@@ -146,6 +146,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "Content\menu.xml"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "Content\PHN.html"
                     BuildAction = "Content"
                 />
@@ -156,6 +160,10 @@
                 <File
                     RelPath = "Content\tags.csv"
                     BuildAction = "None"
+                />
+                <File
+                    RelPath = "Content\tags.xml"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "Graphics\ie.ico"

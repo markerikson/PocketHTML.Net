@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Xml;
 //using CKIUtil.Controls.HTMLViewer;
 using OpenNETCF.Windows.Forms;
 using ISquared.Win32Interop;
@@ -30,6 +31,8 @@ namespace ISquared.PocketHTML
 		private bool showAbout;
 
 		private HTMLViewer htmlControl;
+
+		private Menu currentMenu;
 
 		private MenuItem MenuDocument;
 		private MenuItem MenuForms;
@@ -185,9 +188,16 @@ namespace ISquared.PocketHTML
 
 			#endregion
 
-			#region menu items
-			
 			contextTop = new ContextMenu();
+			tb.ContextMenu = contextTop;
+			currentMenu = contextTop;
+
+			MakeMenuXTR();
+
+			
+			#region menu items
+			/*
+			
 
 			MenuDocument = new MenuItem();
 			MenuDocument.Text = "Document";
@@ -218,7 +228,7 @@ namespace ISquared.PocketHTML
 			contextTop.MenuItems.Add(MenuOther);
 			
 
-			tb.ContextMenu = contextTop;
+			
 
 			MenuDocumentDoctype = new MenuItem();
 			MenuDocumentDoctype.Text = "Doctypes";
@@ -279,15 +289,15 @@ namespace ISquared.PocketHTML
 
 
 
-			/*
-			MenuTablesCreate = new TagMenuItem();
-			MenuTablesCreate.Text = "Create";
-			MenuTables.MenuItems.Add(MenuTablesCreate);
+			
+			//MenuTablesCreate = new TagMenuItem();
+			//MenuTablesCreate.Text = "Create";
+			//MenuTables.MenuItems.Add(MenuTablesCreate);
 
-			sep = new MenuItem();
-			sep.Text = "-";
-			MenuTables.MenuItems.Add(sep);
-			*/
+			//sep = new MenuItem();
+			//sep.Text = "-";
+			//MenuTables.MenuItems.Add(sep);
+
 
 			InsertMenuItem("table", true, MenuTables);
 			InsertMenuItem("tbody", true, MenuTables);
@@ -387,9 +397,63 @@ namespace ISquared.PocketHTML
 
 
 
-
+			*/
 			#endregion
+			
 
+
+		}
+
+		private void MakeMenuXTR()
+		{
+			string filename = Utility.GetCurrentDir(true) + "menu.xml";
+			XmlTextReader xtr = new XmlTextReader(filename);
+			xtr.WhitespaceHandling = WhitespaceHandling.None;
+			xtr.MoveToContent();
+			Stack stack = new Stack();
+			EventHandler eh = new EventHandler(TagMenuItem_Click);
+
+			while(xtr.Read())
+			{
+				switch(xtr.NodeType)
+				{
+					case XmlNodeType.Element:
+					{
+						if(xtr.Name == "menuitems")
+						{
+							continue;
+						}
+						if(xtr.IsStartElement())
+						{
+							string name = xtr.GetAttribute("name");
+							TagMenuItem newItem = new TagMenuItem();
+							newItem.Click += eh;
+							newItem.Text = name;
+							newItem.Tag = name;
+							currentMenu.MenuItems.Add(newItem);
+
+							if(!xtr.IsEmptyElement)
+							{
+								stack.Push(currentMenu);
+								currentMenu = newItem;
+							}
+
+						}
+						break;
+					}
+					case XmlNodeType.EndElement:
+					{
+						if(xtr.Name == "menuitems")
+						{
+							continue;
+						}
+
+						currentMenu = (Menu)stack.Pop();
+						break;		
+					}
+				}
+			}
+			xtr.Close();
 		}
 
 		private TagMenuItem InsertMenuItem(string text, bool handler, MenuItem menu)

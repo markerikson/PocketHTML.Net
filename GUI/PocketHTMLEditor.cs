@@ -9,13 +9,13 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Windows.Forms;
 using Ayende;
 using ISquared.Win32Interop;
 using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
-//using Oxbow.Tools;
 using ISquared.Debugging;
 
 
@@ -35,9 +35,10 @@ namespace ISquared.PocketHTML
 
 		static void Main() 
 		{
+			Application.Run(new PocketHTMLEditor());
 			try
 			{
-				Application.Run(new PocketHTMLEditor());
+				
 			}
 			catch(Exception e)
 			{
@@ -286,7 +287,8 @@ namespace ISquared.PocketHTML
 			
 
 			
-			LoadTags();
+			//LoadTags();
+			LoadTagsXTR();
 			Debug.WriteLine("Tags loaded");
 			SetupButtons();
 			Debug.WriteLine("Buttons created");
@@ -697,7 +699,7 @@ namespace ISquared.PocketHTML
 			bool indentHTML = config.GetBool("Options", "IndentHTML");
 
 			// We'll need a start tag AND an end tag
-			if(!tag.IndividualTag)
+			if(tag.ClosingTag)
 			{
 				sb.Append(tag.StartTag);
 				if(tag.MultiLineTag)
@@ -749,7 +751,7 @@ namespace ISquared.PocketHTML
 
 				if(tag.MultiLineTag)
 				{
-					if(!tag.IndividualTag)
+					if(tag.ClosingTag)
 					{
 						sb.Append(newline);
 					}
@@ -796,7 +798,9 @@ namespace ISquared.PocketHTML
 					}
 				}
 				
-				int idx = tag.Name.IndexOf("\"");
+				// TODO What was I doing here?
+				//int idx = tag.Name.IndexOf("\"");
+				int idx = tag.Value.IndexOf("\"");
 				if(firstUninitializedAttribute != -1)
 				{
 					string fua = tag.DefaultAttributes[firstUninitializedAttribute];
@@ -818,7 +822,9 @@ namespace ISquared.PocketHTML
 				charIndex += idx;
 				charIndex += spaces.Length;
 			}
-			else if(tag.NormalTag)
+			// TODO What was I doing here?
+			//else if(tag.NormalTag)
+			else if(tag.AngleBrackets)
 			{
 				if(tag.MultiLineTag)
 				{
@@ -845,7 +851,7 @@ namespace ISquared.PocketHTML
 
 				else
 				{					
-					if(!tag.IndividualTag)
+					if(tag.ClosingTag)
 					{		
 						charIndex = ed.TextBox.SelectionStart;
 						cursorLocationIndex -= tag.EndTag.Length;//tag.StartTag.Length;
@@ -861,7 +867,9 @@ namespace ISquared.PocketHTML
 				charIndex += cursorLocationIndex;							
 			}
 			
-			if(tag.NormalTag)
+			// TODO What was I doing here?
+			//if(tag.NormalTag)
+			if(tag.AngleBrackets)
 			{
 				int sel = CoreDLL.SendMessage(pTB, (int)EM.SETSEL, charIndex, charIndex);
 			}
@@ -902,6 +910,75 @@ namespace ISquared.PocketHTML
 			CoreDLL.SendMessageString(pTB, (int)EM.REPLACESEL, 0, "\r\n" + spaces);
 		}
 
+		private void LoadTagsXTR()
+		{		
+			string filename = Utility.GetCurrentDir(true) + "tags.xml";
+			XmlTextReader xtr = new XmlTextReader(filename);
+			xtr.WhitespaceHandling = WhitespaceHandling.None;
+			xtr.MoveToContent();
+
+			Tag currentTag = null;
+
+			while(xtr.Read())
+			{
+				switch(xtr.NodeType)
+				{
+					case XmlNodeType.Element:
+					{
+						switch(xtr.Name)
+						{
+							case "Tag":
+							{
+								Tag t = new Tag();
+								currentTag = t;
+
+								xtr.MoveToFirstAttribute();
+						
+								t.DisplayName = xtr.Value;
+								xtr.MoveToNextAttribute();
+								t.Value = xtr.Value;
+								xtr.MoveToNextAttribute();	
+								t.AngleBrackets = Convert.ToBoolean(xtr.Value);
+								xtr.MoveToNextAttribute();
+								t.DefaultInnerTag = xtr.Value;
+								t.InnerTags = (t.DefaultInnerTag != String.Empty);
+								xtr.MoveToNextAttribute();						
+								t.ShortName = xtr.Value;
+								xtr.MoveToNextAttribute();	
+								t.MultiLineTag = Convert.ToBoolean(xtr.Value);
+								xtr.MoveToNextAttribute();
+								t.ClosingTag = Convert.ToBoolean(xtr.Value);
+																	
+								xtr.MoveToElement();
+								tagHash[t.DisplayName] = t;
+
+								break;
+							}
+							case "Attributes":
+							{
+								ArrayList al = new ArrayList();
+								while(xtr.Read())
+								{
+									if(xtr.NodeType == XmlNodeType.EndElement && xtr.Name == "Attributes")
+									{
+										break;
+									}
+									if(xtr.NodeType == XmlNodeType.Text)
+									{
+										al.Add(xtr.Value);
+									}
+								}
+								string[] attributes = (string[])al.ToArray(typeof(string));
+								currentTag.DefaultAttributes = attributes;
+								break;
+							}
+						}
+						break;						
+					}
+				}
+			}
+		}
+		/*
 		// TODO Benchmark this sucker
 		private void LoadTags()
 		{
@@ -1007,6 +1084,7 @@ namespace ISquared.PocketHTML
 				Application.Exit();
 			}
 		}
+		*/
 
 		internal void SetupButtons()
 		{
@@ -1018,18 +1096,21 @@ namespace ISquared.PocketHTML
 				{				
 					string tagName = config.GetValue("Button Tags", nb.Name);
 
-					Tag t = (Tag)tagHash[tagName];					
+					Tag t = (Tag)tagHash[tagName];	
 					
+					
+				
 					if(t.ShortName != String.Empty)
 					{
 						nb.Text = t.ShortName;
 					}
 					else
 					{
-						nb.Text = t.Name;
+						nb.Text = t.Value;
 					}
 					
-					buttonTags[nb.Name] = nb.Text;
+					
+					buttonTags[nb.Name] = t.DisplayName;
 				}
 				else
 				{

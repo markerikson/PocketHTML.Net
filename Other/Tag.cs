@@ -1,5 +1,5 @@
 using System;
-using Ayende;
+//using Ayende;
 using System.Text;
 
 namespace ISquared.PocketHTML
@@ -9,8 +9,9 @@ namespace ISquared.PocketHTML
 	/// </summary>
 	class Tag
 	{
-		private string name;
-		private bool individualTag;
+		private string val;
+		private string displayName;
+		private bool closingTag;
 		private string defaultInnerTag;
 		private string shortName;
 		private string[] defaultAttributes;
@@ -18,7 +19,8 @@ namespace ISquared.PocketHTML
 		private string endTag;
 		private bool innerTags;
 		private bool multiLineTag;
-		private bool normalTag;
+		private bool angleBrackets;
+		/*
 		private Configuration config;
 		
 
@@ -29,20 +31,21 @@ namespace ISquared.PocketHTML
 				this.config = value;
 			}
 		}
+		*/
 
 
 		/// <summary>
 		/// Property NormalTag (bool)
 		/// </summary>
-		public bool NormalTag
+		public bool AngleBrackets
 		{
 			get
 			{
-				return this.normalTag;
+				return this.angleBrackets;
 			}
 			set
 			{
-				this.normalTag = value;
+				this.angleBrackets = value;
 			}
 		}		
 		/// <summary>
@@ -77,16 +80,17 @@ namespace ISquared.PocketHTML
 
 		public Tag()
 		{
-			name = String.Empty;
-			individualTag = false;
+			displayName = String.Empty;
+			val = String.Empty;
+			closingTag = false;
 			defaultInnerTag = String.Empty;
 			shortName = String.Empty;
 			defaultAttributes = new String[0];
 			startTag = String.Empty;
 			endTag = String.Empty;
 			innerTags = false;
-			normalTag = true;
-			config = null;
+			angleBrackets = true;
+			//config = null;
 		}
 		
 		/// <summary>
@@ -100,7 +104,7 @@ namespace ISquared.PocketHTML
 				{
 					StringBuilder sb = new StringBuilder();
 					sb.Append("</");
-					sb.Append(name);
+					sb.Append(val);
 					sb.Append(">");
 					endTag = sb.ToString();
 				}
@@ -118,12 +122,12 @@ namespace ISquared.PocketHTML
 			{
 				StringBuilder sb = new StringBuilder();
 
-				if(this.NormalTag)
+				if(angleBrackets)
 				{
 					sb.Append("<");
 				}
 					
-				sb.Append(this.Name);
+				sb.Append(this.Value);
 
 				foreach(string s in defaultAttributes)
 				{
@@ -134,14 +138,16 @@ namespace ISquared.PocketHTML
 
 					
 
-				if(this.normalTag)
+				if(this.angleBrackets)
 				{
 					// for XHTML compatibility
+					/*
 					if(config.GetBool("Options", "XHTMLTags") && 
-						this.IndividualTag)
+						this.closingTag)
 					{
 						sb.Append(" /");
 					}
+					*/
 					sb.Append(">");
 				}
 					
@@ -178,6 +184,18 @@ namespace ISquared.PocketHTML
 				this.shortName  = value;
 			}
 		}		
+
+		public string DisplayName 
+		{
+			get
+			{
+				return this.displayName ;
+			}
+			set
+			{
+				this.displayName  = value;
+			}
+		}	
 		/// <summary>
 		/// Property DefaultInnerTag (string)
 		/// </summary>
@@ -193,17 +211,17 @@ namespace ISquared.PocketHTML
 			}
 		}		
 		/// <summary>
-		/// Property IndividualTag (bool)
+		/// Property closingTag (bool)
 		/// </summary>
-		public bool IndividualTag
+		public bool ClosingTag
 		{
 			get
 			{
-				return this.individualTag;
+				return this.closingTag;
 			}
 			set
 			{
-				this.individualTag = value;
+				this.closingTag = value;
 			}
 		}	
 
@@ -211,23 +229,23 @@ namespace ISquared.PocketHTML
 		/// <summary>
 		/// Property Name (string)
 		/// </summary>
-		public string Name
+		public string Value
 		{
 			get
 			{
-				return this.name;
+				return this.val;
 			}
 			set
 			{
-				this.name = value;
-				if(name.IndexOf("$C", 0, name.Length) != -1)
+				this.val = value;
+				if(val.IndexOf("$C", 0, val.Length) != -1)
 				{
-					name = name.Replace("$C", ",");
+					val = val.Replace("$C", ",");
 				}
 
-				if(name.IndexOf("$N", 0, name.Length) != -1)
+				if(val.IndexOf("$N", 0, val.Length) != -1)
 				{
-					name = name.Replace("$N", "\r\n");
+					val = val.Replace("$N", "\r\n");
 				}
 
 			}
