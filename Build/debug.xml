@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE dotfuscator SYSTEM "http://www.preemptive.com/dotfuscator/dtd/dotfuscator_v1.2.dtd">
+<dotfuscator version="1.2">
+  <!--This is application generated code. Do not edit manually.-->
+  <trigger>
+    <filelist>
+      <file dir="f:\projects\PocketHTML.Net\PocketHTML.Net\bin\Debug\" name="PocketHTML.Net.exe" />
+    </filelist>
+  </trigger>
+  <output>
+    <file dir="f:\projects\PocketHTML.Net\PocketHTML.Net\Debug" />
+  </output>
+  <renaming>
+    <option>enhancedOI</option>
+    <excludelist>
+      <type name="ISquared.PocketHTML.PocketHTMLEditor" excludetype="false">
+        <method name="Main" signature="" />
+      </type>
+    </excludelist>
+  </renaming>
+  <controlflow level="medium" />
+</dotfuscator>

@@ -1,0 +1,83 @@
+[Version]
+Signature="$Windows NT$"
+Provider="ISquared Software"
+CESignature="$Windows CE$"
+
+[CEStrings]
+AppName="PocketHTML.Net"
+InstallDir=%CE1%\%AppName%
+
+[CEDevice]
+VersionMin=3.00
+VersionMax=4.99
+
+[DefaultInstall]
+CEShortcuts=Shortcuts
+CopyFiles=Files.Common, Help
+
+;[DefaultInstall.ARMV4]
+;CopyFiles=Files.Common, Help
+;CESetupDLL=vsd_setup.dll
+
+;[DefaultInstall.ARM]
+;CopyFiles=Files.ARM
+;CESetupDLL=vsd_setup.dll
+
+
+[SourceDisksNames]
+1=,"Common1",,"C:\Projects\PocketHTML.Net\Release\"
+2=,"Common2",,"C:\Projects\PocketHTML.Net\"
+3=,"Common3",,"C:\Projects\PocketHTML.Net\"
+4=,"Common4",,"C:\Projects\PocketHTML.Net\"
+
+;[SourceDisksNames.ARMV4]
+;5=,"ARMV45",,"C:\Projects\PocketHTML.Net\obj\Release\"
+;6=,"ARMV4_Setup",,"C:\Program Files\Microsoft Visual Studio .NET 2003\CompactFrameworkSDK\v1.0.5000\Windows CE\wce300\ARMV4\"
+
+;[SourceDisksNames.ARM]
+;7=,"ARM7",,"C:\Projects\PocketHTML.Net\obj\Release\"
+;8=,"ARM_Setup",,"C:\Program Files\Microsoft Visual Studio .NET 2003\CompactFrameworkSDK\v1.0.5000\Windows CE\wce300\ARM\"
+
+
+[SourceDisksFiles]
+PocketHTML.Net.exe=1
+PHN.html=2
+pockethtml.ini=3
+tags.csv=4
+filedialogs.dll=2
+
+;[SourceDisksFiles.ARMV4]
+;vsd_config.txt.ARMV4=5
+;vsd_setup.dll=6
+
+;[SourceDisksFiles.ARM]
+;vsd_config.txt.ARM=7
+;vsd_setup.dll=8
+
+
+[DestinationDirs]
+Files.Common=0,%InstallDir%
+Help=0,%CE2%
+Shortcuts=0,%CE2%\Start Menu
+Files.ARMV4=0,%InstallDir%
+Files.ARM=0,%InstallDir%
+
+[Files.Common]
+"PocketHTML.Net.exe"
+"pockethtml.ini"
+"tags.csv"
+"filedialogs.dll"
+
+[Help]
+"PHN.html"
+;[Files.ARMV4]
+;vsd_config.txt,vsd_config.txt.ARMV4,,0
+;vsd_setup.dll,,,0
+
+;[Files.ARM]
+;vsd_config.txt,vsd_config.txt.ARM,,0
+;vsd_setup.dll,,,0
+
+[Shortcuts]
+PocketHTML.Net,0,PocketHTML.Net.exe,%CE11%
+ 

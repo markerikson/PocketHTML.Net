@@ -1,0 +1,180 @@
+# this line is a comment
+# This file is a comma-separated list of HTML tags and a few other items that can be inserted.  There is
+# one tag per line, each with seven columns.  Spaces inside the items are allowed for visual clarity
+# (ie, something like: ", item," is the same as ",item,").  Capitalization is optional for "True" and "False".
+#
+# The columns are:
+# Tag Name: the actual name of the tag (what goes in between the < and the >).  This can be 
+#           arbitrary text, in which case giving a Short Name is recommended.  Please note that
+#           since this file is parsed using newlines and commas, this column must be on one physical
+#           line and have no commas inside of it.  Commas and newlines can be denoted by using 
+#           $C and $N.  All occurrences of these two special items inside the Tag Name will be 
+#           replaced with a comma or a newline as appropriate.  The $S sequence 
+#
+# Normal Tag Insertion: Some items need to be inserted without the < and > (ie, special 
+#                       characters like &quot;.  If this is "True", the tag will be inserted 
+#                       normally (<name>.  If this is "False", the text in the Tag Name column 
+#                       will be inserted verbatim, and only the Multi-Line Tag column will have any
+#                       effect ("True" - insert newline afterwards).  Setting this to "False" is 
+#                       also useful for defining your own text that you'd like to insert
+#                       (such as copyright comments, frequently used tag sequences, etc).  See
+#                       the &whatever; items for examples.
+#
+# Individual Tag: For any tag with a required or often-used ending tag, this will be 
+#                 "False".  For tags such as "br", this will be "True".  If this value is
+#                 set to "True", the Default Inner Tag value is ignored.
+#
+# Multi-line Tag: This value combines with the Default Inner Tag value to define both how
+#                 the tag is inserted and where the cursor is located afterwards.
+#                 DIT      MLT
+#                 Empty    False    <tag>*cursor*</tag>
+#                 Empty    True     <tag>*newline* *cursor* *newline* </tag>
+#                 Exists   False    <tag><innertag>*cursor*</innertag></tag>
+#                 Exists   True     <tag>*newline*<innertag>*newline* *cursor* *newline* </innertag> *newline* </tag>
+#                 If Individual Tag is "True", this option controls whether or not 
+#                 a new line will be inserted.  Also, the Auto-Indent option will affect
+#                 cursor placement on the given line.
+#
+# Default Inner Tag: For some tags, it's nice to have a default item inserted as well 
+#                    (ie, for a list a good default item would be "li").
+#
+# Short Name: If a tag is more than about 6 characters, it won't completely fit 
+#             on the tag insertion buttons.  If a short name is specified, it 
+#             will be displayed on the button instead.
+#
+# Default Attributes: Some tags are almost always used with at least one or more attributes.
+#                     Use the final column to specify any default attributes, separated by a 
+#                     slash ('/') character.  Spaces around the '/' are acceptable.  
+#                     If the option "Position cursor inside first default attribute" is selected, 
+#                     then the cursor will be positioned inside the quote marks of the first 
+#                     uninitialized default attribute.  Note that this will override the cursor  
+#                     placement listed under Multi-Line Tag.
+
+
+# header tags
+html, True, False, True, body,,
+head, True, False, True,,,
+title, True, False, True,,,
+meta, True, False, True,,, name
+body, True, False, True,,,
+link, True, True, True,,, rel
+
+
+# text formatting tags
+big, True, False, False,,,
+cite, True, False, False,,,
+code, True, False, False,,,
+em, True, False, False,,,
+small, True, False, False,,,
+span, True, False, False,,, class
+strong, True, False, False,,,
+sub, True, False, False,,,
+sup, True, False, False,,,
+tt, True, False, False,,,
+
+
+# font formatting
+font, True, False, True,,, face / size
+b, True, False, False,,,
+i, True, False, False,,,
+u, True, False, False,,,
+strike, True, False, False,,,
+
+
+# headers
+h1, True, False, True,,,
+h2, True, False, True,,,
+h3, True, False, True,,,
+h4, True, False, True,,,
+h5, True, False, True,,,
+h6, True, False, True,,,
+
+
+# block formatting
+p, True, False, True,,,
+blockquote, True, False, True,, block,
+pre, True, False, True,,,
+center, True, False, True,,,
+div, True, False, False,,, class
+
+
+# list tags
+li, True, False, True,,,
+ol, True, False, True, li,, type
+ul, True, False, True, li,,
+dl, True, False, True, dt,,
+dt, True, False, True,,,
+dd, True, False, True,,,
+
+
+# link tags
+a, True, False, False,, a hr, href
+a, True, False, False,, a nm, name
+
+
+# table tags
+table, True, False, True,tr,,,
+tr, True, False, True,td,,
+td, True, False, True,,,
+th, True, False, True,,,
+caption, True, False, False,, capt,
+
+
+# form tags
+form, True, False, True,,, action / method / enctype
+form, True, False, True,, frmget,  method="GET" / action / enctype
+form, True, False, True,, frmpst, method="POST" / action / enctype
+input, True, True, True,,, type / name / value
+textarea, True, False, True,, text,name / rows / cols
+select, True, False, True, option,, name
+option, True, False, False,,,
+input, True, True, True,, inprad, type="radio" / name / value
+input, True, True, True,, inpchk, type="checkbox" / name / value
+input, True, True, True,, inppwd, type="password" / name / value
+input, True, True, True,, inpsub, type="submit" / name / value
+input, True, True, True,, inpres, type="reset" / name / value
+input, True, True, True,, inpfil, type="file" / name / value
+input, True, True, True,, inphid, type="hidden" / name / value
+input, True, True, True,, inpbut, type="button" / name / value
+input, True, True, True,, inptxt, type="text" / name / value
+
+
+# character entities
+&quot;, False, True, False,, ",
+&amp;, False, True, False,, &,
+&lt;, False, True, False,, <,
+&gt;, False, True, False,, >,
+&nbsp;, False, True, False,, nbsp,
+&copy;, False, True, False,, copy,
+&deg;, False, True, False,, deg,
+&trade;, False, True, False,, trade,
+&reg;, False, True, False,, reg,
+
+
+# frame tags
+frameset, True, False, True,, fset,
+frame, True, True, True,,, src
+noframe, True, False, True, body,nofrm,
+
+# doctypes
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">, False, True, False,, doc20,
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">, False, True, False,, doc32,
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">, False, True, True,, doc40s,
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">, False, True, True,, doc40t,
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">, False, True, True,, doc40f,
+
+
+# stuff that doesn't fit a normal category
+hr, True, True, True,,,
+img, True, True, True,,, src / width / height / alt
+br, True, True, True,,,
+!--   --, True, True, True,, comment,
+
+
+# note: all items above this line are required by PocketHTML.Net.  Editing them
+# is okay, but removing any of them is likely to make Bad Things(™) happen.
+# feel free to add custom text items below here.
+
+
+# here's an example of an arbitrary text item:
+http://www.replacethis.com, False, True, False,, http,
