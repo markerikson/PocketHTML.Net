@@ -1,3 +1,5 @@
+#define TRACE
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -15,6 +17,8 @@ using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
 //using Oxbow.Tools;
 using ISquared.Debugging;
+
+
 
 namespace ISquared.PocketHTML
 {
@@ -266,6 +270,8 @@ namespace ISquared.PocketHTML
 			optionsDialog.Hide();
 			optionsDialog.SendToBack();
 			ed.BringToFront();
+
+			
 			
 			optionsDialogHidden = true;
 			
@@ -1495,13 +1501,12 @@ namespace ISquared.PocketHTML
 			NewFile(item.Text);
 		}
 
-		// TODO Change templates from this hardcoded stuff to something external
 		private void NewFile(string template)
 		{
 			DialogResult dr = CloseFile();
 			if(dr != DialogResult.Cancel)
 			{
-				string templateText;
+				string templateText = String.Empty;
 				switch(template)
 				{
 					case "blank":
@@ -1515,15 +1520,13 @@ namespace ISquared.PocketHTML
 						if(File.Exists(filename))
 						{
 							LoadFile(filename);
-						}
-						else
-						{
-							ed.TextBox.Text = String.Empty;
-							ed.TextBox.Modified = false;
-							this.saveFileName = String.Empty;
-						}						
+							return;
+						}				
 						break;
 				}
+				ed.TextBox.Text = templateText;
+				ed.TextBox.Modified = false;
+				this.saveFileName = String.Empty;
 				
 			}
 		}

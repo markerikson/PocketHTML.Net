@@ -151,7 +151,7 @@
                 />
                 <File
                     RelPath = "Content\pockethtml.ini"
-                    BuildAction = "None"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "Content\tags.csv"
@@ -306,11 +306,6 @@
                 />
                 <File
                     RelPath = "Other\Utility.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Other\XmlSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
