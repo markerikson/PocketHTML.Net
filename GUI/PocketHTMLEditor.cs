@@ -12,7 +12,9 @@ using Ayende;
 using ISquared.Win32Interop;
 using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
-using Oxbow.Tools;
+using System.Diagnostics;
+//using Oxbow.Tools;
+using ISquared.Debugging;
 
 namespace ISquared.PocketHTML
 {
@@ -166,12 +168,15 @@ namespace ISquared.PocketHTML
 
 		public PocketHTMLEditor()
 		{			
-			TextLogger.Prefix = "PocketHTML";
-			TextLogger.Reset();
-			TextLogger.Log("Beginning PHE constructor");
+			TextTraceListener.Prefix = "PocketHTML";
+			TextTraceListener.InstallListener();
+			TextTraceListener.Reset();
+			TcpTraceListener.InstallListener("PPP_PEER", 6666);
+			
+			Debug.WriteLine("Beginning PHE constructor");
 			// Generated form setup
 			InitializeComponent();
-			TextLogger.Log("InitializeComponent complete");
+			Debug.WriteLine("InitializeComponent complete");
 
 			// Retrieve the embedded toolbar graphics.  Needed because
 			// the designer-generated ImageList doesn't support transparency.
@@ -186,7 +191,7 @@ namespace ISquared.PocketHTML
 			
 
 			ed = new EditorPanel();
-			TextLogger.Log("EditorPanel created");
+			Debug.WriteLine("EditorPanel created");
 			ed.Parent = this;
 
 			// Hooks up each button with the handler
@@ -199,7 +204,7 @@ namespace ISquared.PocketHTML
 			
 			// TODO Delay-load this panel
 			optionsDialog = new OptionsPanel();
-			TextLogger.Log("OptionsDialog created");
+			Debug.WriteLine("OptionsDialog created");
 			optionsDialog.Bounds = new Rectangle(0,0, 240, 270);
 			optionsDialog.Parent = this;
 			optionsDialog.Hide();
@@ -236,20 +241,20 @@ namespace ISquared.PocketHTML
 				MessageBox.Show("Exception while loading pockethtml.ini\nException information: " + dnfe.Message);
 				Application.Exit();
 			}
-			TextLogger.Log("Configuration created");
+			Debug.WriteLine("Configuration created");
 
-			TextLogger.Log("Options section exists: " + config.SectionExists("Options"));
-			TextLogger.Log("TextWrap exists: " + config.ValueExists("Options", "PageWrap"));
+			Debug.WriteLine("Options section exists: " + config.SectionExists("Options"));
+			Debug.WriteLine("TextWrap exists: " + config.ValueExists("Options", "PageWrap"));
 
 			
 
 			
 			LoadTags();
-			TextLogger.Log("Tags loaded");
+			Debug.WriteLine("Tags loaded");
 			SetupButtons();
-			TextLogger.Log("Buttons created");
+			Debug.WriteLine("Buttons created");
 			SetupOptions();
-			TextLogger.Log("Options setup complete");
+			Debug.WriteLine("Options setup complete");
 
 			newline = "\r\n";
 			textList = new ArrayList();
@@ -284,7 +289,7 @@ namespace ISquared.PocketHTML
 			this.ContextMenu = ed.TextBox.ContextMenu;
 			
 			
-			TextLogger.Log("PHE constructor complete");
+			Debug.WriteLine("PHE constructor complete");
 		}
 
 		/// <summary>
@@ -879,7 +884,7 @@ namespace ISquared.PocketHTML
 					string err = "StreamReader was left null in LoadTags()\nFilename: " + name;
 
 					//DebugMessage(err, new Exception("Oops :)"));
-					TextLogger.Log(err);
+					Debug.WriteLine(err);
 					Application.Exit();
 				}
 
@@ -947,7 +952,7 @@ namespace ISquared.PocketHTML
 				sberror.Append("Exception while loading tags.csv\n");
 				sberror.Append("Filename: " + name);
 				//DebugMessage(sberror.ToString(), dnfe);
-				TextLogger.Log(sberror.ToString());
+				Debug.WriteLine(sberror.ToString());
 				
 				Application.Exit();
 			}
@@ -955,7 +960,7 @@ namespace ISquared.PocketHTML
 			{
 				sberror.Append("Caught generic exception in LoadTags()\n");
 				sberror.Append("Filename: " + name + "\n");
-				TextLogger.Log(sberror.ToString() + e);
+				Debug.WriteLine(sberror.ToString() + e);
 				Application.Exit();
 			}
 		}
@@ -1037,17 +1042,17 @@ namespace ISquared.PocketHTML
 		{
 			try
 			{
-				TextLogger.Log("Starting SetupOptions");
+				Debug.WriteLine("Starting SetupOptions");
 				bool tw = config.GetBool("Options", "TextWrap");
-				TextLogger.Log("TextWrap: " + tw);
-				TextLogger.Log("ed: " + ed.ToString());
-				TextLogger.Log("ed.TextBox: " + ed.TextBox.ToString());
+				Debug.WriteLine("TextWrap: " + tw);
+				Debug.WriteLine("ed: " + ed.ToString());
+				Debug.WriteLine("ed.TextBox: " + ed.TextBox.ToString());
 				//ed.TextBox.WordWrap = tw;
-				TextLogger.Log("Set TextWrap");
+				Debug.WriteLine("Set TextWrap");
 				//ed.HtmlControl.WordWrap = config.GetBool("Options", "PageWrap");
 
 				//ed.HtmlControl.ShrinkMode = config.GetBool("Options", "PageWrap");
-				TextLogger.Log("Set PageWrap");
+				Debug.WriteLine("Set PageWrap");
 
 				if(ed.TextBox.WordWrap)
 				{
@@ -1057,11 +1062,11 @@ namespace ISquared.PocketHTML
 				{
 					ed.TextBox.ScrollBars = ScrollBars.Both;
 				}
-				TextLogger.Log("Set scrollbars");
+				Debug.WriteLine("Set scrollbars");
 			}
 			catch(Exception e)
 			{
-				TextLogger.Log("Caught exception: " + e.ToString());
+				Debug.WriteLine("Caught exception: " + e.ToString());
 			}
 			
 		}
@@ -1173,8 +1178,8 @@ namespace ISquared.PocketHTML
 		private void SaveFile(bool saveas)
 		{
 			string name = String.Empty;
-			TextLogger.Log("Saving file.  saveas: " + saveas);
-			TextLogger.Log("Current file name: " + saveFileName);
+			Debug.WriteLine("Saving file.  saveas: " + saveas);
+			Debug.WriteLine("Current file name: " + saveFileName);
 
 			if( (saveFileName == String.Empty) ||
 				(saveas) )

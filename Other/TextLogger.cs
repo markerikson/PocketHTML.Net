@@ -2,21 +2,22 @@ using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Diagnostics;
 
-namespace Oxbow.Tools
+namespace ISquared.Debugging
 {
 	/// <summary>
 	/// A lightweight logging class for Compact Framework applications.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// You can simply call the static member <see cref="Log">TextLogger.Log</see>. There is no requirement for prior intitialization
+	/// You can simply call the static member <see cref="Log">TextTraceListener.Log</see>. There is no requirement for prior intitialization
 	/// or object instantiation.
 	/// </para>
 	/// <para>
 	/// Log messages are prepended with a time stamp of the form hh:mm:ss.cc. The "hours" component is
 	/// in 24-hour clock format. Log messages are written to a file with a name of the form prefix-yymmdd-log.txt
-	/// where "prefix" is the value of a static TextLogger property and yymmdd is the date that the message
+	/// where "prefix" is the value of a static TextTraceListener property and yymmdd is the date that the message
 	/// was written. Log message files are written to the current user's preferred (according to .NET) 
 	/// temporary directory. Log message files are subject to "housekeeping" once a day. Housekeeping removes
 	/// all but the most recent seven log files with the current prefix.
@@ -28,9 +29,9 @@ namespace Oxbow.Tools
 	/// <example>
 	/// </example>
 	/// </remarks>
-	public class TextLogger
+	public class TextTraceListener : TraceListener, IDisposable
 	{
-		const string DefaultPrefix  = "ox";
+		const string DefaultPrefix  = "isquared";
 		const int    RetentionCount = 7; // Number of logs to keep when housekeeping
 
 		private static bool         enabled   = true;
@@ -43,8 +44,20 @@ namespace Oxbow.Tools
 		static DateTime nextHousekeeping  = DateTime.MinValue;
 
 		static StreamWriter writer = null;
+		private static TextTraceListener listener = null;
 
-		static TextLogger()
+		public static void InstallListener()
+		{
+			if(listener == null)
+			{
+				listener = new TextTraceListener();
+			}
+
+			Debug.Listeners.Add(listener);
+
+		}
+
+		static TextTraceListener()
 		{
 			try
 			{
@@ -62,7 +75,7 @@ namespace Oxbow.Tools
 		/// <summary>
 		/// This class is "static". Prevent instantiation.
 		/// </summary>
-		private TextLogger()
+		private TextTraceListener()
 		{
 		}
 
@@ -127,7 +140,7 @@ namespace Oxbow.Tools
 		/// <remarks>
 		/// <para>
 		/// This property controls when log buffers are actually written to the file system, and 
-		/// whether or not the log file is kept open by TextLogger.</para>
+		/// whether or not the log file is kept open by TextTraceListener.</para>
 		/// <para>
 		/// The default method is AutoClose. AutoClose is easiest to use and most robust flush method. It is also the slowest.
 		/// The following characteristics will help you choose the most appropriate method. Timings are taken from tests
@@ -173,7 +186,7 @@ namespace Oxbow.Tools
 		/// </summary>
 		/// <remarks>This method is useful only if <see cref="FlushType">FlushType</see> is Manual. 
 		/// Otherwise it will have no effect.</remarks>
-		public static void Flush()
+		public override void Flush()
 		{
 			if (!Enabled)
 				return;
@@ -187,7 +200,7 @@ namespace Oxbow.Tools
 		/// </summary>
 		/// <remarks>This method is useful only if <see cref="FlushType">FlushType</see> is AutoFlush or Manual.
 		/// Otherwise (i.e. AutoClose) it will have no effect.</remarks>
-		public static void Close()
+		public override void Close()
 		{
 			if (!Enabled)
 				return;
@@ -197,6 +210,7 @@ namespace Oxbow.Tools
 				writer.Close();
 				writer = null;
 			}
+			
 		}
 
 		/// <summary>
@@ -208,18 +222,18 @@ namespace Oxbow.Tools
 		/// </remarks>
 		public static void Reset()
 		{
-			if (!Enabled)
+			if (!Enabled || listener == null)
 				return;
 
-			Delete();
-			Log("Log file reset under program control");
+			listener.Delete();
+			listener.Log("Log file reset under program control");
 		}
 
 		/// <summary>
 		/// Deletes the current log file.
 		/// </summary>
 		/// <remarks> All previous messages in this log file are lost.</remarks>
-		public static void Delete()
+		public void Delete()
 		{
 			if (!Enabled)
 				return;
@@ -244,7 +258,7 @@ namespace Oxbow.Tools
 		///		[STAThread]
 		///		static void Main(string[] args)
 		///		{
-		///			TextLogger.Log("ConsoleApp starting, {0}.", "hello");
+		///			TextTraceListener.Log("ConsoleApp starting, {0}.", "hello");
 		///		}
 		/// }
 		/// </code>
@@ -257,7 +271,7 @@ namespace Oxbow.Tools
 		/// 11:36:01.47 ConsoleApp starting, hello.
 		/// </code>
 		/// </example>
-		public static void Log(string format, params object[] arg)
+		public void Log(string format, params object[] arg)
 		{
 			if (!Enabled)
 				return;
@@ -272,16 +286,16 @@ namespace Oxbow.Tools
 					nextHousekeeping = DateTime.Now.AddDays(1); // once every 24 hours
 				}
 
-				TextLogger.Open();
+				Open();
 
 				DateTime now = HiResDateTime.Now;
 				writer.Write("{0:HH:mm:ss.ff} ", now);
 				writer.WriteLine(format, arg);
 
-				if (TextLogger.FlushType == LogFlushType.AutoFlush)
-					TextLogger.Flush();
-				else if (TextLogger.FlushType == LogFlushType.AutoClose)
-					TextLogger.Close();
+				if (TextTraceListener.FlushType == LogFlushType.AutoFlush)
+					Flush();
+				else if (TextTraceListener.FlushType == LogFlushType.AutoClose)
+					Close();
 			}
 			catch (Exception)
 			{
@@ -295,7 +309,18 @@ namespace Oxbow.Tools
 			}
 		}
 
-		private static void Open()
+		public override void Write(string message)
+		{
+			Log(message);
+		}
+		
+		public override void WriteLine(string message)
+		{
+			string msg = String.Format("{0}\n", message);
+			Log(message);
+		}
+
+		private void Open()
 		{
 			if (!Enabled)
 				return;
@@ -371,5 +396,13 @@ namespace Oxbow.Tools
 			/// </summary>
 			Manual
 		}
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			Close();
+		}
+
+		#endregion
 	}
 }

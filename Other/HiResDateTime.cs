@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Oxbow.Tools
+namespace ISquared.Debugging
 {
 	/// <summary>
 	/// A class providing DateTime objects with millisecond resolution, for
