@@ -169,10 +169,50 @@ namespace ISquared.PocketHTML
 
 		public PocketHTMLEditor()
 		{			
-			TextTraceListener.Prefix = "PocketHTML";
-			TextTraceListener.InstallListener();
-			TextTraceListener.Reset();
-			TcpTraceListener.InstallListener("PPP_PEER", 6666);
+			// TODO Convert to XML config file
+			String inifile = Utility.GetCurrentDir(true) + "pockethtml.ini";
+
+			// TODO Set up some nice defaults
+			try
+			{
+				if(!File.Exists(inifile))
+				{
+					config = new Configuration();				
+				}
+				else
+				{
+					StreamReader sr = new StreamReader(inifile);
+					config = new Configuration(sr);
+					sr.Close();
+				}
+			}
+			catch(DirectoryNotFoundException dnfe)
+			{
+				MessageBox.Show("Exception while loading pockethtml.ini\nException information: " + dnfe.Message);
+				Application.Exit();
+			}
+
+			if(config.SectionExists("Debug"))
+			{
+				if(config.GetBool("Debug", "Text"))
+				{
+					TextTraceListener.Prefix = "PocketHTML";
+					TextTraceListener.InstallListener();
+					TextTraceListener.Reset();
+				}
+
+				if(config.GetBool("Debug", "TCP"))
+				{
+					TcpTraceListener.InstallListener("PPP_PEER", 6666);
+				}
+			}
+
+			Debug.WriteLine("Configuration created");
+
+			Debug.WriteLine("Options section exists: " + config.SectionExists("Options"));
+			Debug.WriteLine("TextWrap exists: " + config.ValueExists("Options", "PageWrap"));
+
+			
 			
 			Debug.WriteLine("Beginning PHE constructor");
 			// Generated form setup
@@ -235,32 +275,7 @@ namespace ISquared.PocketHTML
 			tagHash = new Hashtable();
 			buttonTags = new Hashtable();
 			
-			// TODO Convert to XML config file
-			String inifile = Utility.GetCurrentDir(true) + "pockethtml.ini";
-
-			// TODO Set up some nice defaults
-			try
-			{
-				if(!File.Exists(inifile))
-				{
-					config = new Configuration();				
-				}
-				else
-				{
-					StreamReader sr = new StreamReader(inifile);
-					config = new Configuration(sr);
-					sr.Close();
-				}
-			}
-			catch(DirectoryNotFoundException dnfe)
-			{
-				MessageBox.Show("Exception while loading pockethtml.ini\nException information: " + dnfe.Message);
-				Application.Exit();
-			}
-			Debug.WriteLine("Configuration created");
-
-			Debug.WriteLine("Options section exists: " + config.SectionExists("Options"));
-			Debug.WriteLine("TextWrap exists: " + config.ValueExists("Options", "PageWrap"));
+			
 
 			
 
@@ -968,7 +983,7 @@ namespace ISquared.PocketHTML
 					}
 				}
 			}
-			catch(DirectoryNotFoundException dnfe)
+			catch(DirectoryNotFoundException)
 			{
 				//StreamWriter sw = new StreamWriter(GetCurrentDir(true) + "phnerror.txt", true);
 				sberror.Append("Exception while loading tags.csv\n");

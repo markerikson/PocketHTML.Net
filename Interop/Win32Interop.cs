@@ -257,10 +257,10 @@ namespace ISquared.Win32Interop
 
 	internal class ProcessInfo
 	{
-		public int hProcess;
-		public int hThread;
-		public int ProcessID;
-		public int ThreadID;
+		public int hProcess = 0;
+		public int hThread = 0;
+		public int ProcessID = 0;
+		public int ThreadID = 0;
 	}
 
 	internal class Utility

@@ -290,7 +290,7 @@ namespace ISquared.PocketHTML
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-			int i = 0;
+			
 		}
 
 		private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)

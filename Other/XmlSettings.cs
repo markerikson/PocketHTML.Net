@@ -127,7 +127,7 @@ namespace ForestSoftware.NetCF.UserSettings
 					exitForStatement3: ;
 				}
 				xd.Save(m_sXMLFileName);
-			} catch (FileNotFoundException ex) {
+			} catch (FileNotFoundException) {
 				XmlDocument newDoc = new XmlDocument();
 				XmlElement xe;
 				xe = newDoc.CreateElement("configuration");
