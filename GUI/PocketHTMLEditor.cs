@@ -115,6 +115,7 @@ namespace ISquared.PocketHTML
 		private System.Windows.Forms.ToolBarButton m_btnPreview;
 		private System.Windows.Forms.ToolBarButton m_btnTags;
 		private Microsoft.WindowsCE.Forms.InputPanel inputPanel1;
+		private System.Windows.Forms.MenuItem MenuFileClose;
 		private MenuItem MenuFileNewBasic;
 		
 
@@ -177,6 +178,21 @@ namespace ISquared.PocketHTML
 			// Generated form setup
 			InitializeComponent();
 			Debug.WriteLine("InitializeComponent complete");
+
+			string templatePath = Utility.GetCurrentDir(true) + "templates";
+			string[] templates = Directory.GetFiles(templatePath, "*.htm*");
+
+			Array.Sort(templates);
+
+			foreach(string template in templates)
+			{
+				MenuItem item = new MenuItem();
+				int index = template.LastIndexOf("\\");
+				string filename = template.Substring(index + 1);
+				item.Text = filename;
+				item.Click += new EventHandler(MenuFileNewOther_Click);
+				MenuFileNew.MenuItems.Add(item);
+			}
 
 			// Retrieve the embedded toolbar graphics.  Needed because
 			// the designer-generated ImageList doesn't support transparency.
@@ -314,6 +330,7 @@ namespace ISquared.PocketHTML
 			this.MenuFileOpen = new System.Windows.Forms.MenuItem();
 			this.MenuFileSave = new System.Windows.Forms.MenuItem();
 			this.MenuFileSaveAs = new System.Windows.Forms.MenuItem();
+			this.MenuFileClose = new System.Windows.Forms.MenuItem();
 			this.menuItem4 = new System.Windows.Forms.MenuItem();
 			this.MenuFileExit = new System.Windows.Forms.MenuItem();
 			this.MenuEdit = new System.Windows.Forms.MenuItem();
@@ -353,6 +370,7 @@ namespace ISquared.PocketHTML
 			this.MenuFile.MenuItems.Add(this.MenuFileOpen);
 			this.MenuFile.MenuItems.Add(this.MenuFileSave);
 			this.MenuFile.MenuItems.Add(this.MenuFileSaveAs);
+			this.MenuFile.MenuItems.Add(this.MenuFileClose);
 			this.MenuFile.MenuItems.Add(this.menuItem4);
 			this.MenuFile.MenuItems.Add(this.MenuFileExit);
 			this.MenuFile.Text = "File";
@@ -387,6 +405,10 @@ namespace ISquared.PocketHTML
 			// 
 			this.MenuFileSaveAs.Text = "Save As";
 			this.MenuFileSaveAs.Click += new System.EventHandler(this.MenuFileSaveAs_Click);
+			// 
+			// MenuFileClose
+			// 
+			this.MenuFileClose.Text = "Close";
 			// 
 			// menuItem4
 			// 
@@ -1138,36 +1160,64 @@ namespace ISquared.PocketHTML
 
 		private void MenuFileOpen_Click(object sender, EventArgs e)
 		{
+			OpenFile();
+		}
+
+
+		private void OpenFile()
+		{
+			string filename = GetFileName(false);
+
+			if(filename != String.Empty)
+			{
+				LoadFile(filename);	
+			}
+		}
+
+		private string GetFileName(bool save)
+		{
 			string filename = String.Empty;
+
 			if(!tgetfileExists)
 			{
 			
-				OpenFileDialog ofd = new OpenFileDialog();
-				ofd.Filter = "HTML files (*.html)|*.html;|All files (*.*)|*.*";
-				DialogResult dr = ofd.ShowDialog();
+				FileDialog fd;
+
+				if(save)
+				{
+					fd = new SaveFileDialog();
+				}
+				else
+				{
+					fd = new OpenFileDialog();
+				}
+				//OpenFileDialog ofd = new OpenFileDialog();
+				fd.Filter = "HTML files (*.html)|*.html;|All files (*.*)|*.*";
+				DialogResult dr = fd.ShowDialog();
 
 				if(dr == DialogResult.OK)
 				{
-					filename = ofd.FileName;
-
+					filename = fd.FileName;
 				}
 			}
 			else
 			{
-				filename = TGetFile.TGetFileName(true);
+				filename = TGetFile.TGetFileName(save);
 
 			}
 
-			if(filename != String.Empty)
-			{
-				StreamReader sr = new StreamReader(filename);
-				String s =  sr.ReadToEnd();		
-				sr.Close();
-				CoreDLL.SendMessageString(CoreDLL.GetHandle(ed.TextBox), 
-					(int)WM.SETTEXT, 0, s);
-				this.saveFileName = filename;
-				ed.TextBox.Modified = false;
-			}
+			return filename;
+		}
+
+		private void LoadFile(string filename)
+		{
+			StreamReader sr = new StreamReader(filename);
+			String s =  sr.ReadToEnd();		
+			sr.Close();
+			CoreDLL.SendMessageString(CoreDLL.GetHandle(ed.TextBox), 
+				(int)WM.SETTEXT, 0, s);
+			this.saveFileName = filename;
+			ed.TextBox.Modified = false;
 		}
 
 		private void MenuFileSave_Click(object sender, EventArgs e)
@@ -1177,13 +1227,15 @@ namespace ISquared.PocketHTML
 
 		private void SaveFile(bool saveas)
 		{
-			string name = String.Empty;
+			string filename = String.Empty;
 			Debug.WriteLine("Saving file.  saveas: " + saveas);
 			Debug.WriteLine("Current file name: " + saveFileName);
 
 			if( (saveFileName == String.Empty) ||
 				(saveas) )
 			{
+				filename = GetFileName(true);
+				/*
 				if(!tgetfileExists)
 				{
 					SaveFileDialog sfd = new SaveFileDialog();
@@ -1214,13 +1266,16 @@ namespace ISquared.PocketHTML
 						return;
 					}					
 				}				
+				*/
+
+				saveFileName = filename;
 			}
 			else
 			{
-				name = saveFileName;
+				filename = saveFileName;
 			}			
 				
-			StreamWriter sw = new StreamWriter(name);
+			StreamWriter sw = new StreamWriter(filename);
 			sw.WriteLine(ed.TextBox.Text);			
 			sw.Close();
 			ed.TextBox.Modified = false;			
@@ -1419,28 +1474,42 @@ namespace ISquared.PocketHTML
 			NewFile("basic");
 		}
 
+		private void MenuFileNewOther_Click(object sender, EventArgs e)
+		{
+			MenuItem item = sender as MenuItem;
+			NewFile(item.Text);
+		}
+
 		// TODO Change templates from this hardcoded stuff to something external
 		private void NewFile(string template)
 		{
 			DialogResult dr = CloseFile();
 			if(dr != DialogResult.Cancel)
 			{
-				string rt;
+				string templateText;
 				switch(template)
 				{
 					case "blank":
-						rt = String.Empty;
+						templateText = String.Empty;
 						break;
 					case "basic":
-						rt = "<html>\r\n<body>\r\n\r\n\r\n</body>\r\n</html>";
+						templateText = "<html>\r\n<body>\r\n\r\n\r\n</body>\r\n</html>";
 						break;
 					default:
-						rt = String.Empty;
+						string filename = Utility.GetCurrentDir(true) + "templates\\" + template;
+						if(File.Exists(filename))
+						{
+							LoadFile(filename);
+						}
+						else
+						{
+							ed.TextBox.Text = String.Empty;
+							ed.TextBox.Modified = false;
+							this.saveFileName = String.Empty;
+						}						
 						break;
 				}
-				ed.TextBox.Text = rt;
-				ed.TextBox.Modified = false;
-				this.saveFileName = String.Empty;
+				
 			}
 		}
 		
