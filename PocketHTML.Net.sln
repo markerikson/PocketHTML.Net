@@ -1,23 +1,21 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{20D4826A-C6FA-45DB-90F4-C717570B9F32}") = "PocketHTML.Net", "PocketHTML.Net.csdproj", "{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PocketHTML.Net", "PocketHTML.Net.csproj", "{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Debug.ActiveCfg = Debug|Pocket PC
-		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Debug.Build.0 = Debug|Pocket PC
-		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Debug.Deploy.0 = Debug|Pocket PC
-		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Release.ActiveCfg = Release|Pocket PC
-		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Release.Build.0 = Release|Pocket PC
-		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Release.Deploy.0 = Release|Pocket PC
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

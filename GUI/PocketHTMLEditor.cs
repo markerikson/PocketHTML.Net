@@ -225,19 +225,24 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("InitializeComponent complete");
 
 			string templatePath = Utility.GetCurrentDir(true) + "templates";
-			string[] templates = Directory.GetFiles(templatePath, "*.htm*");
 
-			Array.Sort(templates);
-
-			foreach(string template in templates)
+			if(Directory.Exists(templatePath))
 			{
-				MenuItem item = new MenuItem();
-				int index = template.LastIndexOf("\\");
-				string filename = template.Substring(index + 1);
-				item.Text = filename;
-				item.Click += new EventHandler(MenuFileNewOther_Click);
-				MenuFileNew.MenuItems.Add(item);
+				string[] templates = Directory.GetFiles(templatePath, "*.htm*");
+
+				Array.Sort(templates);
+
+				foreach (string template in templates)
+				{
+					MenuItem item = new MenuItem();
+					int index = template.LastIndexOf("\\");
+					string filename = template.Substring(index + 1);
+					item.Text = filename;
+					item.Click += new EventHandler(MenuFileNewOther_Click);
+					MenuFileNew.MenuItems.Add(item);
+				}
 			}
+			
 
 			// Retrieve the embedded toolbar graphics.  Needed because
 			// the designer-generated ImageList doesn't support transparency.

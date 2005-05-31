@@ -13,7 +13,7 @@ namespace ISquared.PocketHTML
 	{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label m_labVersion;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Label label7;
@@ -29,6 +29,10 @@ namespace ISquared.PocketHTML
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
+
+			m_labVersion.Text = Utility.AssemblyVersion();
+
+
 		}
 
 		/// <summary>
@@ -49,7 +53,7 @@ namespace ISquared.PocketHTML
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AboutPanel));
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
+			this.m_labVersion = new System.Windows.Forms.Label();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.button1 = new System.Windows.Forms.Button();
 			this.label6 = new System.Windows.Forms.Label();
@@ -69,12 +73,12 @@ namespace ISquared.PocketHTML
 			this.label2.Text = "PocketHTML.Net";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
-			// label4
+			// m_labVersion
 			// 
-			this.label4.Location = new System.Drawing.Point(64, 32);
-			this.label4.Size = new System.Drawing.Size(112, 16);
-			this.label4.Text = "Version 1.1";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_labVersion.Location = new System.Drawing.Point(64, 32);
+			this.m_labVersion.Size = new System.Drawing.Size(112, 16);
+			this.m_labVersion.Text = "Version 1.1";
+			this.m_labVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// pictureBox1
 			// 
@@ -109,7 +113,7 @@ namespace ISquared.PocketHTML
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.pictureBox1);
-			this.Controls.Add(this.label4);
+			this.Controls.Add(this.m_labVersion);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Text = "AboutDialog";

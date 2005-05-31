@@ -39,5 +39,13 @@ namespace ISquared
 			Icon icon = new Icon(stream);
 			return icon;
 		}
+
+		public static string AssemblyVersion()
+		{
+			Assembly execAssembly = Assembly.GetExecutingAssembly();
+			AssemblyName name = execAssembly.GetName();
+			Version version = name.Version;
+			return version.ToString();
+		}
 	}
 }
