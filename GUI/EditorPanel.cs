@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Xml;
+using System.IO;
 //using CKIUtil.Controls.HTMLViewer;
 using OpenNETCF.Windows.Forms;
 using ISquared.Win32Interop;
@@ -34,6 +35,7 @@ namespace ISquared.PocketHTML
 
 		private Menu currentMenu;
 
+		/*
 		private MenuItem MenuDocument;
 		private MenuItem MenuForms;
 		private MenuItem MenuLinks;
@@ -51,6 +53,7 @@ namespace ISquared.PocketHTML
 
 		private TagMenuItem MenuTextLayoutHeadings;
 		private TagMenuItem MenuTextLayoutFrames;
+		 */ 
 
 
 		
@@ -407,6 +410,12 @@ namespace ISquared.PocketHTML
 		private void MakeMenuXTR()
 		{
 			string filename = Utility.GetCurrentDir(true) + "menu.xml";
+
+			if(!File.Exists(filename))
+			{
+				throw new Exception("The file menu.xml could not be found.  Please make sure that menu.xml is in the same directory as pockethtml.exe");
+			}
+
 			XmlTextReader xtr = new XmlTextReader(filename);
 			xtr.WhitespaceHandling = WhitespaceHandling.None;
 			xtr.MoveToContent();

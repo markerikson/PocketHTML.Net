@@ -144,7 +144,7 @@ namespace ISquared.Win32Interop
 		[DllImport("filedialogs.dll")]				
 		internal static extern bool tGetSave1(int i1, int i2, int i3, IntPtr p1);
 
-		public static string TGetFileName(bool open) 
+		public static string TGetFileName(bool save) 
 		{
 			OpenFileName ofn = new OpenFileName();
 
@@ -213,13 +213,13 @@ namespace ISquared.Win32Interop
 			
 			// 177 is the magic registration number needed to keep the 
 			// trial message from popping up.
-			if(open)
+			if(save)
 			{
-				res = TGetFile.tGetOpen1(0, 0, 177, pOFN );
+				res = TGetFile.tGetSave1(0, 0, 177, pOFN );
 			}
 			else
 			{
-				res = TGetFile.tGetSave1(0, 0, 177, pOFN);
+				res = TGetFile.tGetOpen1(0, 0, 177, pOFN);
 			}
 
 			string result = String.Empty;
@@ -230,7 +230,7 @@ namespace ISquared.Win32Interop
 				result = result.Substring(slashidx);
 
 				OpenFileName ofn2 = (OpenFileName)Marshal.PtrToStructure(pOFN, typeof(OpenFileName));
-				if(!open && (ofn2.filterIndex == 1))
+				if(save && (ofn2.filterIndex == 1))
 				{
 					//int idx = result.LastIndexOf(".");
 					//string justname = result.Substring(0, idx);

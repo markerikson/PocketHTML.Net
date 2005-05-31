@@ -16,7 +16,7 @@ namespace ISquared.PocketHTML
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
-		private Hashtable th;
+		private Hashtable m_tagHash;
 		//NamedButton[] buttons;
 		//private PHNOptions options;
 		private Ayende.Configuration config;
@@ -87,8 +87,8 @@ namespace ISquared.PocketHTML
 			
 
 
-			th = mainform.TagHash;
-			ICollection ickeys = th.Keys;
+			m_tagHash = mainform.TagHash;
+			ICollection ickeys = m_tagHash.Keys;
 			string[] keys = new string[ickeys.Count];
 			ickeys.CopyTo(keys, 0);
 			Array.Sort(keys);
@@ -122,17 +122,19 @@ namespace ISquared.PocketHTML
 				boxes[i].Checked = chk;
 			}
 			comboBox2.SelectedIndex = 0;
-			comboBox2_SelectedIndexChanged(this, new System.EventArgs());
+			//comboBox2_SelectedIndexChanged(this, new System.EventArgs());
 		}
 
 		internal void ResetValues()
 		{
+			Hashtable buttonTags = maineditor.ButtonTags;
+			NamedButton[] buttons = maineditor.Buttons;
 			for(int i = 0; i < currentButtonValues.Length; i++)
 			{
-				currentButtonValues[i] = maineditor.Buttons[i].Text;
+				currentButtonValues[i] = (string)buttonTags[buttons[i].Name];
 			}
 			comboBox2.SelectedIndex = 0;
-			comboBox2_SelectedIndexChanged(this, new System.EventArgs());
+			//comboBox2_SelectedIndexChanged(this, new System.EventArgs());
 			//comboBox1_SelectedIndexChanged(this, new System.EventArgs());
 
 		}
@@ -193,8 +195,8 @@ namespace ISquared.PocketHTML
 			// 
 			// comboBox1
 			// 
-			this.comboBox1.Location = new System.Drawing.Point(152, 160);
-			this.comboBox1.Size = new System.Drawing.Size(84, 22);
+			this.comboBox1.Location = new System.Drawing.Point(128, 160);
+			this.comboBox1.Size = new System.Drawing.Size(112, 22);
 			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
 			// label1
@@ -235,7 +237,7 @@ namespace ISquared.PocketHTML
 			// label5
 			// 
 			this.label5.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label5.Location = new System.Drawing.Point(112, 160);
+			this.label5.Location = new System.Drawing.Point(92, 160);
 			this.label5.Size = new System.Drawing.Size(36, 20);
 			this.label5.Text = "Label:";
 			// 
@@ -257,19 +259,19 @@ namespace ISquared.PocketHTML
 			this.comboBox2.Items.Add("14");
 			this.comboBox2.Items.Add("15");
 			this.comboBox2.Items.Add("16");
-			this.comboBox2.Location = new System.Drawing.Point(52, 160);
-			this.comboBox2.Size = new System.Drawing.Size(52, 22);
+			this.comboBox2.Location = new System.Drawing.Point(48, 160);
+			this.comboBox2.Size = new System.Drawing.Size(36, 22);
 			this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
 			// 
 			// cbAutoIndent
 			// 
-			this.cbAutoIndent.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
 			this.cbAutoIndent.Location = new System.Drawing.Point(4, 64);
 			this.cbAutoIndent.Size = new System.Drawing.Size(136, 16);
 			this.cbAutoIndent.Text = "Autoindent on Enter";
 			// 
 			// OptionsThingy
 			// 
+			this.ClientSize = new System.Drawing.Size(240, 294);
 			this.Controls.Add(this.cbAutoIndent);
 			this.Controls.Add(this.comboBox2);
 			this.Controls.Add(this.label5);
@@ -296,7 +298,7 @@ namespace ISquared.PocketHTML
 		private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			string text = (string)comboBox1.SelectedItem;
-			Tag t = (Tag)th[text];
+			Tag t = (Tag)m_tagHash[text];
 			label2.Text = t.StartTag;
 			//int idx = Convert.ToInt32(udButtons.Value - 1);
 			int idx = comboBox2.SelectedIndex;
