@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- edited with XMLSPY v2004 rel. 2 U (http://www.xmlspy.com) by Zack Cochran (IS Software) -->
+<menuitems>
+	<menuitem name="Document">
+		<menuitem name="Doctypes">
+			<menuitem name="HTML 2.0" />
+			<menuitem name="HTML 3.2" />
+			<menuitem name="HTML 4.0 Strict" />
+			<menuitem name="HTML 4.0 Transitional" />
+			<menuitem name="HTML 4.0 Frameset" />
+			<menuitem name="XHTML 1.0 Strict" />
+			<menuitem name="XHTML 1.0 Transitional" />
+			<menuitem name="XHTML 1.0 Frameset" />
+		</menuitem>
+		<menuitem name="HTML" />
+		<menuitem name="Head" />
+		<menuitem name="Title" />
+		<menuitem name="Meta" />
+		<menuitem name="Body" />
+	</menuitem>
+	<menuitem name="Forms">
+		<menuitem name="Form" />
+		<menuitem name="Form (get)" />
+		<menuitem name="Form (post)" />
+		<menuitem name="-" />
+		<menuitem name="Select" />
+		<menuitem name="Text area" />
+		<menuitem name="Inputs">
+			<menuitem name="Button" />
+			<menuitem name="Checkbox" />
+			<menuitem name="File upload" />
+			<menuitem name="Hidden field" />
+			<menuitem name="Password field" />
+			<menuitem name="Radio button" />
+			<menuitem name="Reset button" />
+			<menuitem name="Submit button" />
+			<menuitem name="Text field" />
+		</menuitem>
+	</menuitem>
+	<menuitem name="Links">
+		<menuitem name="Hyperlink" />
+		<menuitem name="Page anchor" />
+	</menuitem>
+	<menuitem name="Lists">
+		<menuitem name="Ordered list" />
+		<menuitem name="Unordered list" />
+		<menuitem name="List item" />
+		<menuitem name="Definition list" />
+		<menuitem name="Definition term" />
+		<menuitem name="Definition item" />
+	</menuitem>
+	<menuitem name="Tables">
+		<menuitem name="Table" />
+		<menuitem name="Table body" />
+		<menuitem name="Table header" />
+		<menuitem name="Table row" />
+		<menuitem name="Table cell" />
+		<menuitem name="Table caption" />
+	</menuitem>
+	<menuitem name="Text">
+		<menuitem name="Text Format">
+			<menuitem name="Big text" />
+			<menuitem name="Citation" />
+			<menuitem name="Code block" />
+			<menuitem name="Emphasis" />
+			<menuitem name="Small text" />
+			<menuitem name="Span" />
+			<menuitem name="Strong text" />
+			<menuitem name="Subscript" />
+			<menuitem name="Superscript" />
+			<menuitem name="Typewriter text" />
+		</menuitem>
+		<menitem name="Text Font">
+			<menuitem name="Font" />
+			<menuitem name="Bold" />
+			<menuitem name="Italic" />
+			<menuitem name="Underline" />
+			<menuitem name="Strikethrough" />
+		</menitem>
+		<menuitem name="Text Layout">
+			<menuitem name="Blockquote" />
+			<menuitem name="Center" />
+			<menuitem name="Div" />
+			<menuitem name="Paragraph" />
+			<menuitem name="Preformatted" />
+			<menuitem name="-" />
+			<menuitem name="Frames">
+				<menuitem name="Frameset" />
+				<menuitem name="Frame" />
+				<menuitem name="No frames" />
+			</menuitem>
+			<menuitem name="Headings">
+				<menuitem name="Heading 1" />
+				<menuitem name="Heading 2" />
+				<menuitem name="Heading 3" />
+				<menuitem name="Heading 4" />
+				<menuitem name="Heading 5" />
+				<menuitem name="Heading 6" />
+			</menuitem>
+		</menuitem>
+		<menuitem name="Special Characters">
+			<menuitem name="Ampersand" />
+			<menuitem name="Greater than" />
+			<menuitem name="Less than" />
+			<menuitem name="Quotation mark" />
+			<menuitem name="Copyright" />
+			<menuitem name="Registered" />
+			<menuitem name="Trademark" />
+			<menuitem name="Degree" />
+			<menuitem name="Non-breaking space" />
+		</menuitem>
+	</menuitem>
+	<menuitem name="Other">
+		<menuitem name="Comment" />
+		<menuitem name="Line break" />
+		<menuitem name="Horizontal line" />
+		<menuitem name="Image" />
+	</menuitem>
+</menuitems>
