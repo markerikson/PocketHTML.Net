@@ -58,6 +58,7 @@ namespace ISquared.PocketHTML
 		private string newline;
 		// Name of the current file
 		private string saveFileName;
+		private string m_saveFileDirectory;
 		// TODO actually used?
 		private ArrayList textList;
 		// used by GetLeadingSpaces() to capture the number of beginning spaces
@@ -287,6 +288,7 @@ namespace ISquared.PocketHTML
 			
 			
 			saveFileName = String.Empty;
+			m_saveFileDirectory = "\\My Documents";
 
 			m_tagHash = new Hashtable();
 			buttonTags = new Hashtable();
@@ -1241,11 +1243,8 @@ namespace ISquared.PocketHTML
 
 
 				// Update the textbox to use 4-space tabs (4 dialog units per character)
-				IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-				int EM_SETTABSTOPS = 0x00CB;
-				int[] stops = { 16 };
-				int result = CoreDLL.SendMessage(pTB, EM_SETTABSTOPS, 1, stops);
 
+				
 
 				if(m_editorPanel.TextBox.WordWrap)
 				{
@@ -1255,6 +1254,8 @@ namespace ISquared.PocketHTML
 				{
 					m_editorPanel.TextBox.ScrollBars = ScrollBars.Both;
 				}
+
+				Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
 
 				Debug.WriteLine("Set scrollbars");
 			}
@@ -1350,6 +1351,19 @@ namespace ISquared.PocketHTML
 		{
 			string filename = String.Empty;
 
+			
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.Append("HTML files (*.html, *.htm)\0*.html;*.htm\0");
+			sb.Append("ASP files (*.asp, *.aspx)\0*.asp;*.aspx\0");
+			sb.Append("PHP files (*.php)\0*.php\0");
+			sb.Append("XML files (*.xml)\0*.xml\0");
+			sb.Append("Text files (*.txt)\0*.txt\0");
+			sb.Append("All files (*.*)\0*.*\0\0");
+
+			string fileFilter = sb.ToString();
+
 			if(!tgetfileExists)
 			{
 			
@@ -1364,7 +1378,8 @@ namespace ISquared.PocketHTML
 					fd = new OpenFileDialog();
 				}
 				//OpenFileDialog ofd = new OpenFileDialog();
-				fd.Filter = "HTML files (*.html)|*.html;|All files (*.*)|*.*";
+				fd.Filter = fileFilter;//"HTML files (*.html)|*.html;|All files (*.*)|*.*";
+				fd.InitialDirectory = m_saveFileDirectory;
 				DialogResult dr = fd.ShowDialog();
 
 				if(dr == DialogResult.OK)
@@ -1374,7 +1389,7 @@ namespace ISquared.PocketHTML
 			}
 			else
 			{
-				filename = TGetFile.TGetFileName(save);
+				filename = TGetFile.TGetFileName(save, fileFilter, m_saveFileDirectory);
 
 			}
 
@@ -1389,7 +1404,10 @@ namespace ISquared.PocketHTML
 			CoreDLL.SendMessageString(CoreDLL.GetHandle(m_editorPanel.TextBox), 
 				(int)WM.SETTEXT, 0, s);
 			this.saveFileName = filename;
+			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			m_editorPanel.TextBox.Modified = false;
+
+			Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
 		}
 
 		private void MenuFileSave_Click(object sender, EventArgs e)
@@ -1451,6 +1469,8 @@ namespace ISquared.PocketHTML
 			{
 				return;
 			}
+
+			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			StreamWriter sw = new StreamWriter(filename);
 			sw.WriteLine(m_editorPanel.TextBox.Text);			
 			sw.Close();
@@ -1685,8 +1705,10 @@ namespace ISquared.PocketHTML
 						string filename = Utility.GetCurrentDir(true) + "templates\\" + template;
 						if(File.Exists(filename))
 						{
+							string originalDirectory = m_saveFileDirectory;
 							LoadFile(filename);
 							saveFileName = String.Empty;
+							m_saveFileDirectory = originalDirectory;
 							m_editorPanel.TextBox.Modified = true;
 							return;
 						}				

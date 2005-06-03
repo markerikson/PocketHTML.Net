@@ -148,7 +148,7 @@ namespace ISquared.Win32Interop
 		[DllImport("filedialogs.dll")]				
 		internal static extern bool tGetSave1(int i1, int i2, int i3, IntPtr p1);
 
-		public static string TGetFileName(bool save) 
+		public static string TGetFileName(bool save, string fileFilter, string initialDirectory) 
 		{
 			OpenFileName ofn = new OpenFileName();
 
@@ -176,9 +176,10 @@ namespace ISquared.Win32Interop
 			ofn.flagsEx = 0;
 
 
-			string html = "HTML Files (*.html, *.htm)\0*.html;*.htm\0Text files (*.txt)\0*.txt\0All files (*.*)\0*.*\0\0";
-			ofn.filter = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * html.Length);
-			Win32Interop.Utility.StringToPointer(html, ofn.filter);
+			//string html = "HTML Files (*.html, *.htm)\0*.html;*.htm\0Text files (*.txt)\0*.txt\0All files (*.*)\0*.*\0\0";
+			
+			ofn.filter = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * fileFilter.Length);
+			Win32Interop.Utility.StringToPointer(fileFilter, ofn.filter);
 
 			ofn.filterIndex = 0;
 
@@ -192,7 +193,15 @@ namespace ISquared.Win32Interop
 			ofn.fileTitle = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * 64);
 			ofn.maxFileTitle = 64;	
 			
-			Win32Interop.Utility.InsertString("\\", ofn.initialDir);
+
+			if(initialDirectory == null)
+			{
+				initialDirectory = "\\";
+			}
+			//Win32Interop.Utility.InsertString(initialDirectory, ofn.initialDir);
+
+			ofn.initialDir = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * initialDirectory.Length);
+			Utility.StringToPointer(initialDirectory, ofn.initialDir);
 
 			/*
 						string title = String.Empty;
@@ -252,6 +261,7 @@ namespace ISquared.Win32Interop
 			CoreDLL.LocalFreeCE(ofn.fileTitle);
 			CoreDLL.LocalFreeCE(ofn.title);
 			CoreDLL.LocalFreeCE(ofn.filter);
+			CoreDLL.LocalFreeCE(ofn.initialDir);
 			CoreDLL.LocalFreeCE(pOFN);
 
 			return result;
@@ -267,9 +277,9 @@ namespace ISquared.Win32Interop
 		public int ThreadID = 0;
 	}
 
-	internal class Utility
+	public class Utility
 	{
-		internal unsafe static string PointerToString(IntPtr ptr)   
+		public unsafe static string PointerToString(IntPtr ptr)   
 		{   
 			int i;   
 			StringBuilder sb = new StringBuilder();   
@@ -281,9 +291,9 @@ namespace ISquared.Win32Interop
 			}   
     
 			return sb.ToString();   
-		} 
+		}
 
-		internal unsafe static void StringToPointer(string src, IntPtr dest)   
+		public unsafe static void StringToPointer(string src, IntPtr dest)   
 		{   
 			int i;   
     
@@ -294,12 +304,20 @@ namespace ISquared.Win32Interop
 				p[i] = src[i];   
 			}   
 			p[i] = '\0';   
-		}   
+		}
 
-		internal static void InsertString(string st, IntPtr ip)
+		public static void InsertString(string st, IntPtr ip)
 		{
 			ip = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * st.Length);
 			StringToPointer(st, ip);
+		}
+
+		public static void SetTabStop(System.Windows.Forms.TextBox textBox)
+		{
+			IntPtr pTB = CoreDLL.GetHandle(textBox);
+			int EM_SETTABSTOPS = 0x00CB;
+			int[] stops = { 16 };
+			int result = CoreDLL.SendMessage(pTB, EM_SETTABSTOPS, 1, stops);
 		}
 	}
 
