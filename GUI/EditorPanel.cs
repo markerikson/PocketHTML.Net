@@ -24,7 +24,7 @@ namespace ISquared.PocketHTML
 		private System.Windows.Forms.Panel viewerPanel;
 		private AboutPanel aboutPanel;
 		private System.Windows.Forms.Panel tbPanel;
-		private System.Windows.Forms.TextBox tb;
+		private System.Windows.Forms.TextBox textBox1;
 		private IntPtr pTB;
 		private System.Collections.Hashtable menuTags;
 		private System.Windows.Forms.ContextMenu contextTop;
@@ -65,11 +65,11 @@ namespace ISquared.PocketHTML
 		{
 			get
 			{
-				return this.tb;
+				return this.textBox1;
 			}
 			set
 			{
-				this.tb = value;
+				this.textBox1 = value;
 			}
 		}
 
@@ -133,14 +133,16 @@ namespace ISquared.PocketHTML
 			tbPanel.Parent = this;
 			tbPanel.Bounds = new Rectangle(0, 0, 240, 236);
 
-			tb = new TextBox();
-			this.tb.Font = new System.Drawing.Font("Tahoma", 8.5F, System.Drawing.FontStyle.Regular);
-			this.tb.MaxLength = 0;
-			this.tb.Multiline = true;
-			this.tb.Bounds = new Rectangle(0, 0, 240, 205);
-			this.tb.Text = "";
-			tb.ScrollBars = ScrollBars.Vertical;
-			tb.Parent = tbPanel;
+			textBox1 = new TextBox();
+			this.textBox1.AcceptsTab = true;
+			this.textBox1.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.textBox1.Location = new System.Drawing.Point(0, 0);
+			this.textBox1.MaxLength = 16777215;
+			this.textBox1.Multiline = true;
+			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.textBox1.Size = new System.Drawing.Size(240, 205);
+			this.textBox1.Text = "";
+			textBox1.Parent = tbPanel;
 
 			// TODO Can I delay-load this, too?
 			htmlControl = new HTMLViewer();
@@ -174,25 +176,15 @@ namespace ISquared.PocketHTML
 				nb.Name = "button" + Convert.ToString(i + 1);
 				nb.Parent = buttonPanel;
 				this.buttons[i] = nb;
-			}	
-		
-			LOGFONT lf = new LOGFONT();
-			lf.lfFaceName = "Tahoma";
-			lf.lfHeight = 13;
-			lf.lfWeight = 400;
-			IntPtr pLF = CoreDLL.LocalAllocCE(0x40, 256);
-			Marshal.StructureToPtr(lf, pLF, false);
-			IntPtr hFont = CoreDLL.CreateFontIndirect(pLF);
+			}
 
-			pTB = CoreDLL.GetHandle(tb);
-			CoreDLL.SendMessage(pTB, (int)WM.SETFONT, (int)hFont, 0);
+			pTB = CoreDLL.GetHandle(textBox1);
 			CoreDLL.SendMessage(pTB, (int)EM.LIMITTEXT, 0xFFFFFFF, 0);
-			CoreDLL.LocalFreeCE(pLF);
 
 			#endregion
 
 			contextTop = new ContextMenu();
-			tb.ContextMenu = contextTop;
+			textBox1.ContextMenu = contextTop;
 			currentMenu = contextTop;
 
 			MakeMenuXTR();
@@ -508,14 +500,14 @@ namespace ISquared.PocketHTML
 						just when the options are changed?
 				*/
 				bool ct = ((PocketHTMLEditor)this.Parent).Config.GetBool("Options", "ClearType");
-				if( htmlControl.Source != tb.Text ||//(htmlControl.HtmlString != tb.Text) ||
+				if( htmlControl.Source != textBox1.Text ||//(htmlControl.HtmlString != tb.Text) ||
 					(ct != htmlControl.EnableClearType))
 									
 				{
 					//htmlControl.ClearType = ct;
 					//htmlControl.HtmlString = tb.Text;
 					htmlControl.EnableClearType = ct;
-					htmlControl.Source = tb.Text;
+					htmlControl.Source = textBox1.Text;
 				}	
 			}
 			else
@@ -562,7 +554,7 @@ namespace ISquared.PocketHTML
 				buttonPanel.Top = this.ClientSize.Height - 32;
 			}
 
-			tb.Height = tbPanel.Height;
+			textBox1.Height = tbPanel.Height;
 			htmlControl.Bounds = viewerPanel.ClientRectangle;
 		}
 

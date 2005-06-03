@@ -19,6 +19,10 @@ namespace ISquared.Win32Interop
 		internal static extern int SendMessage(IntPtr hwnd, int message, 
 												int wparam, int lparam);
 
+		[DllImport("coredll", EntryPoint = "SendMessage")]
+		internal static extern int SendMessage(IntPtr hwnd, int message,
+												int wparam, int[] lparam);
+
 		[DllImport("coredll")]
 		internal static extern IntPtr GetFocus();
 		

@@ -290,10 +290,8 @@ namespace ISquared.PocketHTML
 
 			m_tagHash = new Hashtable();
 			buttonTags = new Hashtable();
-			
-			
 
-			
+
 
 			
 			//LoadTags();
@@ -319,6 +317,8 @@ namespace ISquared.PocketHTML
 				| RegexOptions.IgnorePatternWhitespace);
 
 
+
+
 			// hook up auto-indent
 			m_editorPanel.TextBox.KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
 
@@ -335,8 +335,8 @@ namespace ISquared.PocketHTML
 			m_editorPanel.TagMenuClicked += new EditorPanel.TagMenuClickedHandler(this.InsertTag);
 			
 			this.ContextMenu = m_editorPanel.TextBox.ContextMenu;
-			
-			
+
+
 			Debug.WriteLine("PHE constructor complete");
 
 			Debug.WriteLine("Test line");
@@ -1231,12 +1231,21 @@ namespace ISquared.PocketHTML
 				Debug.WriteLine("TextWrap: " + tw);
 				Debug.WriteLine("ed: " + m_editorPanel.ToString());
 				Debug.WriteLine("ed.TextBox: " + m_editorPanel.TextBox.ToString());
+
 				m_editorPanel.TextBox.WordWrap = tw;
 				Debug.WriteLine("Set TextWrap");
 				//ed.HtmlControl.WordWrap = config.GetBool("Options", "PageWrap");
 
 				m_editorPanel.HtmlControl.ShrinkMode = m_config.GetBool("Options", "PageWrap");
 				Debug.WriteLine("Set PageWrap");
+
+
+				// Update the textbox to use 4-space tabs (4 dialog units per character)
+				IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
+				int EM_SETTABSTOPS = 0x00CB;
+				int[] stops = { 16 };
+				int result = CoreDLL.SendMessage(pTB, EM_SETTABSTOPS, 1, stops);
+
 
 				if(m_editorPanel.TextBox.WordWrap)
 				{
@@ -1246,6 +1255,7 @@ namespace ISquared.PocketHTML
 				{
 					m_editorPanel.TextBox.ScrollBars = ScrollBars.Both;
 				}
+
 				Debug.WriteLine("Set scrollbars");
 			}
 			catch(Exception e)
@@ -1594,6 +1604,10 @@ namespace ISquared.PocketHTML
 				m_dlgFind.ControlBox = false;
 			}
 
+			if(m_dlgReplace != null && m_dlgReplace.Visible)
+			{
+				m_dlgReplace.Hide();
+			}
 			m_dlgFind.Show();
 			m_dlgFind.BringToFront();
 			m_dlgFind.TextBox.Focus();			
@@ -1612,6 +1626,11 @@ namespace ISquared.PocketHTML
 				m_dlgReplace.MinimizeBox = false;
 				m_dlgReplace.MaximizeBox = false;
 				m_dlgReplace.ControlBox = false;
+			}
+
+			if(m_dlgFind != null && m_dlgFind.Visible)
+			{
+				m_dlgFind.Hide();
 			}
 			
 
@@ -1644,6 +1663,7 @@ namespace ISquared.PocketHTML
 		{
 			MenuItem item = sender as MenuItem;
 			NewFile(item.Text);
+			
 		}
 
 		private void NewFile(string template)
@@ -1659,6 +1679,7 @@ namespace ISquared.PocketHTML
 						break;
 					case "basic":
 						templateText = "<html>\r\n<body>\r\n\r\n\r\n</body>\r\n</html>";
+						m_editorPanel.TextBox.Modified = true;
 						break;
 					default:
 						string filename = Utility.GetCurrentDir(true) + "templates\\" + template;
@@ -1666,6 +1687,7 @@ namespace ISquared.PocketHTML
 						{
 							LoadFile(filename);
 							saveFileName = String.Empty;
+							m_editorPanel.TextBox.Modified = true;
 							return;
 						}				
 						break;

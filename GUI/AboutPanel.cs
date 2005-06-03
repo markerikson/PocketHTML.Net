@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Reflection;
+using System.IO;
 
 namespace ISquared.PocketHTML
 {
@@ -21,15 +23,14 @@ namespace ISquared.PocketHTML
 	
 		public AboutPanel()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-
+				
+			Assembly asm = Assembly.GetExecutingAssembly();
+			string logoName = "PocketHTML.Net.Graphics.PocketHTML.png";
+			Stream stream = asm.GetManifestResourceStream(logoName);
+			Bitmap bmp = new Bitmap(stream);
+			
+			pictureBox1.Image = bmp;
 			m_labVersion.Text = Utility.AssemblyVersion();
 
 
@@ -82,7 +83,7 @@ namespace ISquared.PocketHTML
 			// 
 			// pictureBox1
 			// 
-			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+			//this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("PocketHTML")));
 			this.pictureBox1.Location = new System.Drawing.Point(28, 8);
 			this.pictureBox1.Size = new System.Drawing.Size(32, 32);
 			// 
@@ -116,7 +117,6 @@ namespace ISquared.PocketHTML
 			this.Controls.Add(this.m_labVersion);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Text = "AboutDialog";
 
 		}
 		#endregion

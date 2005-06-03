@@ -139,9 +139,9 @@
     <Compile Include="GUI\ReplaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Interop\Enum.cs">
+    <None Include="Interop\Enum.cs">
       <SubType>Code</SubType>
-    </Compile>
+    </None>
     <Compile Include="Interop\MarshalEx.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -180,6 +180,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Graphics\ie.ico" />
+    <EmbeddedResource Include="Graphics\PocketHTML.png" />
     <EmbeddedResource Include="Graphics\Tag.ico" />
     <EmbeddedResource Include="GUI\AboutPanel.resx">
       <DependentUpon>AboutPanel.cs</DependentUpon>
@@ -207,6 +208,7 @@
     <Content Include="PHN.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\PocketHTML.Image.png" />
     <Content Include="tags.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
