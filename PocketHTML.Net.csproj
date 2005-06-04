@@ -107,6 +107,8 @@
     <Compile Include="GUI\AboutPanel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\HardwareButtons.cs">
+    </Compile>
     <Compile Include="GUI\ControlMessageWindow.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -128,6 +130,7 @@
     <Compile Include="GUI\IWin32Window.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\MRUManager.cs" />
     <Compile Include="GUI\OptionsPanel.cs">
     </Compile>
     <Compile Include="GUI\OptionsThingy.cs">
@@ -142,6 +145,9 @@
     <None Include="Interop\Enum.cs">
       <SubType>Code</SubType>
     </None>
+    <Compile Include="GUI\TextBox.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Interop\MarshalEx.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -208,7 +214,6 @@
     <Content Include="PHN.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\PocketHTML.Image.png" />
     <Content Include="tags.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

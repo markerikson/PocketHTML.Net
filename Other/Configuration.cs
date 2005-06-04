@@ -300,7 +300,17 @@ namespace Ayende
 			return result;
 		}
 
+		public int GetSectionCount(string section)
+		{
+			System.Collections.Hashtable sectionTable = (System.Collections.Hashtable)Sections[section];
 
+			if(sectionTable != null)
+			{
+				return sectionTable.Count;
+			}
+
+			return 0;
+		}
 
 	}
 }

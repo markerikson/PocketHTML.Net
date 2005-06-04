@@ -17,12 +17,14 @@ using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
 using ISquared.Debugging;
-
+using OpenNETCF.Windows.Forms;
+using HardwareButtons;
+using MRUSample;
 
 
 namespace ISquared.PocketHTML
 {	
-	public class PocketHTMLEditor : Form
+	public class PocketHTMLEditor : Form, IMRUClient
 	{
 		static void Main() 
 		{
@@ -51,6 +53,7 @@ namespace ISquared.PocketHTML
 		// TODO is this actually even used?
 		private ImageList il;
 		private MainMenu m_mainMenu;
+		private MRUManager m_mruManager;
 
 		/// The saved settings for PocketHTML
 		private Configuration m_config;
@@ -62,7 +65,7 @@ namespace ISquared.PocketHTML
 		// TODO actually used?
 		private ArrayList textList;
 		// used by GetLeadingSpaces() to capture the number of beginning spaces
-		Regex reLeadingSpaces;
+		//Regex reLeadingSpaces;
 		// TODO actually used?
 		Regex reNewLine;
 		private OptionsPanel m_optionsDialog;
@@ -86,6 +89,8 @@ namespace ISquared.PocketHTML
 		private Hashtable m_tagHash;
 		// Maps a button name (ie, "button1") to a tag name
 		private Hashtable buttonTags;
+
+		private HardwareButtonMessageWindow m_hardwareButtons;
 
 		private bool firstOptions;
 		private bool tgetfileExists;
@@ -116,6 +121,8 @@ namespace ISquared.PocketHTML
 		private Microsoft.WindowsCE.Forms.InputPanel inputPanel1;
 		private MenuItem m_menuToolsRefreshTemplates;
 		private MenuItem menuItem1;
+		private MenuItem menuItem5;
+		private MenuItem m_menuFileRecentFiles;
 		private System.Windows.Forms.MenuItem MenuFileClose;
 		
 		
@@ -307,11 +314,7 @@ namespace ISquared.PocketHTML
 			newline = "\r\n";
 			textList = new ArrayList();
 
-			reLeadingSpaces = new Regex(
-				@"^\s+",
-				RegexOptions.IgnoreCase | 
-				RegexOptions.Multiline |
-				RegexOptions.IgnorePatternWhitespace);
+			
 			reNewLine = new Regex(
 				@"\r\n",
 				RegexOptions.IgnoreCase
@@ -337,7 +340,39 @@ namespace ISquared.PocketHTML
 			m_editorPanel.TagMenuClicked += new EditorPanel.TagMenuClickedHandler(this.InsertTag);
 			
 			this.ContextMenu = m_editorPanel.TextBox.ContextMenu;
+			ContextMenu menuTextBox = m_editorPanel.TextBox.ContextMenu;
 
+
+
+			menuTextBox.MenuItems[0].Click += new EventHandler(MenuCopy_Click);
+			menuTextBox.MenuItems[1].Click += new EventHandler(MenuCut_Click);
+			menuTextBox.MenuItems[2].Click += new EventHandler(MenuPaste_Click);
+
+			m_hardwareButtons = new HardwareButtonMessageWindow();
+			m_hardwareButtons.HardwareButtonPressed += new HardwareButtonPressedHandler(HardwareButtonPressed);
+			RegisterHKeys.RegisterRecordKey(m_hardwareButtons.Hwnd, RegisterButtons.Hardware1);
+
+			m_mruManager = new MRUManager();
+			m_mruManager.Initialize(this, m_menuFileRecentFiles);
+
+			int numRecentFiles = m_config.GetSectionCount("Recent Files");
+
+			string[] recentFiles = new string[numRecentFiles];
+			for(int i = 0; i < numRecentFiles; i++)
+			{
+				string keyName = "file" + (i + 1).ToString();
+				recentFiles[i] = m_config.GetValue("Recent Files", keyName);
+			}
+
+			for(int i = recentFiles.Length - 1; i >= 0; i--)
+			{
+				m_mruManager.Add(recentFiles[i]);
+			}
+			//m_mruManager.Add("\\My Documents\\test1.html");
+			//m_mruManager.Add("\\My Documents\\test2.html");
+			//m_mruManager.Add("\\Program Files\\PocketHTML.Net\\PHN.html");
+			
+			
 
 			Debug.WriteLine("PHE constructor complete");
 
@@ -381,6 +416,8 @@ namespace ISquared.PocketHTML
 			this.m_menuTools = new System.Windows.Forms.MenuItem();
 			this.m_menuToolsOptions = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
+			this.m_menuToolsRefreshTemplates = new System.Windows.Forms.MenuItem();
+			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.m_menuToolsReplace = new System.Windows.Forms.MenuItem();
 			this.m_menuToolsFind = new System.Windows.Forms.MenuItem();
 			this.m_menuHelp = new System.Windows.Forms.MenuItem();
@@ -392,8 +429,8 @@ namespace ISquared.PocketHTML
 			this.toolBar1 = new System.Windows.Forms.ToolBar();
 			this.m_btnPreview = new System.Windows.Forms.ToolBarButton();
 			this.inputPanel1 = new Microsoft.WindowsCE.Forms.InputPanel();
-			this.m_menuToolsRefreshTemplates = new System.Windows.Forms.MenuItem();
-			this.menuItem1 = new System.Windows.Forms.MenuItem();
+			this.m_menuFileRecentFiles = new System.Windows.Forms.MenuItem();
+			this.menuItem5 = new System.Windows.Forms.MenuItem();
 			// 
 			// m_mainMenu
 			// 
@@ -409,6 +446,8 @@ namespace ISquared.PocketHTML
 			this.m_menuFile.MenuItems.Add(this.m_menuFileSave);
 			this.m_menuFile.MenuItems.Add(this.m_menuFileSaveAs);
 			this.m_menuFile.MenuItems.Add(this.MenuFileClose);
+			this.m_menuFile.MenuItems.Add(this.menuItem5);
+			this.m_menuFile.MenuItems.Add(this.m_menuFileRecentFiles);
 			this.m_menuFile.MenuItems.Add(this.menuItem4);
 			this.m_menuFile.MenuItems.Add(this.m_menuFileExit);
 			this.m_menuFile.Text = "File";
@@ -526,6 +565,15 @@ namespace ISquared.PocketHTML
 			// 
 			this.menuItem2.Text = "-";
 			// 
+			// m_menuToolsRefreshTemplates
+			// 
+			this.m_menuToolsRefreshTemplates.Text = "Refresh Templates";
+			this.m_menuToolsRefreshTemplates.Click += new System.EventHandler(this.m_menuToolsRefreshTemplates_Click);
+			// 
+			// menuItem1
+			// 
+			this.menuItem1.Text = "-";
+			// 
 			// m_menuToolsReplace
 			// 
 			this.m_menuToolsReplace.Text = "Replace";
@@ -582,14 +630,13 @@ namespace ISquared.PocketHTML
 			// 
 			this.inputPanel1.EnabledChanged += new System.EventHandler(this.inputPanel1_EnabledChanged);
 			// 
-			// m_menuToolsRefreshTemplates
+			// m_menuFileRecentFiles
 			// 
-			this.m_menuToolsRefreshTemplates.Text = "Refresh Templates";
-			this.m_menuToolsRefreshTemplates.Click += new System.EventHandler(this.m_menuToolsRefreshTemplates_Click);
+			this.m_menuFileRecentFiles.Text = "Recent Files";
 			// 
-			// menuItem1
+			// menuItem5
 			// 
-			this.menuItem1.Text = "-";
+			this.menuItem5.Text = "-";
 			// 
 			// PocketHTMLEditor
 			// 
@@ -683,38 +730,7 @@ namespace ISquared.PocketHTML
 		/// Utility function to determine the leading spaces on a line
 		/// </summary>
 		/// <returns></returns>
-		private String GetLeadingSpaces()
-		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			int currentLine = CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0); 
-
-			StringBuilder lineText;
-			int charIndex = CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, currentLine, 0); 
-			int lineLength = CoreDLL.SendMessage(pTB, (int)EM.LINELENGTH, 
-				charIndex, 0);
-
-
-			lineText = new StringBuilder(" ", lineLength + 1);
-			lineText[0] = (char)(lineLength + 1);
-
-			int numChars = CoreDLL.SendMessageGetLine(pTB, (int)EM.GETLINE,
-				currentLine, lineText);
-
-			string line = lineText.ToString();
-			String spaces;
-			
-			Match lws = reLeadingSpaces.Match(line);
-
-			if(lws.Success)
-			{
-				spaces = lws.Captures[0].Value;
-			}
-			else
-			{
-				spaces = String.Empty;
-			}
-			return spaces;
-		}
+		
 
 		/// <summary>
 		/// Overload that takes the name or short name of the tag to insert.
@@ -740,20 +756,21 @@ namespace ISquared.PocketHTML
 		/// <returns></returns>
 		private bool InsertTag(Tag tag)
 		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
+			TextBoxEx tb = m_editorPanel.TextBox;
+			//IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
 			StringBuilder sb = new StringBuilder();
-			String spaces = GetLeadingSpaces();
+			String spaces = tb.GetLeadingSpaces();
 			// basically, an additional level of indentation
 			// TODO make this an option?
 			String spacesPlus = spaces + "    ";
 
-			int currentLineNum = CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0); 
+			int currentLineNum = tb.CurrentLine;//CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0); 
 
-			int selstart = m_editorPanel.TextBox.SelectionStart;
+			int selstart = tb.SelectionStart;
 
 			int newLineNum = currentLineNum;
 
-			string seltext = m_editorPanel.TextBox.SelectedText;
+			string seltext = tb.SelectedText;
 
 			bool indentHTML = m_config.GetBool("Options", "IndentHTML");
 
@@ -836,14 +853,15 @@ namespace ISquared.PocketHTML
 				}				
 			}
 
-			CoreDLL.SendMessageString(pTB, (int)EM.REPLACESEL, 1, sb.ToString());			
+			//CoreDLL.SendMessageString(pTB, (int)EM.REPLACESEL, 1, sb.ToString());		
+			tb.ReplaceSelection(sb.ToString());
 
 			int charIndex = 0; 
 			int cursorLocationIndex = 0;
 				
 			if(tag.DefaultAttributes.Length > 0)
 			{
-				charIndex = CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, currentLineNum, 0);
+				charIndex = tb.GetLineIndex(currentLineNum);
 				
 				int firstUninitializedAttribute = -1;
 				int temp = -1;
@@ -905,7 +923,7 @@ namespace ISquared.PocketHTML
 						}
 					}
 
-					charIndex = CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, newLineNum, 0);
+					charIndex = tb.GetLineIndex(newLineNum);//CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, newLineNum, 0);
 				}
 
 				else
@@ -930,7 +948,10 @@ namespace ISquared.PocketHTML
 			//if(tag.NormalTag)
 			if(tag.AngleBrackets)
 			{
-				int sel = CoreDLL.SendMessage(pTB, (int)EM.SETSEL, charIndex, charIndex);
+				//int sel = CoreDLL.SendMessage(pTB, (int)EM.SETSEL, charIndex, charIndex);
+				tb.Focus();
+				tb.SelectionStart = charIndex;
+				tb.SelectionLength = 0;
 			}
 
 			m_editorPanel.TextBox.Modified = true;
@@ -954,7 +975,7 @@ namespace ISquared.PocketHTML
 					if(m_config.GetBool("Options", "AutoIndent"))
 					{
 						e.Handled=true;
-						AutoIndent();
+						m_editorPanel.TextBox.AutoIndent();
 					}
 					
 					firstEnter = true;
@@ -962,12 +983,7 @@ namespace ISquared.PocketHTML
 			}			
 		}
 
-		private void AutoIndent()
-		{
-			string spaces = GetLeadingSpaces();
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessageString(pTB, (int)EM.REPLACESEL, 0, "\r\n" + spaces);
-		}
+		
 
 		private void LoadTagsXTR()
 		{		
@@ -1267,6 +1283,7 @@ namespace ISquared.PocketHTML
 		}
 
 		// TODO Either move these to a new TextBox class, or use OpenNetCF's TextBoxEx
+		/*
 		private void Copy()
 		{
 			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
@@ -1298,37 +1315,44 @@ namespace ISquared.PocketHTML
 			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
 			CoreDLL.SendMessage(pTB, (int)WM.CUT, 0, 0);
 		}
+		*/ 
 
 		private void MenuUndo_Click(object sender, EventArgs e)
 		{
-			Undo();
+			//Undo();
+			m_editorPanel.TextBox.Undo();
 		}
 
 		private void MenuCopy_Click(object sender, EventArgs e)
 		{
-			Copy();
+			//Copy();
+			m_editorPanel.TextBox.Copy();
 		}
 
 		private void MenuCut_Click(object sender, EventArgs e)
 		{
-			Cut();
+			//Cut();
+			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
+			m_editorPanel.TextBox.Cut();
 		}
 
 		private void MenuPaste_Click(object sender, EventArgs e)
 		{
-			Paste();
+			//Paste();
+			m_editorPanel.TextBox.Paste();
 		}
 
 		private void MenuClear_Click(object sender, EventArgs e)
 		{
-			Clear();
+			//Clear();
+			m_editorPanel.TextBox.Clear();
 		}
 
 		private void MenuSelectAll_Click(object sender, EventArgs e)
 		{
-		
-			IntPtr pTB1 = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessage(pTB1, (int)EM.SETSEL, 0, -1);
+			//IntPtr pTB1 = CoreDLL.GetHandle(m_editorPanel.TextBox);
+			//CoreDLL.SendMessage(pTB1, (int)EM.SETSEL, 0, -1);
+			m_editorPanel.TextBox.SelectAll();
 		}
 
 		private void MenuFileOpen_Click(object sender, EventArgs e)
@@ -1401,13 +1425,16 @@ namespace ISquared.PocketHTML
 			StreamReader sr = new StreamReader(filename);
 			String s =  sr.ReadToEnd();		
 			sr.Close();
-			CoreDLL.SendMessageString(CoreDLL.GetHandle(m_editorPanel.TextBox), 
-				(int)WM.SETTEXT, 0, s);
+			//CoreDLL.SendMessageString(CoreDLL.GetHandle(m_editorPanel.TextBox), 
+			//	(int)WM.SETTEXT, 0, s);
+			m_editorPanel.TextBox.Text = s;
 			this.saveFileName = filename;
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			m_editorPanel.TextBox.Modified = false;
 
 			Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
+
+			m_mruManager.Add(filename);
 		}
 
 		private void MenuFileSave_Click(object sender, EventArgs e)
@@ -1474,7 +1501,8 @@ namespace ISquared.PocketHTML
 			StreamWriter sw = new StreamWriter(filename);
 			sw.WriteLine(m_editorPanel.TextBox.Text);			
 			sw.Close();
-			m_editorPanel.TextBox.Modified = false;			
+			m_editorPanel.TextBox.Modified = false;
+			m_mruManager.Add(filename);
 		}
 
 		private DialogResult CloseFile()
@@ -1490,6 +1518,10 @@ namespace ISquared.PocketHTML
 					SaveFile(false);	
 				}
 			}
+			else
+			{
+				dr = DialogResult.Yes;
+			}
 			return dr;
 		}
 
@@ -1504,6 +1536,14 @@ namespace ISquared.PocketHTML
 			{
 				//ed.HtmlControl.DestroyHTMLControl();
 				m_editorPanel.HtmlControl.Dispose();
+
+				string[] recentFiles = m_mruManager.FileNames;
+
+				for(int i = 0; i < recentFiles.Length; i++)
+				{
+					m_config.SetValue("Recent Files", "file" + (i + 1).ToString(), recentFiles[i]);
+				}
+
 				String inifile = Utility.GetCurrentDir(true) + "pockethtml.ini";
 				StreamWriter sw = new StreamWriter(inifile);
 				m_config.Save(sw);
@@ -1609,6 +1649,14 @@ namespace ISquared.PocketHTML
 			}		
 		}
 
+		public void HardwareButtonPressed(int buttonNumber)
+		{
+			if(buttonNumber == (int)KeysHardware.Hardware1)
+			{
+				ContextMenu.Show(this, new Point(80, 160));
+			}
+		}
+
 		// TODO Remove 240x320 specific code
 		private void MenuToolsFind_Click(object sender, EventArgs e)
 		{
@@ -1630,7 +1678,8 @@ namespace ISquared.PocketHTML
 			}
 			m_dlgFind.Show();
 			m_dlgFind.BringToFront();
-			m_dlgFind.TextBox.Focus();			
+			m_dlgFind.FindTextBox.Text = m_editorPanel.TextBox.SelectedText;
+			m_dlgFind.FindTextBox.Focus();			
 		}
 
 		// TODO Remove 240x320 specific code
@@ -1652,10 +1701,11 @@ namespace ISquared.PocketHTML
 			{
 				m_dlgFind.Hide();
 			}
-			
 
+			m_dlgReplace.FindTextBox.Text = m_editorPanel.TextBox.SelectedText;
 			m_dlgReplace.Show();
-			m_dlgReplace.BringToFront();		
+			m_dlgReplace.BringToFront();
+			m_dlgReplace.FindTextBox.Focus();	
 		}
 
 		private void MenuHelpContents_Click(object sender, EventArgs e)
@@ -1707,6 +1757,7 @@ namespace ISquared.PocketHTML
 						{
 							string originalDirectory = m_saveFileDirectory;
 							LoadFile(filename);
+							m_mruManager.Remove(filename);
 							saveFileName = String.Empty;
 							m_saveFileDirectory = originalDirectory;
 							m_editorPanel.TextBox.Modified = true;
@@ -1725,8 +1776,21 @@ namespace ISquared.PocketHTML
 		{
 			RefreshTemplates();
 		}
-		
-	} // end of PocketHTMLEditor
+
+
+		#region IMRUClient Members
+
+		void IMRUClient.OpenMRUFile(string fileName)
+		{
+			if(CloseFile() == DialogResult.Yes)
+			{
+				LoadFile(fileName);
+			}
+			
+		}
+
+		#endregion
+} // end of PocketHTMLEditor
 
 
 	class NamedButton : Button

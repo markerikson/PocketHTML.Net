@@ -31,6 +31,14 @@ namespace ISquared.PocketHTML
 		
 		protected System.Windows.Forms.Label titleLabel;
 
+		public TextBox FindTextBox
+		{
+			get
+			{
+				return this.tbFind;
+			}
+		}	
+
 		public FloatingDialog(PocketHTMLEditor phe)
 		{
 			//

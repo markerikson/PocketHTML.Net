@@ -24,7 +24,8 @@ namespace ISquared.PocketHTML
 		private System.Windows.Forms.Panel viewerPanel;
 		private AboutPanel aboutPanel;
 		private System.Windows.Forms.Panel tbPanel;
-		private System.Windows.Forms.TextBox textBox1;
+		//private System.Windows.Forms.TextBox textBox1;
+		private OpenNETCF.Windows.Forms.TextBoxEx m_textbox;
 		private IntPtr pTB;
 		private System.Collections.Hashtable menuTags;
 		private System.Windows.Forms.ContextMenu contextTop;
@@ -61,15 +62,15 @@ namespace ISquared.PocketHTML
 		/// <summary>
 		/// Property Tb (TextBox)
 		/// </summary>
-		public TextBox TextBox
+		public TextBoxEx TextBox
 		{
 			get
 			{
-				return this.textBox1;
+				return this.m_textbox;
 			}
 			set
 			{
-				this.textBox1 = value;
+				this.m_textbox = value;
 			}
 		}
 
@@ -133,16 +134,16 @@ namespace ISquared.PocketHTML
 			tbPanel.Parent = this;
 			tbPanel.Bounds = new Rectangle(0, 0, 240, 236);
 
-			textBox1 = new TextBox();
-			this.textBox1.AcceptsTab = true;
-			this.textBox1.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.textBox1.Location = new System.Drawing.Point(0, 0);
-			this.textBox1.MaxLength = 16777215;
-			this.textBox1.Multiline = true;
-			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.textBox1.Size = new System.Drawing.Size(240, 205);
-			this.textBox1.Text = "";
-			textBox1.Parent = tbPanel;
+			m_textbox = new TextBoxEx();
+			this.m_textbox.AcceptsTab = true;
+			this.m_textbox.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.m_textbox.Location = new System.Drawing.Point(0, 0);
+			this.m_textbox.MaxLength = 16777215;
+			this.m_textbox.Multiline = true;
+			this.m_textbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.m_textbox.Size = new System.Drawing.Size(240, 205);
+			this.m_textbox.Text = "";
+			m_textbox.Parent = tbPanel;
 
 			// TODO Can I delay-load this, too?
 			htmlControl = new HTMLViewer();
@@ -178,13 +179,13 @@ namespace ISquared.PocketHTML
 				this.buttons[i] = nb;
 			}
 
-			pTB = CoreDLL.GetHandle(textBox1);
+			pTB = CoreDLL.GetHandle(m_textbox);
 			CoreDLL.SendMessage(pTB, (int)EM.LIMITTEXT, 0xFFFFFFF, 0);
 
 			#endregion
 
 			contextTop = new ContextMenu();
-			textBox1.ContextMenu = contextTop;
+			m_textbox.ContextMenu = contextTop;
 			currentMenu = contextTop;
 
 			MakeMenuXTR();
@@ -414,6 +415,21 @@ namespace ISquared.PocketHTML
 			Stack stack = new Stack();
 			EventHandler eh = new EventHandler(TagMenuItem_Click);
 
+			MenuItem copy = new MenuItem();
+			copy.Text = "Copy";
+			MenuItem cut = new MenuItem();
+			cut.Text = "Cut";
+			MenuItem paste = new MenuItem();
+			paste.Text = "Paste";
+			MenuItem sep = new MenuItem();
+			sep.Text = "-";
+
+			currentMenu.MenuItems.Add(copy);
+			currentMenu.MenuItems.Add(cut);
+			currentMenu.MenuItems.Add(paste);
+			currentMenu.MenuItems.Add(sep);
+
+
 			while(xtr.Read())
 			{
 				switch(xtr.NodeType)
@@ -500,14 +516,14 @@ namespace ISquared.PocketHTML
 						just when the options are changed?
 				*/
 				bool ct = ((PocketHTMLEditor)this.Parent).Config.GetBool("Options", "ClearType");
-				if( htmlControl.Source != textBox1.Text ||//(htmlControl.HtmlString != tb.Text) ||
+				if (htmlControl.Source != m_textbox.Text ||//(htmlControl.HtmlString != tb.Text) ||
 					(ct != htmlControl.EnableClearType))
 									
 				{
 					//htmlControl.ClearType = ct;
 					//htmlControl.HtmlString = tb.Text;
 					htmlControl.EnableClearType = ct;
-					htmlControl.Source = textBox1.Text;
+					htmlControl.Source = m_textbox.Text;
 				}	
 			}
 			else
@@ -554,7 +570,7 @@ namespace ISquared.PocketHTML
 				buttonPanel.Top = this.ClientSize.Height - 32;
 			}
 
-			textBox1.Height = tbPanel.Height;
+			m_textbox.Height = tbPanel.Height;
 			htmlControl.Bounds = viewerPanel.ClientRectangle;
 		}
 

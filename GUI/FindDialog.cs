@@ -15,13 +15,7 @@ namespace ISquared.PocketHTML
 	{
 		private System.Windows.Forms.Label findLabel;
 
-		public TextBox TextBox
-		{
-			get
-			{
-				return this.tbFind;
-			}
-		}	
+
 		
 		/// <summary>
 		/// Property Word (CheckBox)
