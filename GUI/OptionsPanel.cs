@@ -104,6 +104,10 @@ namespace ISquared.PocketHTML
 				ot.Config.SetValue("Options", name, boolvalue);
 			}
 
+			int buttonNumber = (int)ot.HardwareButtonNumber.Value;
+			string sButtonNumber = "Hardware" + buttonNumber.ToString();
+			ot.Config.SetValue("Options", "HardwareButton", sButtonNumber);
+
 
 			this.ok = true;
 			((PocketHTMLEditor)Parent).MenuToolsOptions_Click(sender, e);

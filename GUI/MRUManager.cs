@@ -108,7 +108,7 @@ namespace MRUSample
 
         //private string registryPath;            // Registry path to keep MRU list
 
-        private int maxNumberOfFiles = 10;      // maximum number of files in MRU list
+        private int maxNumberOfFiles = 5;      // maximum number of files in MRU list
 
         private int maxDisplayLength = 30;      // maximum length of file name for display
 

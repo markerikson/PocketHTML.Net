@@ -32,6 +32,7 @@ namespace HardwareButtons
 
 	public enum RegisterButtons
 	{
+		None	  = 0,
 		Hardware1 = 1,
 		Hardware2 = 2,
 		Hardware3 = 4,
@@ -117,9 +118,60 @@ namespace HardwareButtons
 		int key //virtual-key code
 		);
 
+		[DllImport("coredll.dll", SetLastError = true)]
+		private static extern bool UnregisterHotKey(
+			IntPtr hWnd, // handle to window 
+			int id // hot key identifier 			
+			);
+
+		private static RegisterButtons m_registeredButtons = RegisterButtons.None;
+
+		public static RegisterButtons RegisteredButtons
+		{
+			get { return m_registeredButtons; }
+			set { m_registeredButtons = value; }
+		}
+
+
 		[DllImport("coredll.dll")]
 		private static extern bool UnregisterFunc1(KeyModifiers
 		modifiers, int keyID);
+
+		public static void UnregisterRecordKey(IntPtr hWnd, RegisterButtons buttons)
+		{
+			if ((buttons & RegisterButtons.Hardware1) == RegisterButtons.Hardware1)
+			{
+				UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware1);
+				UnregisterHotKey(hWnd, (int)KeysHardware.Hardware1);
+			}
+
+			if ((buttons & RegisterButtons.Hardware2) == RegisterButtons.Hardware2)
+			{
+				UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware2);
+				UnregisterHotKey(hWnd, (int)KeysHardware.Hardware2);
+			}
+
+			if ((buttons & RegisterButtons.Hardware3) == RegisterButtons.Hardware3)
+			{
+				UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware3);
+				UnregisterHotKey(hWnd, (int)KeysHardware.Hardware3);
+			}
+
+			if ((buttons & RegisterButtons.Hardware4) == RegisterButtons.Hardware4)
+			{
+				UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware4);
+				UnregisterHotKey(hWnd, (int)KeysHardware.Hardware4);
+			}
+
+			if ((buttons & RegisterButtons.Hardware5) == RegisterButtons.Hardware5)
+			{
+				UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware5);
+				UnregisterHotKey(hWnd, (int)KeysHardware.Hardware5);
+			}
+
+			m_registeredButtons &= ~buttons;
+			
+		}
 
 		public static void RegisterRecordKey(IntPtr hWnd, RegisterButtons buttons)
 		{
@@ -153,16 +205,9 @@ namespace HardwareButtons
 				RegisterHotKey(hWnd, (int)KeysHardware.Hardware5, KeyModifiers.Windows, (int)KeysHardware.Hardware5);
 			}
 
-			/*
-			UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware2);
-			RegisterHotKey(hWnd, (int)KeysHardware.Hardware2, KeyModifiers.Windows, (int)KeysHardware.Hardware2);
-
-			UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware3);
-			RegisterHotKey(hWnd, (int)KeysHardware.Hardware3, KeyModifiers.Windows, (int)KeysHardware.Hardware3);
-
-			UnregisterFunc1(KeyModifiers.Windows, (int)KeysHardware.Hardware4);
-			RegisterHotKey(hWnd, (int)KeysHardware.Hardware4, KeyModifiers.Windows, (int)KeysHardware.Hardware4);
-			*/ 
+			RegisteredButtons = buttons;
 		}
+
+
 	}
 }

@@ -12,28 +12,43 @@ namespace ISquared.PocketHTML
 	/// </summary>
 	public class OptionsThingy : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.ComboBox comboBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
 		private Hashtable m_tagHash;
 		//NamedButton[] buttons;
 		//private PHNOptions options;
 		private Ayende.Configuration config;
-		private System.Windows.Forms.CheckBox cbTextWrap;
-		private System.Windows.Forms.CheckBox cbPageWrap;
-		private System.Windows.Forms.CheckBox cbXHTML;
-		private System.Windows.Forms.CheckBox cbClearType;
 		private PocketHTMLEditor maineditor;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
 		private string[] currentButtonValues;
 		private string[] boolnames;
-		private System.Windows.Forms.ComboBox comboBox2;
-		private System.Windows.Forms.CheckBox cbIndentHTML;
-		private System.Windows.Forms.CheckBox cbAutoIndent;
+		private TabControl tabControl1;
+		private TabPage tabPage1;
+		private TabPage tabPage2;
+		private CheckBox cbAutoIndent;
+		private CheckBox cbIndentHTML;
+		private CheckBox cbClearType;
+		private CheckBox cbXHTML;
+		private CheckBox cbPageWrap;
+		private CheckBox cbTextWrap;
+		private ComboBox comboBox2;
+		private Label label5;
+		private Label label4;
+		private Label label2;
+		private Label label1;
+		private ComboBox comboBox1;
+		private CheckBox cbHardwareButtons;
+		private ListView listView1;
+		private ColumnHeader columnHeader1;
+		private ColumnHeader columnHeader2;
+		private NumericUpDown nudHardwareButton;
+
+
+		private Label label3;
 		private CheckBox[] boxes;
-		
+
+		public NumericUpDown HardwareButtonNumber
+		{
+			get { return nudHardwareButton; }
+			set { nudHardwareButton = value; }
+		}
 
 		internal String[] CurrentButtonValues
 		{
@@ -104,9 +119,9 @@ namespace ISquared.PocketHTML
 			//udButtons.Value = 1;
 			// TODO This is hardcoded.  Fix it somehow?
 			boolnames = new string[]{"XHTMLTags", "TextWrap", "PageWrap",
-									"ClearType", "IndentHTML", "AutoIndent"};
+									"ClearType", "IndentHTML", "AutoIndent", "HardwareButtonShowsMenu"};
 			boxes = new CheckBox[]{cbXHTML, cbTextWrap, cbPageWrap, 
-									cbClearType, cbIndentHTML, cbAutoIndent};
+									cbClearType, cbIndentHTML, cbAutoIndent, cbHardwareButtons};
 
 			ResetCheckboxes();
 			
@@ -137,6 +152,13 @@ namespace ISquared.PocketHTML
 			//comboBox2_SelectedIndexChanged(this, new System.EventArgs());
 			//comboBox1_SelectedIndexChanged(this, new System.EventArgs());
 
+			string hardwareButtonName = config.GetValue("Options", "HardwareButton");
+			string sButtonNumber = hardwareButtonName.Substring(hardwareButtonName.Length - 1);
+			int buttonNumber = Int32.Parse(sButtonNumber);
+
+			nudHardwareButton.Value = buttonNumber;
+			nudHardwareButton.Enabled = cbHardwareButtons.Checked;
+
 		}
 
 
@@ -155,91 +177,157 @@ namespace ISquared.PocketHTML
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.cbTextWrap = new System.Windows.Forms.CheckBox();
-			this.cbPageWrap = new System.Windows.Forms.CheckBox();
-			this.cbXHTML = new System.Windows.Forms.CheckBox();
-			this.cbClearType = new System.Windows.Forms.CheckBox();
-			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.label3 = new System.Windows.Forms.Label();
-			this.cbIndentHTML = new System.Windows.Forms.CheckBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.comboBox2 = new System.Windows.Forms.ComboBox();
+			this.nudHardwareButton = new System.Windows.Forms.NumericUpDown();
+			this.cbHardwareButtons = new System.Windows.Forms.CheckBox();
 			this.cbAutoIndent = new System.Windows.Forms.CheckBox();
+			this.cbIndentHTML = new System.Windows.Forms.CheckBox();
+			this.cbClearType = new System.Windows.Forms.CheckBox();
+			this.cbXHTML = new System.Windows.Forms.CheckBox();
+			this.cbPageWrap = new System.Windows.Forms.CheckBox();
+			this.cbTextWrap = new System.Windows.Forms.CheckBox();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.listView1 = new System.Windows.Forms.ListView();
+			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+			this.comboBox2 = new System.Windows.Forms.ComboBox();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			// 
-			// cbTextWrap
+			// tabControl1
 			// 
-			this.cbTextWrap.Location = new System.Drawing.Point(4, 4);
-			this.cbTextWrap.Size = new System.Drawing.Size(128, 16);
-			this.cbTextWrap.Text = "Wrap editor text";
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Location = new System.Drawing.Point(0, 0);
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(240, 200);
 			// 
-			// cbPageWrap
+			// tabPage1
 			// 
-			this.cbPageWrap.Location = new System.Drawing.Point(4, 24);
-			this.cbPageWrap.Size = new System.Drawing.Size(128, 16);
-			this.cbPageWrap.Text = "Wrap page preview";
-			// 
-			// cbXHTML
-			// 
-			this.cbXHTML.Location = new System.Drawing.Point(4, 84);
-			this.cbXHTML.Size = new System.Drawing.Size(160, 16);
-			this.cbXHTML.Text = "XHTML-style single tags";
-			// 
-			// cbClearType
-			// 
-			this.cbClearType.Location = new System.Drawing.Point(4, 104);
-			this.cbClearType.Size = new System.Drawing.Size(164, 16);
-			this.cbClearType.Text = "Use ClearType in preview";
-			// 
-			// comboBox1
-			// 
-			this.comboBox1.Location = new System.Drawing.Point(128, 160);
-			this.comboBox1.Size = new System.Drawing.Size(112, 22);
-			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-			// 
-			// label1
-			// 
-			this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label1.Location = new System.Drawing.Point(4, 188);
-			this.label1.Size = new System.Drawing.Size(32, 20);
-			this.label1.Text = "Tag:";
-			// 
-			// label2
-			// 
-			this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label2.Location = new System.Drawing.Point(40, 188);
-			this.label2.Size = new System.Drawing.Size(196, 52);
-			this.label2.Text = "label2";
+			this.tabPage1.Controls.Add(this.label3);
+			this.tabPage1.Controls.Add(this.nudHardwareButton);
+			this.tabPage1.Controls.Add(this.cbHardwareButtons);
+			this.tabPage1.Controls.Add(this.cbAutoIndent);
+			this.tabPage1.Controls.Add(this.cbIndentHTML);
+			this.tabPage1.Controls.Add(this.cbClearType);
+			this.tabPage1.Controls.Add(this.cbXHTML);
+			this.tabPage1.Controls.Add(this.cbPageWrap);
+			this.tabPage1.Controls.Add(this.cbTextWrap);
+			this.tabPage1.Location = new System.Drawing.Point(0, 0);
+			this.tabPage1.Size = new System.Drawing.Size(240, 177);
+			this.tabPage1.Text = "Options";
 			// 
 			// label3
 			// 
-			this.label3.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
-			this.label3.Location = new System.Drawing.Point(84, 136);
-			this.label3.Size = new System.Drawing.Size(76, 20);
-			this.label3.Text = "QuickTags";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.label3.Location = new System.Drawing.Point(35, 148);
+			this.label3.Size = new System.Drawing.Size(49, 20);
+			this.label3.Text = "Button:";
+			// 
+			// nudHardwareButton
+			// 
+			this.nudHardwareButton.Location = new System.Drawing.Point(90, 146);
+			this.nudHardwareButton.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			this.nudHardwareButton.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.nudHardwareButton.Size = new System.Drawing.Size(43, 22);
+			this.nudHardwareButton.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// cbHardwareButtons
+			// 
+			this.cbHardwareButtons.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbHardwareButtons.Location = new System.Drawing.Point(7, 126);
+			this.cbHardwareButtons.Size = new System.Drawing.Size(196, 16);
+			this.cbHardwareButtons.Text = "Hardware button shows tag menu\r\n";
+			this.cbHardwareButtons.CheckStateChanged += new System.EventHandler(this.cbHardwareButtons_CheckStateChanged);
+			// 
+			// cbAutoIndent
+			// 
+			this.cbAutoIndent.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbAutoIndent.Location = new System.Drawing.Point(7, 64);
+			this.cbAutoIndent.Size = new System.Drawing.Size(136, 16);
+			this.cbAutoIndent.Text = "Autoindent on Enter";
 			// 
 			// cbIndentHTML
 			// 
-			this.cbIndentHTML.Location = new System.Drawing.Point(4, 44);
+			this.cbIndentHTML.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbIndentHTML.Location = new System.Drawing.Point(7, 44);
 			this.cbIndentHTML.Size = new System.Drawing.Size(128, 16);
 			this.cbIndentHTML.Text = "Indent HTML tags";
 			// 
-			// label4
+			// cbClearType
 			// 
-			this.label4.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label4.Location = new System.Drawing.Point(4, 160);
-			this.label4.Size = new System.Drawing.Size(44, 20);
-			this.label4.Text = "Button:";
+			this.cbClearType.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbClearType.Location = new System.Drawing.Point(7, 104);
+			this.cbClearType.Size = new System.Drawing.Size(164, 16);
+			this.cbClearType.Text = "Use ClearType in preview";
 			// 
-			// label5
+			// cbXHTML
 			// 
-			this.label5.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label5.Location = new System.Drawing.Point(92, 160);
-			this.label5.Size = new System.Drawing.Size(36, 20);
-			this.label5.Text = "Label:";
+			this.cbXHTML.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbXHTML.Location = new System.Drawing.Point(7, 84);
+			this.cbXHTML.Size = new System.Drawing.Size(160, 16);
+			this.cbXHTML.Text = "XHTML-style single tags";
+			// 
+			// cbPageWrap
+			// 
+			this.cbPageWrap.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbPageWrap.Location = new System.Drawing.Point(7, 24);
+			this.cbPageWrap.Size = new System.Drawing.Size(128, 16);
+			this.cbPageWrap.Text = "Wrap page preview";
+			// 
+			// cbTextWrap
+			// 
+			this.cbTextWrap.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+			this.cbTextWrap.Location = new System.Drawing.Point(7, 4);
+			this.cbTextWrap.Size = new System.Drawing.Size(128, 16);
+			this.cbTextWrap.Text = "Wrap editor text";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.listView1);
+			this.tabPage2.Controls.Add(this.comboBox2);
+			this.tabPage2.Controls.Add(this.label5);
+			this.tabPage2.Controls.Add(this.label4);
+			this.tabPage2.Controls.Add(this.label2);
+			this.tabPage2.Controls.Add(this.label1);
+			this.tabPage2.Controls.Add(this.comboBox1);
+			this.tabPage2.Location = new System.Drawing.Point(0, 0);
+			this.tabPage2.Size = new System.Drawing.Size(232, 174);
+			this.tabPage2.Text = "QuickTags";
+			// 
+			// listView1
+			// 
+			this.listView1.Columns.Add(this.columnHeader1);
+			this.listView1.Columns.Add(this.columnHeader2);
+			this.listView1.Location = new System.Drawing.Point(8, 73);
+			this.listView1.Size = new System.Drawing.Size(225, 101);
+			this.listView1.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader1
+			// 
+			this.columnHeader1.Text = "Button";
+			this.columnHeader1.Width = 46;
+			// 
+			// columnHeader2
+			// 
+			this.columnHeader2.Text = "Label";
+			this.columnHeader2.Width = 160;
 			// 
 			// comboBox2
 			// 
@@ -259,41 +347,52 @@ namespace ISquared.PocketHTML
 			this.comboBox2.Items.Add("14");
 			this.comboBox2.Items.Add("15");
 			this.comboBox2.Items.Add("16");
-			this.comboBox2.Location = new System.Drawing.Point(48, 160);
+			this.comboBox2.Location = new System.Drawing.Point(49, 5);
 			this.comboBox2.Size = new System.Drawing.Size(36, 22);
 			this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
 			// 
-			// cbAutoIndent
+			// label5
 			// 
-			this.cbAutoIndent.Location = new System.Drawing.Point(4, 64);
-			this.cbAutoIndent.Size = new System.Drawing.Size(136, 16);
-			this.cbAutoIndent.Text = "Autoindent on Enter";
+			this.label5.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
+			this.label5.Location = new System.Drawing.Point(93, 5);
+			this.label5.Size = new System.Drawing.Size(36, 20);
+			this.label5.Text = "Label:";
+			// 
+			// label4
+			// 
+			this.label4.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
+			this.label4.Location = new System.Drawing.Point(5, 5);
+			this.label4.Size = new System.Drawing.Size(44, 20);
+			this.label4.Text = "Button:";
+			// 
+			// label2
+			// 
+			this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
+			this.label2.Location = new System.Drawing.Point(41, 33);
+			this.label2.Size = new System.Drawing.Size(196, 26);
+			this.label2.Text = "label2";
+			// 
+			// label1
+			// 
+			this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
+			this.label1.Location = new System.Drawing.Point(5, 33);
+			this.label1.Size = new System.Drawing.Size(32, 26);
+			this.label1.Text = "Tag:";
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.Location = new System.Drawing.Point(129, 5);
+			this.comboBox1.Size = new System.Drawing.Size(108, 22);
+			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
 			// OptionsThingy
 			// 
 			this.ClientSize = new System.Drawing.Size(240, 294);
-			this.Controls.Add(this.cbAutoIndent);
-			this.Controls.Add(this.comboBox2);
-			this.Controls.Add(this.label5);
-			this.Controls.Add(this.label4);
-			this.Controls.Add(this.cbIndentHTML);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.comboBox1);
-			this.Controls.Add(this.cbClearType);
-			this.Controls.Add(this.cbXHTML);
-			this.Controls.Add(this.cbPageWrap);
-			this.Controls.Add(this.cbTextWrap);
+			this.Controls.Add(this.tabControl1);
 			this.Text = "OptionsThingy";
 
 		}
 		#endregion
-
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			
-		}
 
 		private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -323,6 +422,11 @@ namespace ISquared.PocketHTML
 			int index = comboBox1.Items.IndexOf(refname);
 			comboBox1.SelectedIndex = index;
 					
+		}
+
+		private void cbHardwareButtons_CheckStateChanged(object sender, EventArgs e)
+		{
+			nudHardwareButton.Enabled = cbHardwareButtons.Checked;
 		}
 	}
 }

@@ -142,9 +142,9 @@
     <Compile Include="GUI\ReplaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="Interop\Enum.cs">
+    <Compile Include="Interop\Enum.cs">
       <SubType>Code</SubType>
-    </None>
+    </Compile>
     <Compile Include="GUI\TextBox.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -183,7 +183,7 @@
     </Compile>
     <None Include="Graphics\PocketHTML.ico" />
     <Content Include="pockethtml.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Graphics\ie.ico" />
     <EmbeddedResource Include="Graphics\PocketHTML.png" />

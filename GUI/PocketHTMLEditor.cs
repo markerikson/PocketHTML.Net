@@ -17,6 +17,7 @@ using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
 using ISquared.Debugging;
+using OpenNETCF;
 using OpenNETCF.Windows.Forms;
 using HardwareButtons;
 using MRUSample;
@@ -301,7 +302,8 @@ namespace ISquared.PocketHTML
 			buttonTags = new Hashtable();
 
 
-
+			m_hardwareButtons = new HardwareButtonMessageWindow();
+			m_hardwareButtons.HardwareButtonPressed += new HardwareButtonPressedHandler(HardwareButtonPressed);
 			
 			//LoadTags();
 			LoadTagsXTR();
@@ -348,9 +350,9 @@ namespace ISquared.PocketHTML
 			menuTextBox.MenuItems[1].Click += new EventHandler(MenuCut_Click);
 			menuTextBox.MenuItems[2].Click += new EventHandler(MenuPaste_Click);
 
-			m_hardwareButtons = new HardwareButtonMessageWindow();
-			m_hardwareButtons.HardwareButtonPressed += new HardwareButtonPressedHandler(HardwareButtonPressed);
-			RegisterHKeys.RegisterRecordKey(m_hardwareButtons.Hwnd, RegisterButtons.Hardware1);
+			
+			//
+			//RegisterHKeys.RegisterRecordKey(m_hardwareButtons.Hwnd, RegisterButtons.Hardware1);
 
 			m_mruManager = new MRUManager();
 			m_mruManager.Initialize(this, m_menuFileRecentFiles);
@@ -1257,11 +1259,6 @@ namespace ISquared.PocketHTML
 				m_editorPanel.HtmlControl.ShrinkMode = m_config.GetBool("Options", "PageWrap");
 				Debug.WriteLine("Set PageWrap");
 
-
-				// Update the textbox to use 4-space tabs (4 dialog units per character)
-
-				
-
 				if(m_editorPanel.TextBox.WordWrap)
 				{
 					m_editorPanel.TextBox.ScrollBars = ScrollBars.Vertical;
@@ -1271,9 +1268,30 @@ namespace ISquared.PocketHTML
 					m_editorPanel.TextBox.ScrollBars = ScrollBars.Both;
 				}
 
+				Debug.WriteLine("Set scrollbars");
+
+				// Update the textbox to use 4-space tabs (4 dialog units per character)
 				Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
 
-				Debug.WriteLine("Set scrollbars");
+				bool useHardwareButton = Boolean.Parse(m_config.GetValue("Options", "HardwareButtonShowsMenu"));
+
+				if(useHardwareButton)
+				{
+					string buttonName = m_config.GetValue("Options", "HardwareButton");
+					RegisterButtons buttons = (RegisterButtons)EnumEx.Parse(typeof(RegisterButtons), buttonName);
+
+					if(buttons != RegisterHKeys.RegisteredButtons)
+					{
+						RegisterHKeys.UnregisterRecordKey(m_hardwareButtons.Hwnd, RegisterHKeys.RegisteredButtons);
+						RegisterHKeys.RegisterRecordKey(m_hardwareButtons.Hwnd, buttons);
+					}					
+				}
+				else
+				{
+					RegisterHKeys.UnregisterRecordKey(m_hardwareButtons.Hwnd, RegisterHKeys.RegisteredButtons);			
+				}
+
+				
 			}
 			catch(Exception e)
 			{
@@ -1651,10 +1669,7 @@ namespace ISquared.PocketHTML
 
 		public void HardwareButtonPressed(int buttonNumber)
 		{
-			if(buttonNumber == (int)KeysHardware.Hardware1)
-			{
-				ContextMenu.Show(this, new Point(80, 160));
-			}
+			ContextMenu.Show(this, new Point(80, 160));
 		}
 
 		// TODO Remove 240x320 specific code
