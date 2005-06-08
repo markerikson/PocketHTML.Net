@@ -90,7 +90,7 @@ namespace ISquared.PocketHTML
 			
 			//IterSort iters = new IterSort(parent.TagHash);
 			this.Parent = parent;
-			this.config = mainform.Config;
+			this.config = PocketHTMLEditor.Config;
 			maineditor = mainform;
 
 

@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace ISquared
 {
@@ -36,6 +37,8 @@ namespace ISquared
 			string fullName = execAssembly.GetName().Name + "." + name + ".ico";
 
 			Stream stream  = execAssembly.GetManifestResourceStream(fullName);
+
+			Debug.WriteLine("Loading icon: " + fullName);
 			Icon icon = new Icon(stream);
 			return icon;
 		}

@@ -141,13 +141,13 @@ namespace ISquared.PocketHTML
 				if(this.angleBrackets)
 				{
 					// for XHTML compatibility
-					/*
-					if(config.GetBool("Options", "XHTMLTags") && 
-						this.closingTag)
+					
+					if(PocketHTMLEditor.Config.GetBool("Options", "XHTMLTags") && 
+						!this.closingTag)
 					{
 						sb.Append(" /");
 					}
-					*/
+					
 					sb.Append(">");
 				}
 					

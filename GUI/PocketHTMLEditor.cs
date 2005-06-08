@@ -57,7 +57,7 @@ namespace ISquared.PocketHTML
 		private MRUManager m_mruManager;
 
 		/// The saved settings for PocketHTML
-		private Configuration m_config;
+		private static Configuration m_config;
 		// just used to keep from writing "\r\n" all the time
 		private string newline;
 		// Name of the current file
@@ -175,7 +175,7 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-		internal Configuration Config
+		internal static Configuration Config
 		{
 			get
 			{
@@ -255,27 +255,22 @@ namespace ISquared.PocketHTML
 
 			
 			
-			Debug.WriteLine("Beginning PHE constructor");
+			Debug.WriteLine("Beginning PHE construction");
 			// Generated form setup
 			InitializeComponent();
 
 			Debug.WriteLine("InitializeComponent complete");
 
+			
 			RefreshTemplates();
 			
 
-			// Retrieve the embedded toolbar graphics.  Needed because
-			// the designer-generated ImageList doesn't support transparency.
-			Icon iconIE = Utility.GetIcon("Graphics.ie");
-			Icon iconTag = Utility.GetIcon("Graphics.Tag");
 
-			imageList1.Images.Add(iconTag);
-			imageList1.Images.Add(iconIE);
-			
-			m_btnTags.ImageIndex = 0;
-			m_btnPreview.ImageIndex = 1;
+
 			
 
+
+			Debug.WriteLine("Loading EditorPanel");
 			m_editorPanel = new EditorPanel();
 			Debug.WriteLine("EditorPanel created");
 			m_editorPanel.Parent = this;
@@ -289,6 +284,7 @@ namespace ISquared.PocketHTML
 			}
 			
 			// TODO Delay-load this panel
+			Debug.WriteLine("Loading OptionsPanel");
 			m_optionsDialog = new OptionsPanel();
 			Debug.WriteLine("OptionsDialog created");
 			m_optionsDialog.Bounds = new Rectangle(0,0, 240, 270);
@@ -313,10 +309,11 @@ namespace ISquared.PocketHTML
 			m_hardwareButtons.HardwareButtonPressed += new HardwareButtonPressedHandler(HardwareButtonPressed);
 			
 			//LoadTags();
+			Debug.WriteLine("Loading tags");
 			LoadTagsXTR();
-			Debug.WriteLine("Tags loaded");
+			Debug.WriteLine("Tags loaded, loading buttons");
 			SetupButtons();
-			Debug.WriteLine("Buttons created");
+			Debug.WriteLine("Buttons created, checking options");
 			SetupOptions();
 			Debug.WriteLine("Options setup complete");
 
@@ -681,6 +678,7 @@ namespace ISquared.PocketHTML
 			this.Menu = this.m_mainMenu;
 			this.Text = "PocketHTML.Net";
 			this.Deactivate += new System.EventHandler(this.PocketHTMLEditor_Deactivate);
+			this.Load += new System.EventHandler(this.PocketHTMLEditor_Load);
 			this.Activated += new System.EventHandler(this.PocketHTMLEditor_Activated);
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.PocketHTMLEditor_Closing);
 			this.GotFocus += new System.EventHandler(this.inputPanel1_EnabledChanged);
@@ -691,6 +689,7 @@ namespace ISquared.PocketHTML
 
 		private void RefreshTemplates()
 		{
+			Debug.WriteLine("Checking templates");
 			m_menuFileNew.MenuItems.Clear();
 			m_menuFileNew.MenuItems.Add(m_menuFileNewBlank);
 			m_menuFileNew.MenuItems.Add(m_menuFileNewBasic);
@@ -699,6 +698,7 @@ namespace ISquared.PocketHTML
 
 			if (Directory.Exists(templatePath))
 			{
+				Debug.WriteLine("Templates exist");
 				string[] templates = Directory.GetFiles(templatePath, "*.htm*");
 
 				Array.Sort(templates);
@@ -713,6 +713,11 @@ namespace ISquared.PocketHTML
 					m_menuFileNew.MenuItems.Add(item);
 				}
 			}
+			else
+			{
+				Debug.WriteLine("Templates directory not found");
+			}
+			Debug.WriteLine("Templates check complete");
 		}
 		
 		/// <summary>
@@ -800,7 +805,7 @@ namespace ISquared.PocketHTML
 			String spaces = tb.GetLeadingSpaces();
 			// basically, an additional level of indentation
 			// TODO make this an option?
-			String spacesPlus = spaces + "    ";
+			String spacesPlus = spaces + "\t";
 
 			int currentLineNum = tb.CurrentLine;//CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0); 
 
@@ -1295,7 +1300,7 @@ namespace ISquared.PocketHTML
 		{
 			try
 			{
-				Debug.WriteLine("Starting SetupOptions");
+				//Debug.WriteLine("Starting SetupOptions");
 				bool tw = m_config.GetBool("Options", "TextWrap");
 				Debug.WriteLine("TextWrap: " + tw);
 				Debug.WriteLine("ed: " + m_editorPanel.ToString());
@@ -1977,6 +1982,49 @@ namespace ISquared.PocketHTML
 		private void m_menuEdit_Popup(object sender, EventArgs e)
 		{
 			m_menuEditUndo.Enabled = m_editorPanel.TextBox.CanUndo;
+		}
+
+		private void PocketHTMLEditor_Load(object sender, EventArgs e)
+		{
+			/*
+			Size size1;
+			this.ImageList1.Images.Add(Module1.GetIcon("home"));
+			this.ImageList1.Images.Add(Module1.GetIcon("help"));
+			size1 = new Size(0x10, 0x10);
+			this.ImageList1.ImageSize = size1;
+			this.ToolBar1.ImageList = this.ImageList1;
+			this.ToolBarButton1.ImageIndex = 0;
+			this.ToolBarButton2.ImageIndex = 1;
+			 */
+
+			// Retrieve the embedded toolbar graphics.  Needed because
+			// the designer-generated ImageList doesn't support transparency.
+
+			Debug.WriteLine("Loading icons");
+			Icon iconIE = Utility.GetIcon("Graphics.ie");
+			Icon iconTag = Utility.GetIcon("Graphics.Tag");
+
+			Debug.WriteLine("Icons loaded, adding to imagelist");
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append("iconIE: ");
+			sb.Append(iconIE);
+			Debug.WriteLine(sb.ToString());
+
+			sb = new StringBuilder();
+			sb.Append("iconTag: ");
+			sb.Append(iconTag);
+			Debug.WriteLine(sb.ToString());
+
+			imageList1.Images.Add(iconTag);
+			imageList1.Images.Add(iconIE);
+
+			Debug.WriteLine("Icons added, setting indices");
+
+			Size size1 = new Size(0x10, 0x10);
+			imageList1.ImageSize = size1;
+			m_btnTags.ImageIndex = 0;
+			m_btnPreview.ImageIndex = 1;
 		}
 
 

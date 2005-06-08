@@ -515,7 +515,7 @@ namespace ISquared.PocketHTML
 				/* TODO Do I really need to check this every time it gets swapped, or can it be 
 						just when the options are changed?
 				*/
-				bool ct = ((PocketHTMLEditor)this.Parent).Config.GetBool("Options", "ClearType");
+				bool ct = PocketHTMLEditor.Config.GetBool("Options", "ClearType");
 				if (htmlControl.Source != m_textbox.Text ||//(htmlControl.HtmlString != tb.Text) ||
 					(ct != htmlControl.EnableClearType))
 									
