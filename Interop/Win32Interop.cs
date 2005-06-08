@@ -148,7 +148,8 @@ namespace ISquared.Win32Interop
 		[DllImport("filedialogs.dll")]				
 		internal static extern bool tGetSave1(int i1, int i2, int i3, IntPtr p1);
 
-		public static string TGetFileName(bool save, string fileFilter, string initialDirectory) 
+		public static string TGetFileName(bool save, string originalFileName, int initialFilter, 
+											string fileFilter, string initialDirectory) 
 		{
 			OpenFileName ofn = new OpenFileName();
 
@@ -181,7 +182,9 @@ namespace ISquared.Win32Interop
 			ofn.filter = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * fileFilter.Length);
 			Win32Interop.Utility.StringToPointer(fileFilter, ofn.filter);
 
-			ofn.filterIndex = 0;
+
+			ofn.filterIndex = initialFilter;
+					
 
 			int OFN_OVERWRITEPROMPT = 0x02;
 			ofn.flags |= OFN_OVERWRITEPROMPT;
@@ -202,6 +205,11 @@ namespace ISquared.Win32Interop
 
 			ofn.initialDir = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * initialDirectory.Length);
 			Utility.StringToPointer(initialDirectory, ofn.initialDir);
+
+			if(save && originalFileName != null)
+			{
+				Utility.StringToPointer(originalFileName, ofn.file);
+			}
 
 			/*
 						string title = String.Empty;

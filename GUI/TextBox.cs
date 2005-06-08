@@ -195,6 +195,16 @@ namespace OpenNETCF.Windows.Forms
         private int defaultStyle = 0;
         private TextBoxStyle style;
 		private Regex m_reLeadingSpaces;
+		private bool m_autoIndent;
+
+		public bool AutoIndent
+		{
+			get { return m_autoIndent; }
+			set { m_autoIndent = value; }
+		}
+
+		// Keeps the auto-indent function from recursing
+		private bool firstEnter;
 
         protected virtual event EventHandler OnStyleChanged;
 
@@ -208,6 +218,11 @@ namespace OpenNETCF.Windows.Forms
 				RegexOptions.IgnoreCase |
 				RegexOptions.Multiline |
 				RegexOptions.IgnorePatternWhitespace);
+
+			firstEnter = true;
+
+			KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
+			KeyDown += new KeyEventHandler(textBox1_KeyDown);
         }
 
 		/// <summary>
@@ -296,6 +311,16 @@ namespace OpenNETCF.Windows.Forms
 			setHwnd();
 			SendMessage(this.hwnd, (int)WM.CUT, 0, 0);
 		}
+
+		public bool CanUndo
+		{
+			get
+			{
+				setHwnd();
+				int result = SendMessage(this.hwnd, (int)EM.CANUNDO, 0, 0);
+				return (result == 1);
+			}
+		}
 		/*
 		#region Clipboard Support
 		/// <summary>
@@ -365,14 +390,23 @@ namespace OpenNETCF.Windows.Forms
 		}
 		*/
 
-		public String GetLeadingSpaces()
+		public string GetLeadingSpaces()
 		{
 			setHwnd();
 			IntPtr pTB = this.hwnd;//CoreDLL.GetHandle(m_editorPanel.TextBox);
 			int currentLine = CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0);
+			
+			return GetLeadingSpaces(currentLine);
+		}
+
+		public string GetLeadingSpaces(int lineNumber)
+		{
+			setHwnd();
+			IntPtr pTB = this.hwnd;//CoreDLL.GetHandle(m_editorPanel.TextBox);
+			//int currentLine = CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0);
 
 			StringBuilder lineText;
-			int charIndex = CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, currentLine, 0);
+			int charIndex = CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, lineNumber, 0);
 			int lineLength = CoreDLL.SendMessage(pTB, (int)EM.LINELENGTH,
 				charIndex, 0);
 
@@ -381,7 +415,7 @@ namespace OpenNETCF.Windows.Forms
 			lineText[0] = (char)(lineLength + 1);
 
 			int numChars = CoreDLL.SendMessageGetLine(pTB, (int)EM.GETLINE,
-				currentLine, lineText);
+				lineNumber, lineText);
 
 			string line = lineText.ToString();
 			String spaces;
@@ -399,7 +433,7 @@ namespace OpenNETCF.Windows.Forms
 			return spaces;
 		}
 
-		public void AutoIndent()
+		public void DoAutoIndent()
 		{
 			string spaces = GetLeadingSpaces();
 			//IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
@@ -424,6 +458,188 @@ namespace OpenNETCF.Windows.Forms
 			{
 				setHwnd();
 				return SendMessage(this.hwnd, (int)EM.LINEFROMCHAR, -1, 0); 
+			}
+		}
+
+		public void IndentSelection()
+		{
+			if (SelectionLength == 0)
+			{
+				SelectedText = "\t";
+				//SelectionStart += 1;
+				SelectionLength = 0;
+
+				Focus();
+				return;
+			}
+
+			string soep = "";
+			int start = SelectionStart;
+			int end = start + SelectionLength;
+			soep = SelectedText;
+			int loc = 0; soep = soep.Insert(0, "\t");
+
+			while (loc != -1)
+			{
+				loc = soep.IndexOf("\n", loc);
+				if (loc > 0)
+				{
+					soep = soep.Insert(loc + 1, "\t");
+					loc = loc + 1;
+					if (loc >= soep.Length)
+						break;
+				}
+			}
+			//Cut(); 
+			//Text = Text.Insert(start,soep); 
+			SelectedText = soep;
+			//ReplaceSelection(soep);
+			SelectionStart = start;
+			SelectionLength = soep.Length;
+
+			Focus();
+		}
+
+		public void UnindentSelection()
+		{
+			if (SelectionLength == 0)
+			{
+				char previousChar = Text[SelectionStart - 1];
+
+				if (previousChar == '\t')
+				{
+					SelectionStart -= 1;
+					SelectionLength = 1;
+					SelectedText = "";
+				}
+
+				Focus();
+				return;
+			}
+			string soep = "";
+			int start = SelectionStart;
+			int end = start + SelectionLength;
+			soep = SelectedText;
+			int loc = 0;
+			int loc2 = 0;
+			int loc3 = 0;
+			loc2 = soep.IndexOf("\n", loc);
+			loc3 = soep.IndexOf("\t", loc);
+			if (loc3 < loc2 || loc2 == -1)
+			{
+				if (loc3 > -1)
+				{
+					soep = soep.Remove(loc3, 1);
+				}
+			} loc = 0;
+
+			bool exitloop = false;
+
+			while (exitloop == false)
+			{
+				loc = soep.IndexOf("\n", loc);
+				loc2 = soep.IndexOf("\n", loc + 1);
+
+				if (loc < 0)
+					exitloop = true;
+
+				if (loc > -1)
+				{
+					loc3 = soep.IndexOf("\t", loc);
+
+					if ((loc3 < loc2 || loc2 == -1))
+					{
+						if (loc3 > 0)
+						{
+							soep = soep.Remove(loc3, 1);
+						}
+					}
+
+					loc = loc + 1; // 
+
+					if (loc >= soep.Length)
+						exitloop = true;
+				}
+			}
+
+			//Cut(); 
+			//Text = Text.Insert(start,soep); 
+			SelectedText = soep;
+
+			SelectionStart = start;
+
+			SelectionLength = soep.Length;
+
+			Focus();
+		}
+
+		private void textBox1_KeyDown(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+				// Tab
+				case Keys.Tab:
+				{
+					if (e.Shift)
+					{
+						UnindentSelection();
+					}
+					else
+					{
+						IndentSelection();
+					}
+
+					e.Handled = true;
+					break;
+				}
+			}
+		}
+
+		private void textBox1_KeyUp(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+				// Tab
+				case Keys.Tab:
+				{
+					e.Handled = true;
+					break;
+				}
+			}
+		}
+
+		void textBox1_KeyPress(Object o, KeyPressEventArgs e)
+		{
+			// The keypressed method uses the KeyChar property to check 
+			// whether the ENTER key is pressed. 
+
+			// If the ENTER key is pressed, the Handled property is set to true, 
+			// to indicate the event is handled.
+			switch (e.KeyChar)
+			{
+				// Enter
+				case (char)Keys.Enter:
+				{
+					if (firstEnter)
+					{
+						firstEnter = false;
+
+						if (AutoIndent)
+						{
+							e.Handled = true;
+							DoAutoIndent();
+						}
+
+						firstEnter = true;
+					}
+					break;
+				}
+				// Tab
+				case (char)Keys.Tab:
+				{
+					e.Handled = true;
+					break;
+				}
 			}
 		}
 
