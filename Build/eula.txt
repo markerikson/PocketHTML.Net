@@ -1,6 +1,6 @@
-PocketHTML.Net version 1.0
+PocketHTML.Net version 1.2
 ISquared Software
-http://acemarke.ionichost.com/isquared/
+http://www.isquaredsoftware.com
 
 End User License Agreement
 

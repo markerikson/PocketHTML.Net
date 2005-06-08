@@ -1381,6 +1381,7 @@ namespace ISquared.PocketHTML
 			if (useHardwareButton && activate)
 			{
 				string buttonName = m_config.GetValue("Options", "HardwareButton");
+				Debug.WriteLine("Button name: " + buttonName);
 				RegisterButtons buttons = (RegisterButtons)EnumEx.Parse(typeof(RegisterButtons), buttonName);
 
 				if (buttons != RegisterHKeys.RegisteredButtons)
