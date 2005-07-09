@@ -496,6 +496,7 @@ namespace ISquared.PocketHTML
 			// MenuFileClose
 			// 
 			this.MenuFileClose.Text = "Close";
+			this.MenuFileClose.Click += new System.EventHandler(this.MenuFileClose_Click);
 			// 
 			// menuItem5
 			// 
@@ -1485,9 +1486,12 @@ namespace ISquared.PocketHTML
 		{
 			string filename = GetFileName(false);
 
-			if(filename != String.Empty)
+			if (filename != String.Empty)
 			{
-				LoadFile(filename);	
+				if (CloseFile() == DialogResult.Yes)
+				{
+					LoadFile(filename);
+				}
 			}
 		}
 
@@ -1608,7 +1612,7 @@ namespace ISquared.PocketHTML
 			SaveFile(false);
 		}
 
-		private void SaveFile(bool saveas)
+		private bool SaveFile(bool saveas)
 		{
 			string filename = String.Empty;
 			Debug.WriteLine("Saving file.  saveas: " + saveas);
@@ -1660,7 +1664,7 @@ namespace ISquared.PocketHTML
 				
 			if(filename == String.Empty)
 			{
-				return;
+				return false;
 			}
 
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
@@ -1669,6 +1673,8 @@ namespace ISquared.PocketHTML
 			sw.Close();
 			m_editorPanel.TextBox.Modified = false;
 			m_mruManager.Add(filename);
+
+			return true;
 		}
 
 		private DialogResult CloseFile()
@@ -1679,9 +1685,12 @@ namespace ISquared.PocketHTML
 				dr = MessageBox.Show("You have unsaved changes.  Do you want to save before you quit?",
 					"Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
 					MessageBoxDefaultButton.Button1);
-				if(dr == DialogResult.Yes)
+				if (dr == DialogResult.Yes)
 				{
-					SaveFile(false);	
+					if (!SaveFile(false))
+					{
+						dr = DialogResult.Cancel;
+					}
 				}
 			}
 			else
