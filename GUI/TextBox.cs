@@ -196,6 +196,7 @@ namespace OpenNETCF.Windows.Forms
         private TextBoxStyle style;
 		private Regex m_reLeadingSpaces;
 		private bool m_autoIndent;
+		private bool m_indenting;
 
 		public bool AutoIndent
 		{
@@ -204,7 +205,7 @@ namespace OpenNETCF.Windows.Forms
 		}
 
 		// Keeps the auto-indent function from recursing
-		private bool firstEnter;
+		private bool m_firstEnter;
 
         protected virtual event EventHandler OnStyleChanged;
 
@@ -219,7 +220,8 @@ namespace OpenNETCF.Windows.Forms
 				RegexOptions.Multiline |
 				RegexOptions.IgnorePatternWhitespace);
 
-			firstEnter = true;
+			m_firstEnter = true;
+			m_indenting = false;
 
 			KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
 			KeyDown += new KeyEventHandler(textBox1_KeyDown);
@@ -465,7 +467,8 @@ namespace OpenNETCF.Windows.Forms
 		{
 			if (SelectionLength == 0)
 			{
-				SelectedText = "\t";
+				//SelectedText = "\t";
+				ReplaceSelection("\t");
 				//SelectionStart += 1;
 				SelectionLength = 0;
 
@@ -492,8 +495,8 @@ namespace OpenNETCF.Windows.Forms
 			}
 			//Cut(); 
 			//Text = Text.Insert(start,soep); 
-			SelectedText = soep;
-			//ReplaceSelection(soep);
+			//SelectedText = soep;
+			ReplaceSelection(soep);
 			SelectionStart = start;
 			SelectionLength = soep.Length;
 
@@ -502,22 +505,30 @@ namespace OpenNETCF.Windows.Forms
 
 		public void UnindentSelection()
 		{
+			char previousChar = Text[SelectionStart - 1];
+
 			if (SelectionLength == 0)
 			{
-				char previousChar = Text[SelectionStart - 1];
-
 				if (previousChar == '\t')
 				{
 					SelectionStart -= 1;
 					SelectionLength = 1;
-					SelectedText = "";
+					//SelectedText = "";
+					ReplaceSelection("");
+					//SendMessage(this.Handle, (int)EM.SCROLLCARET, 0, 0);
 				}
 
 				Focus();
 				return;
 			}
 			string soep = "";
+
+			if(previousChar == '\t')
+			{
+				SelectionStart -= 1;
+			}
 			int start = SelectionStart;
+			
 			int end = start + SelectionLength;
 			soep = SelectedText;
 			int loc = 0;
@@ -564,7 +575,8 @@ namespace OpenNETCF.Windows.Forms
 
 			//Cut(); 
 			//Text = Text.Insert(start,soep); 
-			SelectedText = soep;
+			//SelectedText = soep;
+			ReplaceSelection(soep);
 
 			SelectionStart = start;
 
@@ -583,13 +595,19 @@ namespace OpenNETCF.Windows.Forms
 					if (e.Shift)
 					{
 						UnindentSelection();
+						e.Handled = true;
 					}
 					else
 					{
-						IndentSelection();
+						if(SelectionLength > 0)
+						{
+							IndentSelection();
+							e.Handled = true;
+						}
+						
 					}
 
-					e.Handled = true;
+					
 					break;
 				}
 			}
@@ -602,7 +620,11 @@ namespace OpenNETCF.Windows.Forms
 				// Tab
 				case Keys.Tab:
 				{
-					e.Handled = true;
+					if(SelectionLength > 0)
+					{
+						e.Handled = true;
+					}
+					
 					break;
 				}
 			}
@@ -620,9 +642,9 @@ namespace OpenNETCF.Windows.Forms
 				// Enter
 				case (char)Keys.Enter:
 				{
-					if (firstEnter)
+					if (m_firstEnter)
 					{
-						firstEnter = false;
+						m_firstEnter = false;
 
 						if (AutoIndent)
 						{
@@ -630,14 +652,17 @@ namespace OpenNETCF.Windows.Forms
 							DoAutoIndent();
 						}
 
-						firstEnter = true;
+						m_firstEnter = true;
 					}
 					break;
 				}
 				// Tab
 				case (char)Keys.Tab:
 				{
-					e.Handled = true;
+					if (SelectionLength > 0)
+					{
+						e.Handled = true;
+					}
 					break;
 				}
 			}
