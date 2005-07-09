@@ -133,10 +133,12 @@ namespace ISquared.PocketHTML
 				{
 					sb.Append(" ");
 					sb.Append(s);
-					sb.Append("=\"\"");
-				}
 
-					
+					if(s.IndexOf("=") == -1)
+					{						
+						sb.Append("=\"\"");
+					}
+				}
 
 				if(this.angleBrackets)
 				{
