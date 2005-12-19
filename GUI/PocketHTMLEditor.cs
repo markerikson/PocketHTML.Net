@@ -380,9 +380,37 @@ namespace ISquared.PocketHTML
 			
 			
 
-			Debug.WriteLine("PHE constructor complete");
+			//Debug.WriteLine("PHE constructor complete");
 
-			Debug.WriteLine("Test line");
+			Debug.WriteLine("Loading icons");
+			Icon iconIE = Utility.GetIcon("Graphics.ie");
+			Icon iconTag = Utility.GetIcon("Graphics.Tag");
+
+			Debug.WriteLine("Icons loaded, adding to imagelist");
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append("iconIE: ");
+			sb.Append(iconIE);
+			Debug.WriteLine(sb.ToString());
+
+			sb = new StringBuilder();
+			sb.Append("iconTag: ");
+			sb.Append(iconTag);
+			Debug.WriteLine(sb.ToString());
+
+			imageList1.Images.Add(iconTag);
+			imageList1.Images.Add(iconIE);
+
+			Debug.WriteLine("Icons added, setting indices");
+
+			Size size1 = new Size(0x10, 0x10);
+			imageList1.ImageSize = size1;
+			Debug.WriteLine("Set image size");
+			m_btnTags.ImageIndex = 0;
+			m_btnPreview.ImageIndex = 1;
+			Debug.WriteLine("Set indices");
+
+			Debug.WriteLine("Loading complete");
 		}
 
 		/// <summary>
@@ -645,12 +673,10 @@ namespace ISquared.PocketHTML
 			// imageList1
 			// 
 			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.Images.Clear();
 			// 
 			// il
 			// 
 			this.il.ImageSize = new System.Drawing.Size(16, 16);
-			this.il.Images.Clear();
 			// 
 			// m_btnTags
 			// 
@@ -679,7 +705,7 @@ namespace ISquared.PocketHTML
 			this.Menu = this.m_mainMenu;
 			this.Text = "PocketHTML.Net";
 			this.Deactivate += new System.EventHandler(this.PocketHTMLEditor_Deactivate);
-			this.Load += new System.EventHandler(this.PocketHTMLEditor_Load);
+			this.Closed += new System.EventHandler(this.PocketHTMLEditor_Closed);
 			this.Activated += new System.EventHandler(this.PocketHTMLEditor_Activated);
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.PocketHTMLEditor_Closing);
 			this.GotFocus += new System.EventHandler(this.inputPanel1_EnabledChanged);
@@ -1387,7 +1413,7 @@ namespace ISquared.PocketHTML
 			if (useHardwareButton && activate)
 			{
 				string buttonName = m_config.GetValue("Options", "HardwareButton");
-				Debug.WriteLine("Button name: " + buttonName);
+				//Debug.WriteLine("Button name: " + buttonName);
 				RegisterButtons buttons = (RegisterButtons)EnumEx.Parse(typeof(RegisterButtons), buttonName);
 
 				if (buttons != RegisterHKeys.RegisteredButtons)
@@ -1592,12 +1618,14 @@ namespace ISquared.PocketHTML
 
 		private void LoadFile(string filename)
 		{
-			StreamReader sr = new StreamReader(filename);
-			String s =  sr.ReadToEnd();		
-			sr.Close();
+			FileStream fs = new FileStream(filename, FileMode.Open);
+			String contents = Utility.DecodeData(fs);
+			//StreamReader sr = new StreamReader(filename, Encoding.UTF8);
+			//String s =  sr.ReadToEnd();		
+			//sr.Close();
 			//CoreDLL.SendMessageString(CoreDLL.GetHandle(m_editorPanel.TextBox), 
 			//	(int)WM.SETTEXT, 0, s);
-			m_editorPanel.TextBox.Text = s;
+			m_editorPanel.TextBox.Text = contents;
 			this.m_saveFileName = filename;
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			m_editorPanel.TextBox.Modified = false;
@@ -1702,10 +1730,12 @@ namespace ISquared.PocketHTML
 
 		private void PocketHTMLEditor_Closing(object sender, CancelEventArgs e)
 		{
+			Debug.WriteLine("Program close requested");
 			DialogResult dr = CloseFile();
 			if(dr == DialogResult.Cancel)
 			{
 				e.Cancel = true;
+				Debug.WriteLine("Close canceled");
 			}
 			else
 			{
@@ -1723,7 +1753,9 @@ namespace ISquared.PocketHTML
 				StreamWriter sw = new StreamWriter(inifile);
 				m_config.Save(sw);
 				sw.Close();
-			}			
+				Debug.WriteLine("Finishing close");
+			}
+			
 		} 
 
 		private void PocketHTMLEditor_GotFocus(object sender, EventArgs e)
@@ -1965,11 +1997,13 @@ namespace ISquared.PocketHTML
 
 		private void PocketHTMLEditor_Activated(object sender, EventArgs e)
 		{
+			Debug.WriteLine("Main form activated");
 			UpdateHardwareButton(true);
 		}
 
 		private void PocketHTMLEditor_Deactivate(object sender, EventArgs e)
 		{
+			Debug.WriteLine("Main form deactivated");
 			UpdateHardwareButton(false);
 		}
 
@@ -2032,8 +2066,19 @@ namespace ISquared.PocketHTML
 
 			Size size1 = new Size(0x10, 0x10);
 			imageList1.ImageSize = size1;
+			Debug.WriteLine("Set image size");
 			m_btnTags.ImageIndex = 0;
 			m_btnPreview.ImageIndex = 1;
+			Debug.WriteLine("Set indices");
+
+			Debug.WriteLine("Loading complete");
+
+			
+		}
+
+		private void PocketHTMLEditor_Closed(object sender, EventArgs e)
+		{
+			Debug.WriteLine("PocketHTML closed");
 		}
 
 

@@ -62,13 +62,17 @@ namespace ISquared.Debugging
 			try
 			{
 				Prefix = DefaultPrefix;
-				logDir = Path.GetTempPath();
+				logDir = @"\Temp\";
+				if (!Directory.Exists(logDir))
+				{
+					logDir = Path.GetTempPath();
+				}
+				int i = 42;
+				int q = i;
 			}
 			catch (Exception)
 			{
-				logDir = @"\Temp\";
-				if (!Directory.Exists(logDir))
-					logDir = "";
+				logDir = @"\";
 			}
 		}
 

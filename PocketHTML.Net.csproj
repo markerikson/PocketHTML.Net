@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BB1B80EB-01F7-4F71-8412-B8B7F4D2D53F}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -24,6 +24,7 @@
     <UpgradeBackupLocation>C:\Projects\PocketHTML.Net - 1\backup\Backup\</UpgradeBackupLocation>
     <FormFactorID>
     </FormFactorID>
+    <OSVersion>4.20</OSVersion>
   </PropertyGroup>
   <PropertyGroup>
     <PlatformID>3C41C503-53EF-4c2a-8DD4-A8217CAD115E</PlatformID>
@@ -50,6 +51,8 @@
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -70,6 +73,7 @@
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsCE.Forms">
@@ -178,6 +182,7 @@
     <Compile Include="Other\Utility.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Graphics\PocketHTML.ico" />
     <Content Include="pockethtml.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

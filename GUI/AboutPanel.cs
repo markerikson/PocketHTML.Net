@@ -105,7 +105,7 @@ namespace ISquared.PocketHTML
 			this.label7.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
 			this.label7.Location = new System.Drawing.Point(0, 68);
 			this.label7.Size = new System.Drawing.Size(240, 120);
-			this.label7.Text = @"PocketHTML.Net is shareware / donationware.  Loosely translated, that means that if you like this program and continue to use it, I'd appreciate it if you registered it for $5.  But, since I hate reg keys and crippleware, this program is fully functional and no registration is required.  If you like it enough to send more than $5, I won't complain too much :) See the website for registration instructions.";
+			this.label7.Text = @"PocketHTML.Net is donationware.  Loosely translated, that means that if you like this program and continue to use it, I'd appreciate it if you registered it for $5.  But, since I hate reg keys and crippleware, this program is fully functional and no registration is required.  Of course, if you like it enough to send more than $5, that would be appreciated too. See the website for donation instructions.";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// AboutPanel
