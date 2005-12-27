@@ -58,6 +58,9 @@ namespace ISquared.PocketHTML
 
 		/// The saved settings for PocketHTML
 		private static Configuration m_config;
+		private static string m_versionText = "1.2 Beta 6";
+
+		
 		// just used to keep from writing "\r\n" all the time
 		private string newline;
 		// Name of the current file
@@ -181,6 +184,11 @@ namespace ISquared.PocketHTML
 			{
 				return m_config;
 			}
+		}
+
+		public static string VersionText
+		{
+			get { return PocketHTMLEditor.m_versionText; }
 		}
 		#endregion
 
@@ -380,8 +388,9 @@ namespace ISquared.PocketHTML
 			
 			
 
-			//Debug.WriteLine("PHE constructor complete");
+			Debug.WriteLine("PHE constructor complete");
 
+			/*
 			Debug.WriteLine("Loading icons");
 			Icon iconIE = Utility.GetIcon("Graphics.ie");
 			Icon iconTag = Utility.GetIcon("Graphics.Tag");
@@ -411,6 +420,7 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("Set indices");
 
 			Debug.WriteLine("Loading complete");
+			 */ 
 		}
 
 		/// <summary>
@@ -709,6 +719,7 @@ namespace ISquared.PocketHTML
 			this.Activated += new System.EventHandler(this.PocketHTMLEditor_Activated);
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.PocketHTMLEditor_Closing);
 			this.GotFocus += new System.EventHandler(this.inputPanel1_EnabledChanged);
+			this.Load += new System.EventHandler(this.PocketHTMLEditor_Load);
 
 		}
 		#endregion
@@ -2026,7 +2037,7 @@ namespace ISquared.PocketHTML
 		{
 			m_menuEditUndo.Enabled = m_editorPanel.TextBox.CanUndo;
 		}
-
+		
 		private void PocketHTMLEditor_Load(object sender, EventArgs e)
 		{
 			/*
@@ -2038,7 +2049,7 @@ namespace ISquared.PocketHTML
 			this.ToolBar1.ImageList = this.ImageList1;
 			this.ToolBarButton1.ImageIndex = 0;
 			this.ToolBarButton2.ImageIndex = 1;
-			 */
+			*/
 
 			// Retrieve the embedded toolbar graphics.  Needed because
 			// the designer-generated ImageList doesn't support transparency.

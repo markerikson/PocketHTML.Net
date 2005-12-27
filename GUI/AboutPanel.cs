@@ -13,13 +13,13 @@ namespace ISquared.PocketHTML
 	/// </summary>
 	public class AboutPanel : System.Windows.Forms.Panel
 	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label m_labVersion;
+		private System.Windows.Forms.Label m_lblISquared;
+		private System.Windows.Forms.Label m_lblPocketHTML;
+		private System.Windows.Forms.Label m_lblVersion;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.Label m_lblMessage;
+		private System.Windows.Forms.Label m_lblURL;
 	
 		public AboutPanel()
 		{
@@ -31,9 +31,8 @@ namespace ISquared.PocketHTML
 			Bitmap bmp = new Bitmap(stream);
 			
 			pictureBox1.Image = bmp;
-			m_labVersion.Text = Utility.AssemblyVersion();
-
-
+			string buildNumber = Utility.AssemblyVersion();
+			m_lblVersion.Text = PocketHTMLEditor.VersionText +"\r\n" + buildNumber;
 		}
 
 		/// <summary>
@@ -52,34 +51,34 @@ namespace ISquared.PocketHTML
 		private void InitializeComponent()
 		{
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AboutPanel));
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.m_labVersion = new System.Windows.Forms.Label();
+			this.m_lblISquared = new System.Windows.Forms.Label();
+			this.m_lblPocketHTML = new System.Windows.Forms.Label();
+			this.m_lblVersion = new System.Windows.Forms.Label();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.button1 = new System.Windows.Forms.Button();
-			this.label6 = new System.Windows.Forms.Label();
-			this.label7 = new System.Windows.Forms.Label();
+			this.m_lblURL = new System.Windows.Forms.Label();
+			this.m_lblMessage = new System.Windows.Forms.Label();
 			// 
-			// label1
+			// m_lblISquared
 			// 
-			this.label1.Location = new System.Drawing.Point(64, 0);
-			this.label1.Size = new System.Drawing.Size(112, 16);
-			this.label1.Text = "ISquared Software";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_lblISquared.Location = new System.Drawing.Point(64, 0);
+			this.m_lblISquared.Size = new System.Drawing.Size(112, 16);
+			this.m_lblISquared.Text = "ISquared Software";
+			this.m_lblISquared.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(64, 16);
-			this.label2.Size = new System.Drawing.Size(112, 16);
-			this.label2.Text = "PocketHTML.Net";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_lblPocketHTML.Location = new System.Drawing.Point(64, 16);
+			this.m_lblPocketHTML.Size = new System.Drawing.Size(112, 16);
+			this.m_lblPocketHTML.Text = "PocketHTML.Net";
+			this.m_lblPocketHTML.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
-			// m_labVersion
+			// m_lblVersion
 			// 
-			this.m_labVersion.Location = new System.Drawing.Point(64, 32);
-			this.m_labVersion.Size = new System.Drawing.Size(112, 16);
-			this.m_labVersion.Text = "Version 1.1";
-			this.m_labVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_lblVersion.Location = new System.Drawing.Point(64, 32);
+			this.m_lblVersion.Size = new System.Drawing.Size(112, 32);
+			this.m_lblVersion.Text = "Version 1.1";
+			this.m_lblVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// pictureBox1
 			// 
@@ -89,34 +88,34 @@ namespace ISquared.PocketHTML
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(84, 192);
+			this.button1.Location = new System.Drawing.Point(84, 208);
 			this.button1.Text = "OK";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// label6
+			// m_lblURL
 			// 
-			this.label6.Location = new System.Drawing.Point(0, 48);
-			this.label6.Size = new System.Drawing.Size(232, 16);
-			this.label6.Text = "http://www.isquaredsoftware.com";
-			this.label6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_lblURL.Location = new System.Drawing.Point(0, 64);
+			this.m_lblURL.Size = new System.Drawing.Size(232, 16);
+			this.m_lblURL.Text = "http://www.isquaredsoftware.com";
+			this.m_lblURL.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
-			// label7
+			// m_lblMessage
 			// 
-			this.label7.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label7.Location = new System.Drawing.Point(0, 68);
-			this.label7.Size = new System.Drawing.Size(240, 120);
-			this.label7.Text = @"PocketHTML.Net is donationware.  Loosely translated, that means that if you like this program and continue to use it, I'd appreciate it if you registered it for $5.  But, since I hate reg keys and crippleware, this program is fully functional and no registration is required.  Of course, if you like it enough to send more than $5, that would be appreciated too. See the website for donation instructions.";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.m_lblMessage.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
+			this.m_lblMessage.Location = new System.Drawing.Point(0, 84);
+			this.m_lblMessage.Size = new System.Drawing.Size(240, 120);
+			this.m_lblMessage.Text = @"PocketHTML.Net is donationware.  Loosely translated, that means that if you like this program and continue to use it, I'd appreciate it if you registered it for $5.  But, since I hate reg keys and crippleware, this program is fully functional and no registration is required.  Of course, if you like it enough to send more than $5, that would be appreciated too. See the website for donation instructions.";
+			this.m_lblMessage.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// AboutPanel
 			// 
-			this.Controls.Add(this.label7);
-			this.Controls.Add(this.label6);
+			this.Controls.Add(this.m_lblMessage);
+			this.Controls.Add(this.m_lblURL);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.pictureBox1);
-			this.Controls.Add(this.m_labVersion);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.m_lblVersion);
+			this.Controls.Add(this.m_lblPocketHTML);
+			this.Controls.Add(this.m_lblISquared);
 
 		}
 		#endregion

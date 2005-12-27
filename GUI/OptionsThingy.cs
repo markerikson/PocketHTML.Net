@@ -283,7 +283,7 @@ namespace ISquared.PocketHTML
 			this.tabPage2.Size = new System.Drawing.Size(232, 174);
 			this.tabPage2.Text = "QuickTags";
 			// 
-			// label6
+			// m_lblURL
 			// 
 			this.label6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
 			this.label6.Location = new System.Drawing.Point(7, 4);
