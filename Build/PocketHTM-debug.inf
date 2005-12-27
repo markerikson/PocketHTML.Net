@@ -1,0 +1,49 @@
+[Version]
+Signature="$Windows NT$"
+Provider="ISquared Software"
+CESignature="$Windows CE$"
+
+[CEStrings]
+AppName="PocketHTML.Net"
+InstallDir=%CE1%\%AppName%
+
+[DefaultInstall]
+CEShortcuts=Shortcuts
+CopyFiles=Files.Common, Help, Templates
+
+[SourceDisksNames]
+1=,"Common1",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\Debug\"
+2=,"Common2",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\"
+3=,"Common3",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\Templates\"
+
+[SourceDisksFiles]
+PocketHTML.Net.exe=1
+PHN.html=2
+pockethtml.ini=2
+tags.xml=2
+menu.xml=2
+filedialogs.dll=2
+template1.html=3
+
+[DestinationDirs]
+Files.Common=0,%InstallDir%
+Help=0,%CE2%
+Templates=0,%InstallDir%\Templates
+Shortcuts=0,%CE2%\Start Menu
+
+[Files.Common]
+"PocketHTML.Net.exe"
+"pockethtml.ini"
+"tags.xml"
+"menu.xml"
+"filedialogs.dll"
+
+[Help]
+"PHN.html"
+
+[Templates]
+"template1.html"
+
+[Shortcuts]
+PocketHTML.Net,0,PocketHTML.Net.exe,%CE11%
+ 

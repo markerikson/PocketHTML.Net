@@ -1,0 +1,21 @@
+<Project name="phnbuild" standardNamespace="PocketHTMLBuild" description="" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="Boo">
+  <Contents>
+    <File name=".\phnbuild.boo" subtype="Code" buildaction="Compile" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="True" name="Debug">
+    <CompilerOptions runtime="MsNet" compileTarget="Exe" includeDebugInformation="True" commandLineParameters="" pauseConsoleOutput="True" duckTypingByDefault="False" />
+    <Output directory="..\" assembly="phnbuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="True" name="Debug">
+      <CompilerOptions runtime="MsNet" compileTarget="Exe" includeDebugInformation="True" commandLineParameters="" pauseConsoleOutput="True" duckTypingByDefault="False" />
+      <Output directory="..\" assembly="phnbuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+    </Configuration>
+    <Configuration runwithwarnings="True" name="Release">
+      <CompilerOptions runtime="MsNet" compileTarget="Exe" includeDebugInformation="False" commandLineParameters="" pauseConsoleOutput="True" duckTypingByDefault="False" />
+      <Output directory="..\bin\Release" assembly="PocketHTMLBuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+    </Configuration>
+  </Configurations>
+</Project>
