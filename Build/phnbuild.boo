@@ -15,12 +15,12 @@ def BuildSourceDiskString(num, currDir, destDir):
 	ncsb.Append("\"")
 	ncsb.Append(num)
 	ncsb.Append("\" ")
-	ncsb.Append(",\"Common")
+	ncsb.Append(",\"~qCommon")
 	ncsb.Append(num)
-	ncsb.Append("\",,")
-	ncsb.Append("\"")
+	ncsb.Append("~q\",,")
+	ncsb.Append("\"~q")
 	ncsb.Append(destDir)
-	ncsb.Append("\"")
+	ncsb.Append("\\~q\"")
 	
 	return ncsb.ToString()
 	
@@ -120,15 +120,17 @@ def Main(argv as (string)):
 	
 	print(output)
 	
-	destCabName = newBuildDir + "\\PocketHTML" + versionString + ".cab"
-	File.Move(newBuildDir + "\\PocketHTML.cab", destCabName)
+	originalCabName = "PocketHTML.cab"
+	originalCabLocation = newBuildDir + "\\" + originalCabName
 	
-	nircmdArgs = BuildSetupINIString(currDir, destCabName)
+	nircmdArgs = BuildSetupINIString(currDir, originalCabName)
 	print("nircmdargs: " + nircmdArgs)
 	nircmd.StartInfo.Arguments = nircmdArgs
 	nircmd.Start()
 	nircmd.WaitForExit()
 	
+	tempCabLocation = currDir + "\\" + originalCabName
+	File.Copy(originalCabLocation, tempCabLocation)
 	ezsetup = Process()
 	ezsetup.StartInfo.FileName = "ezsetup.exe"
 	ezsetupArgs = "-l english -i PHNSetup.ini -r readme-" + buildMode + ".txt -e eula.txt -o " + newBuildDir + "\\PocketHTML" + versionString + "Setup.exe"
@@ -142,4 +144,11 @@ def Main(argv as (string)):
 	ezsetup.WaitForExit()
 	
 	print(output)
+	
+	destCabName = "PocketHTML" + versionString + ".cab"
+	destCabLocation = newBuildDir + "\\" + destCabName
+	#if(File.Exists(destCabLocation)):
+	#	File.Delete(destCabLocation)
+	File.Copy(newBuildDir + "\\PocketHTML.cab", destCabLocation)
+	File.Delete(tempCabLocation)
 	print("Build complete")

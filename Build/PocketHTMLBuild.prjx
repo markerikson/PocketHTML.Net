@@ -2,20 +2,22 @@
   <Contents>
     <File name=".\phnbuild.boo" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
-  <References />
+  <References>
+    <Reference type="Gac" refto="System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" localcopy="True" />
+  </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="True" name="Debug">
     <CompilerOptions runtime="MsNet" compileTarget="Exe" includeDebugInformation="True" commandLineParameters="" pauseConsoleOutput="True" duckTypingByDefault="False" />
-    <Output directory="..\" assembly="phnbuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+    <Output directory=".\" assembly="phnbuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="True" name="Debug">
       <CompilerOptions runtime="MsNet" compileTarget="Exe" includeDebugInformation="True" commandLineParameters="" pauseConsoleOutput="True" duckTypingByDefault="False" />
-      <Output directory="..\" assembly="phnbuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+      <Output directory=".\" assembly="phnbuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="True" name="Release">
       <CompilerOptions runtime="MsNet" compileTarget="Exe" includeDebugInformation="False" commandLineParameters="" pauseConsoleOutput="True" duckTypingByDefault="False" />
-      <Output directory="..\bin\Release" assembly="PocketHTMLBuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+      <Output directory=".\bin\Release" assembly="PocketHTMLBuild" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>
