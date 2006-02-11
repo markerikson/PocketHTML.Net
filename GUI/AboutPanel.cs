@@ -33,6 +33,8 @@ namespace ISquared.PocketHTML
 			pictureBox1.Image = bmp;
 			string buildNumber = Utility.AssemblyVersion();
 			m_lblVersion.Text = PocketHTMLEditor.VersionText +"\r\n" + buildNumber;
+
+			DpiHelper.AdjustAllControls(this);
 		}
 
 		/// <summary>

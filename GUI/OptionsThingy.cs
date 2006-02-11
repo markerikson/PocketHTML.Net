@@ -87,17 +87,11 @@ namespace ISquared.PocketHTML
 			//
 			InitializeComponent();
 			
-			
-			//IterSort iters = new IterSort(parent.TagHash);
 			this.Parent = parent;
 			this.config = PocketHTMLEditor.Config;
 			maineditor = mainform;
 
-
 			currentButtonValues = new string[16];			
-
-			
-
 
 			m_tagHash = mainform.TagHash;
 			ICollection ickeys = m_tagHash.Keys;
@@ -105,15 +99,11 @@ namespace ISquared.PocketHTML
 			ickeys.CopyTo(keys, 0);
 			Array.Sort(keys);
 
-			//for(int i = 0; i < keys.Length; i++)
 			foreach(string s in keys)
 			{
 				comboBox1.Items.Add(s);
 			}
 
-			ResetValues();
-
-			//udButtons.Value = 1;
 			// TODO This is hardcoded.  Fix it somehow?
 			boolnames = new string[]{"XHTMLTags", "TextWrap", "PageWrap", "ClearType",
 										"IndentHTML", "AutoIndent", "HardwareButtonShowsMenu",
@@ -123,6 +113,9 @@ namespace ISquared.PocketHTML
 									cbMonospacedFont};
 
 			ResetCheckboxes();
+			ResetValues();
+
+			DpiHelper.AdjustAllControls(this);
 			
 		}
 
@@ -136,7 +129,6 @@ namespace ISquared.PocketHTML
 				boxes[i].Checked = chk;
 			}
 			comboBox2.SelectedIndex = 0;
-			//comboBox2_SelectedIndexChanged(this, new System.EventArgs());
 		}
 
 		internal void ResetValues()
@@ -148,18 +140,14 @@ namespace ISquared.PocketHTML
 				currentButtonValues[i] = (string)buttonTags[buttons[i].Name];
 			}
 			comboBox2.SelectedIndex = 0;
-			//comboBox2_SelectedIndexChanged(this, new System.EventArgs());
-			//comboBox1_SelectedIndexChanged(this, new System.EventArgs());
 
 			string hardwareButtonName = config.GetValue("Options", "HardwareButton");
 			string sButtonNumber = hardwareButtonName.Substring(hardwareButtonName.Length - 1);
 			int buttonNumber = Int32.Parse(sButtonNumber);
 
 			nudHardwareButton.Value = buttonNumber;
-			nudHardwareButton.Enabled = cbHardwareButtons.Checked;
 
 		}
-
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -280,10 +268,10 @@ namespace ISquared.PocketHTML
 			this.tabPage2.Controls.Add(this.label1);
 			this.tabPage2.Controls.Add(this.comboBox1);
 			this.tabPage2.Location = new System.Drawing.Point(0, 0);
-			this.tabPage2.Size = new System.Drawing.Size(232, 174);
+			this.tabPage2.Size = new System.Drawing.Size(240, 177);
 			this.tabPage2.Text = "QuickTags";
 			// 
-			// m_lblURL
+			// label6
 			// 
 			this.label6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
 			this.label6.Location = new System.Drawing.Point(7, 4);
@@ -322,6 +310,7 @@ namespace ISquared.PocketHTML
 			this.cbHardwareButtons.Location = new System.Drawing.Point(5, 129);
 			this.cbHardwareButtons.Size = new System.Drawing.Size(196, 16);
 			this.cbHardwareButtons.Text = "Hardware button shows tag menu\r\n";
+			this.cbHardwareButtons.CheckStateChanged += new System.EventHandler(this.cbHardwareButtons_CheckStateChanged);
 			// 
 			// comboBox2
 			// 
@@ -393,21 +382,11 @@ namespace ISquared.PocketHTML
 			string text = (string)comboBox1.SelectedItem;
 			Tag t = (Tag)m_tagHash[text];
 			label2.Text = t.StartTag;
-			//int idx = Convert.ToInt32(udButtons.Value - 1);
+
 			int idx = comboBox2.SelectedIndex;
 			currentButtonValues[idx] = text;
-			//MessageBox.Show(th[text].ToString());
-		}
 
-		/*
-		private void numericUpDown1_ValueChanged(object sender, System.EventArgs e)
-		{
-			int num = Convert.ToInt32(udButtons.Value - 1);
-			string refname = currentButtonValues[num];//maineditor.GetButtonString(num);
-			int index = comboBox1.Items.IndexOf(refname);
-			comboBox1.SelectedIndex = index;					
 		}
-		*/
 
 		private void comboBox2_SelectedIndexChanged(object sender, System.EventArgs e)
 		{

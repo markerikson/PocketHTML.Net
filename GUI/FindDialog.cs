@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using ISquared.Win32Interop.WinEnums;
+//using ISquared.Win32Interop.WinEnums;
 using System.Text.RegularExpressions;
 
 namespace ISquared.PocketHTML

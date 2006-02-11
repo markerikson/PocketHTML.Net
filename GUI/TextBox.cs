@@ -60,7 +60,7 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using OpenNETCF.Win32;
 using ISquared.Win32Interop;
-using ISquared.Win32Interop.WinEnums;
+//using ISquared.Win32Interop.WinEnums;
 using System.Text.RegularExpressions;
 using System.Text;
 

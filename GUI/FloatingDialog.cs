@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using ISquared.Win32Interop.WinEnums;
+//using ISquared.Win32Interop.WinEnums;
 using System.Text.RegularExpressions;
 
 namespace ISquared.PocketHTML
@@ -55,7 +55,8 @@ namespace ISquared.PocketHTML
 			this.Controls.Add(titlePanel);
 			moving = false;
 			penblack = new Pen(Color.Black);
-			
+
+			DpiHelper.AdjustAllControls(this);
 		}
 
 		/// <summary>

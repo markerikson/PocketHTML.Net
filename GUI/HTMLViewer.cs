@@ -562,7 +562,7 @@ namespace OpenNETCF.Windows.Forms
 		{
 #if !DESIGN
 			//get handle to internal webview control
-			IntPtr webviewhandle = Win32Window.GetWindow(m_msgwnd.ControlHWnd, Win32Window.GetWindowParam.GW_CHILD);
+			IntPtr webviewhandle = Win32Window.GetWindow(m_msgwnd.ControlHWnd, GW.CHILD);
 			//set focus to webview control
 			Win32Window.SetFocus(webviewhandle);
 #endif
