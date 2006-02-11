@@ -3,7 +3,7 @@
     <Execute entry="phnbuild" type="None" />
   </StartMode>
   <Entries>
-    <Entry filename=".\.\PocketHTMLBuild.prjx" />
+    <Entry filename=".\PocketHTMLBuild.prjx" />
   </Entries>
   <Configurations active="Debug">
     <Configuration name="Release">
