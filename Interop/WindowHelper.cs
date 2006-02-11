@@ -599,14 +599,14 @@ namespace OpenNETCF.Win32
 		/// <param name="nCmd">Specifies the relationship between the specified window and the window whose handle is to be retrieved.</param>
 		/// <returns>A window handle indicates success. NULL indicates that no window exists with the specified relationship to the specified window.</returns>
 		[DllImport("coredll")]
-		public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowParam nCmd);
+		public static extern IntPtr GetWindow(IntPtr hWnd, GW nCmd);
 
 		/// <summary>
 		/// Retrieves the handle to a window that has the specified relationship to the Win32Window.
 		/// </summary>
 		/// <param name="nCmd">Specifies the relationship between the specified window and the window which is to be retrieved.</param>
 		/// <returns></returns>
-		public Win32Window GetWindow(GetWindowParam nCmd)
+		public Win32Window GetWindow(GW nCmd)
 		{
 			IntPtr hWndNext = GetWindow(hWnd, nCmd);
 			return new Win32Window(hWndNext);	
@@ -781,7 +781,7 @@ namespace OpenNETCF.Win32
 		[DllImport("coredll.dll")]
 		public extern static int SetWindowPos (
 			IntPtr hWnd, SetWindowPosZOrder pos,
-			int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
+			int X, int Y, int cx, int cy, SWP uFlags);
 
 		public static void UpdateWindowStyle(IntPtr hwnd, int RemoveStyle, int AddStyle) 
 		{
@@ -789,17 +789,17 @@ namespace OpenNETCF.Win32
 			style &= ~RemoveStyle;
 			style |= AddStyle;
 			SetWindowLong(hwnd, (int)GetWindowLongParam.GWL_STYLE, style);
-			SetWindowPos(hwnd, 0, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE |
-				SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOSIZE |
-				SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_FRAMECHANGED);
+			SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP.NOMOVE |
+				SWP.NOZORDER | SWP.NOSIZE |
+				SWP.NOACTIVATE | SWP.FRAMECHANGED);
 		}
 
 		public static void SetWindowStyle(IntPtr hwnd, int style) 
 		{
 			SetWindowLong(hwnd, (int)GetWindowLongParam.GWL_STYLE, style);
-			SetWindowPos(hwnd, 0, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE |
-				SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOSIZE |
-				SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_FRAMECHANGED);
+			SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP.NOMOVE |
+				SWP.NOZORDER | SWP.NOSIZE |
+				SWP.NOACTIVATE | SWP.FRAMECHANGED);
 		}
 
 		[DllImport("coredll.dll", EntryPoint="SetParent", SetLastError=true)] 
