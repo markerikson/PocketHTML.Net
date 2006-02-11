@@ -81,6 +81,8 @@ namespace OpenNETCF.Windows.Forms
 		private bool m_shrink = true;
 		private bool m_script = true;
 
+		private string m_filename;
+
 		#endregion
 
 		#region Constructor
@@ -313,7 +315,37 @@ namespace OpenNETCF.Windows.Forms
 		}
 		#endregion
 
-		
+		#region ZoomLevel property
+		public int ZoomLevel
+		{
+			set
+			{
+				int zoom = value;
+				if (zoom > 4)
+				{
+					zoom = 4;
+				}
+				if (zoom < 0)
+				{
+					zoom = 0;
+				}
+
+				Win32Window.SendMessage(this.Handle, (int)HtmlMessage.ZoomLevel, 0, zoom);
+			}
+		}
+
+		public string CurrentFilename
+		{
+			get
+			{
+				return m_filename;
+			}
+			set
+			{
+				m_filename = value;
+			}
+		}
+		#endregion
 
 		#region EnableClearType Property
 		/// <summary>

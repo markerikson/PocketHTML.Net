@@ -13,12 +13,13 @@ using System.Xml;
 using System.Windows.Forms;
 using Ayende;
 using ISquared.Win32Interop;
-using ISquared.Win32Interop.WinEnums;
+//using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
 using ISquared.Debugging;
 using OpenNETCF;
 using OpenNETCF.Windows.Forms;
+using OpenNETCF.Win32;
 using HardwareButtons;
 using MRUSample;
 
@@ -72,7 +73,7 @@ namespace ISquared.PocketHTML
 		//Regex reLeadingSpaces;
 		// TODO actually used?
 		Regex reNewLine;
-		private OptionsPanel m_optionsDialog;
+		private OptionsPanel m_optionsPanel;
 		private EditorPanel m_editorPanel;
 		private Match findmatch;
 		// TODO Not entirely sure if this is actually used
@@ -98,7 +99,7 @@ namespace ISquared.PocketHTML
 		private bool firstOptions;
 		private bool tgetfileExists;
 		//private PHNOptions options;
-		private bool optionsDialogHidden;
+		private bool m_optionsDialogHidden;
 		private MenuItem menuItem4;
 		private MenuItem m_menuFileExit;
 		private MenuItem m_menuFileSaveAs;
@@ -192,10 +193,10 @@ namespace ISquared.PocketHTML
 		}
 		#endregion
 
+		#region Constructor
 
 		public PocketHTMLEditor()
 		{			
-			// TODO Convert to XML config file
 			String inifile = Utility.GetCurrentDir(true) + "pockethtml.ini";
 
 			try
@@ -226,6 +227,7 @@ namespace ISquared.PocketHTML
 					m_config.SetValue("Options", "HardwareButtonShowsMenu", "True");
 					m_config.SetValue("Options", "MonospacedFont", "True");
 					m_config.SetValue("Options", "HardwareButton", "Hardware1");
+					m_config.SetValue("Options", "ZoomLevel", "2");
 					
 				}
 				else
@@ -241,6 +243,7 @@ namespace ISquared.PocketHTML
 				Application.Exit();
 			}
 
+			#if DEBUG
 			if(m_config.SectionExists("Debug"))
 			{
 				if(m_config.GetBool("Debug", "Text"))
@@ -255,28 +258,20 @@ namespace ISquared.PocketHTML
 					TcpTraceListener.InstallListener("PPP_PEER", 6666);
 				}
 			}
-
+			#endif
 			Debug.WriteLine("Configuration created");
 
 			Debug.WriteLine("Options section exists: " + m_config.SectionExists("Options"));
 			Debug.WriteLine("TextWrap exists: " + m_config.ValueExists("Options", "PageWrap"));
-
-			
-			
+						
 			Debug.WriteLine("Beginning PHE construction");
+
 			// Generated form setup
 			InitializeComponent();
 
 			Debug.WriteLine("InitializeComponent complete");
-
 			
 			RefreshTemplates();
-			
-
-
-
-			
-
 
 			Debug.WriteLine("Loading EditorPanel");
 			m_editorPanel = new EditorPanel();
@@ -292,18 +287,13 @@ namespace ISquared.PocketHTML
 			}
 			
 			// TODO Delay-load this panel
-			Debug.WriteLine("Loading OptionsPanel");
-			m_optionsDialog = new OptionsPanel();
-			Debug.WriteLine("OptionsDialog created");
-			m_optionsDialog.Bounds = new Rectangle(0,0, 240, 270);
-			m_optionsDialog.Parent = this;
-			m_optionsDialog.Hide();
-			m_optionsDialog.SendToBack();
-			m_editorPanel.BringToFront();
 
+			/*
 			
 			
-			optionsDialogHidden = true;
+			*/
+			m_editorPanel.BringToFront();
+			m_optionsDialogHidden = true;
 			
 			
 			m_saveFileName = String.Empty;
@@ -312,11 +302,9 @@ namespace ISquared.PocketHTML
 			m_tagHash = new Hashtable();
 			buttonTags = new Hashtable();
 
-
 			m_hardwareButtons = new HardwareButtonMessageWindow();
 			m_hardwareButtons.HardwareButtonPressed += new HardwareButtonPressedHandler(HardwareButtonPressed);
 			
-			//LoadTags();
 			Debug.WriteLine("Loading tags");
 			LoadTagsXTR();
 			Debug.WriteLine("Tags loaded, loading buttons");
@@ -327,16 +315,12 @@ namespace ISquared.PocketHTML
 
 			newline = "\r\n";
 			textList = new ArrayList();
-
-			
+						
 			reNewLine = new Regex(
 				@"\r\n",
 				RegexOptions.IgnoreCase
 				| RegexOptions.Multiline
 				| RegexOptions.IgnorePatternWhitespace);
-
-
-
 
 			// hook up auto-indent
 			//m_editorPanel.TextBox.KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
@@ -347,7 +331,7 @@ namespace ISquared.PocketHTML
 			// HACK firstOptions is ugly.  Get rid of it.
 			firstOptions = true;
 
-			// Note the constant.  Change this?
+			// TODO Note the constant.  Change this?
 			tgetfileExists = File.Exists("\\Windows\\tgetfile.dll");
 
 			findindex = 0;
@@ -356,15 +340,9 @@ namespace ISquared.PocketHTML
 			this.ContextMenu = m_editorPanel.TextBox.ContextMenu;
 			ContextMenu menuTextBox = m_editorPanel.TextBox.ContextMenu;
 
-
-
 			menuTextBox.MenuItems[0].Click += new EventHandler(MenuCopy_Click);
 			menuTextBox.MenuItems[1].Click += new EventHandler(MenuCut_Click);
 			menuTextBox.MenuItems[2].Click += new EventHandler(MenuPaste_Click);
-
-			
-			//
-			//RegisterHKeys.RegisterRecordKey(m_hardwareButtons.Hwnd, RegisterButtons.Hardware1);
 
 			m_mruManager = new MRUManager();
 			m_mruManager.Initialize(this, m_menuFileRecentFiles);
@@ -382,47 +360,15 @@ namespace ISquared.PocketHTML
 			{
 				m_mruManager.Add(recentFiles[i]);
 			}
-			//m_mruManager.Add("\\My Documents\\test1.html");
-			//m_mruManager.Add("\\My Documents\\test2.html");
-			//m_mruManager.Add("\\Program Files\\PocketHTML.Net\\PHN.html");
-			
-			
+
+			DpiHelper.AdjustAllControls(this);
 
 			Debug.WriteLine("PHE constructor complete");
 
-			/*
-			Debug.WriteLine("Loading icons");
-			Icon iconIE = Utility.GetIcon("Graphics.ie");
-			Icon iconTag = Utility.GetIcon("Graphics.Tag");
-
-			Debug.WriteLine("Icons loaded, adding to imagelist");
-
-			StringBuilder sb = new StringBuilder();
-			sb.Append("iconIE: ");
-			sb.Append(iconIE);
-			Debug.WriteLine(sb.ToString());
-
-			sb = new StringBuilder();
-			sb.Append("iconTag: ");
-			sb.Append(iconTag);
-			Debug.WriteLine(sb.ToString());
-
-			imageList1.Images.Add(iconTag);
-			imageList1.Images.Add(iconIE);
-
-			Debug.WriteLine("Icons added, setting indices");
-
-			Size size1 = new Size(0x10, 0x10);
-			imageList1.ImageSize = size1;
-			Debug.WriteLine("Set image size");
-			m_btnTags.ImageIndex = 0;
-			m_btnPreview.ImageIndex = 1;
-			Debug.WriteLine("Set indices");
-
-			Debug.WriteLine("Loading complete");
-			 */ 
+			//m_editorPanel.Browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(Browser_DocumentCompleted);
 		}
 
+#endregion
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -768,7 +714,7 @@ namespace ISquared.PocketHTML
 			Rectangle visible;
 			visible = inputPanel1.VisibleDesktop;
 
-			if(optionsDialogHidden)
+			if(m_optionsDialogHidden)
 			{
 				m_editorPanel.ResizePanel(inputPanel1);
 			}
@@ -806,13 +752,6 @@ namespace ISquared.PocketHTML
 			return (string)buttonTags[name];
 		}
 
-		// TODO Can this be moved to the Utility class?
-		/// <summary>
-		/// Utility function to determine the leading spaces on a line
-		/// </summary>
-		/// <returns></returns>
-		
-
 		/// <summary>
 		/// Overload that takes the name or short name of the tag to insert.
 		/// </summary>
@@ -838,14 +777,14 @@ namespace ISquared.PocketHTML
 		private bool InsertTag(Tag tag)
 		{
 			TextBoxEx tb = m_editorPanel.TextBox;
-			//IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
 			StringBuilder sb = new StringBuilder();
 			String spaces = tb.GetLeadingSpaces();
+
 			// basically, an additional level of indentation
 			// TODO make this an option?
 			String spacesPlus = spaces + "\t";
 
-			int currentLineNum = tb.CurrentLine;//CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0); 
+			int currentLineNum = tb.CurrentLine;
 
 			int selstart = tb.SelectionStart;
 
@@ -933,8 +872,7 @@ namespace ISquared.PocketHTML
 					}
 				}				
 			}
-
-			//CoreDLL.SendMessageString(pTB, (int)EM.REPLACESEL, 1, sb.ToString());		
+	
 			tb.ReplaceSelection(sb.ToString());
 
 			int charIndex = 0; 
@@ -1004,7 +942,7 @@ namespace ISquared.PocketHTML
 						}
 					}
 
-					charIndex = tb.GetLineIndex(newLineNum);//CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, newLineNum, 0);
+					charIndex = tb.GetLineIndex(newLineNum);
 				}
 
 				else
@@ -1012,12 +950,12 @@ namespace ISquared.PocketHTML
 					if(tag.ClosingTag)
 					{		
 						charIndex = m_editorPanel.TextBox.SelectionStart;
-						cursorLocationIndex -= tag.EndTag.Length;//tag.StartTag.Length;
+						cursorLocationIndex -= tag.EndTag.Length;
 
 						if(tag.InnerTags)
 						{
 							Tag innerTag = (Tag)m_tagHash[tag.DefaultInnerTag];
-							cursorLocationIndex -= innerTag.EndTag.Length;//StartTag.Length;
+							cursorLocationIndex -= innerTag.EndTag.Length;
 						}
 					}
 				}				
@@ -1029,7 +967,6 @@ namespace ISquared.PocketHTML
 			//if(tag.NormalTag)
 			if(tag.AngleBrackets)
 			{
-				//int sel = CoreDLL.SendMessage(pTB, (int)EM.SETSEL, charIndex, charIndex);
 				tb.Focus();
 				tb.SelectionStart = charIndex;
 				tb.SelectionLength = 0;
@@ -1039,45 +976,6 @@ namespace ISquared.PocketHTML
 
 			return true;			
 		}
-
-		/*
-		void textBox1_KeyPress(Object o, KeyPressEventArgs e)
-		{
-			// The keypressed method uses the KeyChar property to check 
-			// whether the ENTER key is pressed. 
-
-			// If the ENTER key is pressed, the Handled property is set to true, 
-			// to indicate the event is handled.
-			switch(e.KeyChar)
-			{
-				// Enter
-				case (char)13:
-				{
-					if (firstEnter)
-					{
-						firstEnter = false;
-
-						if (m_config.GetBool("Options", "AutoIndent"))
-						{
-							e.Handled = true;
-							m_editorPanel.TextBox.AutoIndent();
-						}
-
-						firstEnter = true;
-					}
-					break;
-				}
-				// Tab
-				case (char)9:
-				{
-
-					break;
-				}
-			}		
-		}
-		 */ 
-
-		
 
 		private void LoadTagsXTR()
 		{		
@@ -1147,113 +1045,6 @@ namespace ISquared.PocketHTML
 				}
 			}
 		}
-		/*
-		// TODO Benchmark this sucker
-		private void LoadTags()
-		{
-			string name = String.Empty;
-			StringBuilder sberror = new StringBuilder();
-			try
-			{
-				StreamReader sr = null;
-				
-				name = Utility.GetCurrentDir(true);
-				name += "tags.csv";
-				sr = new StreamReader(name);	
-				
-				ArrayList al = new ArrayList();
-				string inline = null;
-				string[] items;
-				char[] itemSep = {','};
-				char[] defattSep = {'/'};
-				string[] cols = {"Name", "Individual", "InnerTag", "ShortName", "DefaultAttributes"};
-							
-				if(sr == null)
-				{
-					string err = "StreamReader was left null in LoadTags()\nFilename: " + name;
-
-					//DebugMessage(err, new Exception("Oops :)"));
-					Debug.WriteLine(err);
-					Application.Exit();
-				}
-
-				while( (inline = sr.ReadLine()) != null)
-				{
-					al.Add(inline);
-				}
-
-				foreach(String l in al)
-				{
-					String line = l.Trim();
-					if( (line.Length == 0) || (line[0] == '#'))
-					{
-						continue;
-					}
-					else
-					{
-
-						items = line.Split(itemSep);	
-						for(int i = 0; i < items.Length; i++)
-						{
-							items[i] = items[i].Trim();
-						}
-					
-						Tag t = new Tag();
-						t.Name = items[0];
-						t.NormalTag = Convert.ToBoolean(items[1]);
-						t.IndividualTag = Convert.ToBoolean(items[2]);
-						t.MultiLineTag = Convert.ToBoolean(items[3]);
-						t.DefaultInnerTag = items[4];
-						if(t.DefaultInnerTag != String.Empty)
-						{
-							t.InnerTags = true;
-						}
-						t.ShortName = items[5];
-						if(items[6] != String.Empty)
-						{					
-							t.DefaultAttributes = items[6].Split(defattSep);
-							for(int i = 0; i < t.DefaultAttributes.Length; i++)
-							{
-								t.DefaultAttributes[i] = t.DefaultAttributes[i].Trim();
-							}
-						}
-						else
-						{
-							t.DefaultAttributes = new String[0];						
-						}
-						
-						if(t.ShortName != String.Empty)
-						{
-							tagHash[t.ShortName] = t;
-						}
-						else
-						{
-							tagHash[t.Name] = t;
-						}
-
-						t.Config = this.config;
-					}
-				}
-			}
-			catch(DirectoryNotFoundException)
-			{
-				//StreamWriter sw = new StreamWriter(GetCurrentDir(true) + "phnerror.txt", true);
-				sberror.Append("Exception while loading tags.csv\n");
-				sberror.Append("Filename: " + name);
-				//DebugMessage(sberror.ToString(), dnfe);
-				Debug.WriteLine(sberror.ToString());
-				
-				Application.Exit();
-			}
-			catch(Exception e)
-			{
-				sberror.Append("Caught generic exception in LoadTags()\n");
-				sberror.Append("Filename: " + name + "\n");
-				Debug.WriteLine(sberror.ToString() + e);
-				Application.Exit();
-			}
-		}
-		*/
 
 		internal void SetupButtons()
 		{
@@ -1304,7 +1095,6 @@ namespace ISquared.PocketHTML
 			Regex findregex, bool scroll)
 		{
 			StringBuilder sb = new StringBuilder();
-			//this.findindex = ed.TextBox.SelectionStart + ed.TextBox.SelectionLength;
 
 			findmatch = findregex.Match(targetString, index);			
 
@@ -1332,24 +1122,26 @@ namespace ISquared.PocketHTML
 			return bRet;
 		}
 
-
-
 		private void SetupOptions()
 		{
 			try
 			{
-				//Debug.WriteLine("Starting SetupOptions");
 				bool tw = m_config.GetBool("Options", "TextWrap");
 				Debug.WriteLine("TextWrap: " + tw);
-				Debug.WriteLine("ed: " + m_editorPanel.ToString());
-				Debug.WriteLine("ed.TextBox: " + m_editorPanel.TextBox.ToString());
+				//Debug.WriteLine("ed: " + m_editorPanel.ToString());
+				//Debug.WriteLine("ed.TextBox: " + m_editorPanel.TextBox.ToString());
 
 				m_editorPanel.TextBox.WordWrap = tw;
 				Debug.WriteLine("Set TextWrap");
-				//ed.HtmlControl.WordWrap = config.GetBool("Options", "PageWrap");
 
 				m_editorPanel.HtmlControl.ShrinkMode = m_config.GetBool("Options", "PageWrap");
+				//bool wrapPreview = m_config.GetBool("Options", "PageWrap");
+				//m_editorPanel.Browser.EnableShrink = wrapPreview;
 				Debug.WriteLine("Set PageWrap");
+
+				int zoomLevel = int.Parse(m_config.GetValue("Options", "ZoomLevel"));
+				//m_editorPanel.Browser.ZoomLevel = zoomLevel;
+				m_editorPanel.HtmlControl.ZoomLevel = zoomLevel;
 
 				if(m_editorPanel.TextBox.WordWrap)
 				{
@@ -1363,31 +1155,11 @@ namespace ISquared.PocketHTML
 				Debug.WriteLine("Set scrollbars");
 
 				m_editorPanel.TextBox.AutoIndent = m_config.GetBool("Options", "AutoIndent");
+
 				// Update the textbox to use 4-space tabs (4 dialog units per character)
 				Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
 
-				/*
-				bool useHardwareButton = m_config.GetBool("Options", "HardwareButtonShowsMenu");
-
-				if(useHardwareButton)
-				{
-					string buttonName = m_config.GetValue("Options", "HardwareButton");
-					RegisterButtons buttons = (RegisterButtons)EnumEx.Parse(typeof(RegisterButtons), buttonName);
-
-					if(buttons != RegisterHKeys.RegisteredButtons)
-					{
-						RegisterHKeys.UnregisterRecordKey(m_hardwareButtons.Hwnd, RegisterHKeys.RegisteredButtons);
-						RegisterHKeys.RegisterRecordKey(m_hardwareButtons.Hwnd, buttons);
-					}					
-				}
-				else
-				{
-					RegisterHKeys.UnregisterRecordKey(m_hardwareButtons.Hwnd, RegisterHKeys.RegisteredButtons);			
-				}
-				*/
-
 				UpdateHardwareButton();
-
 
 				bool useMonospaceFont = Boolean.Parse(m_config.GetValue("Options", "MonospacedFont"));
 
@@ -1401,9 +1173,7 @@ namespace ISquared.PocketHTML
 					f = new Font("Tahoma", 8, FontStyle.Regular);
 				}
 
-				m_editorPanel.TextBox.Font = f;
-
-				
+				m_editorPanel.TextBox.Font = f;				
 			}
 			catch(Exception e)
 			{
@@ -1439,77 +1209,34 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-
-		// TODO Either move these to a new TextBox class, or use OpenNetCF's TextBoxEx
-		/*
-		private void Copy()
-		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessage(pTB, (int)WM.COPY, 0, 0);
-		}
-
-		private void Undo()
-		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessage(pTB, (int)WM.UNDO, 0, 0);
-		}
-
-		private void Paste()
-		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessage(pTB, (int)WM.PASTE, 0, 0);
-			m_editorPanel.TextBox.Modified = true;
-		}
-
-		private void Clear()
-		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessage(pTB, (int)EM.SETSEL, 0, -1);
-			CoreDLL.SendMessage(pTB, (int)WM.CLEAR, 0, 0);
-		}
-
-		private void Cut()
-		{
-			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			CoreDLL.SendMessage(pTB, (int)WM.CUT, 0, 0);
-		}
-		*/ 
-
 		private void MenuUndo_Click(object sender, EventArgs e)
 		{
-			//Undo();
 			m_editorPanel.TextBox.Undo();
 		}
 
 		private void MenuCopy_Click(object sender, EventArgs e)
 		{
-			//Copy();
 			m_editorPanel.TextBox.Copy();
 		}
 
 		private void MenuCut_Click(object sender, EventArgs e)
 		{
-			//Cut();
 			IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
 			m_editorPanel.TextBox.Cut();
 		}
 
 		private void MenuPaste_Click(object sender, EventArgs e)
 		{
-			//Paste();
 			m_editorPanel.TextBox.Paste();
 		}
 
 		private void MenuClear_Click(object sender, EventArgs e)
 		{
-			//Clear();
 			m_editorPanel.TextBox.Clear();
 		}
 
 		private void MenuSelectAll_Click(object sender, EventArgs e)
 		{
-			//IntPtr pTB1 = CoreDLL.GetHandle(m_editorPanel.TextBox);
-			//CoreDLL.SendMessage(pTB1, (int)EM.SETSEL, 0, -1);
 			m_editorPanel.TextBox.SelectAll();
 		}
 
@@ -1517,7 +1244,6 @@ namespace ISquared.PocketHTML
 		{
 			OpenFile();
 		}
-
 
 		private void OpenFile()
 		{
@@ -1631,13 +1357,11 @@ namespace ISquared.PocketHTML
 		{
 			FileStream fs = new FileStream(filename, FileMode.Open);
 			String contents = Utility.DecodeData(fs);
-			//StreamReader sr = new StreamReader(filename, Encoding.UTF8);
-			//String s =  sr.ReadToEnd();		
-			//sr.Close();
-			//CoreDLL.SendMessageString(CoreDLL.GetHandle(m_editorPanel.TextBox), 
-			//	(int)WM.SETTEXT, 0, s);
 			m_editorPanel.TextBox.Text = contents;
+
 			this.m_saveFileName = filename;
+			//m_editorPanel.Browser.CurrentFileName = filename;
+			m_editorPanel.HtmlControl.CurrentFilename = filename;
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			m_editorPanel.TextBox.Modified = false;
 
@@ -1661,40 +1385,8 @@ namespace ISquared.PocketHTML
 				(saveas) )
 			{
 				filename = GetFileName(true);
-				/*
-				if(!tgetfileExists)
-				{
-					SaveFileDialog sfd = new SaveFileDialog();
-					sfd.Filter = "HTML files (*.html)|*.html|All files (*.*)|*.*";
-					DialogResult dr = sfd.ShowDialog();
-
-					if(dr == DialogResult.OK)
-					{	
-						name  = sfd.FileName;
-
-						if(sfd.FilterIndex == 1)
-						{
-							int idx = name.LastIndexOf(".");
-							string justname = name.Substring(0, idx);
-							name = justname + ".html";
-						}	
-					}
-					else
-					{
-						return;
-					}
-				}
-				else
-				{
-					name = TGetFile.TGetFileName(false);
-					if(name == String.Empty)
-					{
-						return;
-					}					
-				}				
-				*/
-
-				m_saveFileName = filename;
+				
+				
 			}
 			else
 			{
@@ -1705,6 +1397,10 @@ namespace ISquared.PocketHTML
 			{
 				return false;
 			}
+
+			m_saveFileName = filename;
+			//m_editorPanel.Browser.CurrentFileName = filename;
+			m_editorPanel.HtmlControl.CurrentFilename = filename;
 
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			StreamWriter sw = new StreamWriter(filename);
@@ -1750,8 +1446,8 @@ namespace ISquared.PocketHTML
 			}
 			else
 			{
-				//ed.HtmlControl.DestroyHTMLControl();
 				m_editorPanel.HtmlControl.Dispose();
+				//m_editorPanel.Browser.Dispose();
 
 				string[] recentFiles = m_mruManager.FileNames;
 
@@ -1776,23 +1472,29 @@ namespace ISquared.PocketHTML
 
 		internal void MenuToolsOptions_Click(object sender, EventArgs e)
 		{
-			if(optionsDialogHidden)
+			if(m_optionsDialogHidden)
 			{
 				m_editorPanel.Hide();
 				// HACK Ugly hack.  Gotta be a better way to do it.
-				if(firstOptions)
+				if(m_optionsPanel == null)//firstOptions))
 				{
-					m_optionsDialog.Load(this);
+					Debug.WriteLine("Loading OptionsPanel");
+					m_optionsPanel = new OptionsPanel(this);
+					Debug.WriteLine("OptionsDialog created");
+					m_optionsPanel.Bounds = new Rectangle(0, 0, DpiHelper.Scale(240), DpiHelper.Scale(270));
+					m_optionsPanel.Parent = this;
+
+					//m_optionsPanel.Load(this);
 					
 				}
 				else
 				{
-					m_optionsDialog.Reset();					
+					m_optionsPanel.Reset();					
 				}
-				m_optionsDialog.Show();
+				m_optionsPanel.Show();
 
 				firstOptions = false;
-				optionsDialogHidden = false;
+				m_optionsDialogHidden = false;
 				foreach(MenuItem m in m_mainMenu.MenuItems)
 				{
 					m.Enabled = false;
@@ -1800,15 +1502,15 @@ namespace ISquared.PocketHTML
 			}
 			else
 			{
-				if(m_optionsDialog.OK)
+				if(m_optionsPanel.Result == DialogResult.OK)
 				{
 					SetupButtons();
 					SetupOptions();
 				}
 				
-				m_optionsDialog.Hide();
+				m_optionsPanel.Hide();
 				m_editorPanel.Show();
-				optionsDialogHidden = true;
+				m_optionsDialogHidden = true;
 				foreach(MenuItem m in m_mainMenu.MenuItems)
 				{
 					m.Enabled = true;
@@ -1839,19 +1541,6 @@ namespace ISquared.PocketHTML
 		{
 			this.Close();			
 		}
-
-		/*
-		private void PocketHTMLEditor_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			Point p = new Point(e.X, e.Y);
-			Size s = ed.TextBox.Size;
-			if( (p.X <= s.Width) &&
-				(p.Y <= s.Height ))
-			{
-				MessageBox.Show(p.X.ToString() + ", " + p.Y.ToString());
-			}
-		}
-		*/
 
 		// TODO Remove 240x320 specific code
 		private void toolBarButton1_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
@@ -2040,23 +1729,14 @@ namespace ISquared.PocketHTML
 		
 		private void PocketHTMLEditor_Load(object sender, EventArgs e)
 		{
-			/*
-			Size size1;
-			this.ImageList1.Images.Add(Module1.GetIcon("home"));
-			this.ImageList1.Images.Add(Module1.GetIcon("help"));
-			size1 = new Size(0x10, 0x10);
-			this.ImageList1.ImageSize = size1;
-			this.ToolBar1.ImageList = this.ImageList1;
-			this.ToolBarButton1.ImageIndex = 0;
-			this.ToolBarButton2.ImageIndex = 1;
-			*/
-
 			// Retrieve the embedded toolbar graphics.  Needed because
 			// the designer-generated ImageList doesn't support transparency.
 
 			Debug.WriteLine("Loading icons");
-			Icon iconIE = Utility.GetIcon("Graphics.ie");
-			Icon iconTag = Utility.GetIcon("Graphics.Tag");
+			int iconSize = DpiHelper.Scale(16);
+
+			Icon iconIE = Utility.GetIcon("Graphics.ie", iconSize);
+			Icon iconTag = Utility.GetIcon("Graphics.Tag", iconSize);
 
 			Debug.WriteLine("Icons loaded, adding to imagelist");
 
@@ -2070,21 +1750,22 @@ namespace ISquared.PocketHTML
 			sb.Append(iconTag);
 			Debug.WriteLine(sb.ToString());
 
-			imageList1.Images.Add(iconTag);
-			imageList1.Images.Add(iconIE);
+			
 
 			Debug.WriteLine("Icons added, setting indices");
 
-			Size size1 = new Size(0x10, 0x10);
+			
+			Size size1 = new Size(iconSize, iconSize);
 			imageList1.ImageSize = size1;
+
+			imageList1.Images.Add(iconTag);
+			imageList1.Images.Add(iconIE);
 			Debug.WriteLine("Set image size");
 			m_btnTags.ImageIndex = 0;
 			m_btnPreview.ImageIndex = 1;
 			Debug.WriteLine("Set indices");
 
 			Debug.WriteLine("Loading complete");
-
-			
 		}
 
 		private void PocketHTMLEditor_Closed(object sender, EventArgs e)

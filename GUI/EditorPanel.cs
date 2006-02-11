@@ -8,7 +8,8 @@ using System.IO;
 //using CKIUtil.Controls.HTMLViewer;
 using OpenNETCF.Windows.Forms;
 using ISquared.Win32Interop;
-using ISquared.Win32Interop.WinEnums;
+using OpenNETCF.Win32;
+//using ISquared.Win32Interop.WinEnums;
 
 
 
@@ -33,6 +34,7 @@ namespace ISquared.PocketHTML
 		private bool showAbout;
 
 		private HTMLViewer htmlControl;
+		//private WebBrowser m_browser;
 
 		private Menu currentMenu;
 
@@ -78,6 +80,7 @@ namespace ISquared.PocketHTML
 		/// <summary>
 		/// Property HtmlControl (HTMLViewer)
 		/// </summary>
+		
 		public HTMLViewer HtmlControl
 		{
 			get
@@ -89,8 +92,20 @@ namespace ISquared.PocketHTML
 				this.htmlControl = value;
 			}
 		}		
-
-
+		
+		/*
+		public WebBrowser Browser
+		{
+			get
+			{
+				return m_browser;
+			}
+			set
+			{
+				m_browser = value;
+			}
+		}
+		*/
 		// TODO Is there a better way to handle this than exposing the buttons as a property?
 
 		/// <summary>
@@ -149,6 +164,13 @@ namespace ISquared.PocketHTML
 			htmlControl = new HTMLViewer();
 			htmlControl.Bounds = viewerPanel.Bounds;
 			htmlControl.Parent = viewerPanel;
+			/*
+			m_browser = new WebBrowser();
+			m_browser.Bounds = viewerPanel.Bounds;
+			m_browser.Parent = viewerPanel;
+			m_browser.BorderStyle = BorderStyle.None;
+			*/
+
 			//htmlControl.CreateHTMLControl();
 
 			int width = 30;
@@ -516,6 +538,7 @@ namespace ISquared.PocketHTML
 						just when the options are changed?
 				*/
 				bool ct = PocketHTMLEditor.Config.GetBool("Options", "ClearType");
+				
 				if (htmlControl.Source != m_textbox.Text ||//(htmlControl.HtmlString != tb.Text) ||
 					(ct != htmlControl.EnableClearType))
 									
@@ -525,6 +548,15 @@ namespace ISquared.PocketHTML
 					htmlControl.EnableClearType = ct;
 					htmlControl.Source = m_textbox.Text;
 				}	
+				 
+				/*
+				if(ct != m_browser.EnableClearType)
+				{
+					m_browser.EnableClearType = ct;
+				}
+				
+				m_browser.DocumentText = m_textbox.Text;
+				*/
 			}
 			else
 			{
@@ -557,21 +589,25 @@ namespace ISquared.PocketHTML
 		{
 			Rectangle visible;
 			visible = inputPanel1.VisibleDesktop;
+			int scaledSize = DpiHelper.Scale(32);
 			if (inputPanel1.Enabled == true)
 			{
-				viewerPanel.Height = this.ClientSize.Height - 32 - inputPanel1.Bounds.Height;
-				tbPanel.Height = this.ClientSize.Height - 32 - inputPanel1.Bounds.Height;
-				buttonPanel.Top = visible.Height - 32;
+				viewerPanel.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
+				tbPanel.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
+				buttonPanel.Top = visible.Height - scaledSize;
 			}
 			else
 			{
-				viewerPanel.Height = this.ClientSize.Height - 32;
-				tbPanel.Height = this.ClientSize.Height - 32;
-				buttonPanel.Top = this.ClientSize.Height - 32;
+				viewerPanel.Height = this.ClientSize.Height - scaledSize;
+				tbPanel.Height = this.ClientSize.Height - scaledSize;
+				buttonPanel.Top = this.ClientSize.Height - scaledSize;
 			}
 
 			m_textbox.Height = tbPanel.Height;
 			htmlControl.Bounds = viewerPanel.ClientRectangle;
+			//m_browser.Bounds = viewerPanel.ClientRectangle;
+			//m_browser.BorderStyle = BorderStyle.Fixed3D;
+			//m_browser.Height -= 2;
 		}
 
 		private void TagMenuItem_Click(object sender, EventArgs e)
