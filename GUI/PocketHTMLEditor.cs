@@ -59,7 +59,7 @@ namespace ISquared.PocketHTML
 
 		/// The saved settings for PocketHTML
 		private static Configuration m_config;
-		private static string m_versionText = "1.2 Beta 6";
+		private static string m_versionText = "1.2 Beta 7";
 
 		
 		// just used to keep from writing "\r\n" all the time
