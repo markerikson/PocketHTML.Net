@@ -96,7 +96,7 @@ namespace ISquared.PocketHTML
 
 		private HardwareButtonMessageWindow m_hardwareButtons;
 
-		private bool firstOptions;
+		//private bool firstOptions;
 		private bool tgetfileExists;
 		//private PHNOptions options;
 		private bool m_optionsDialogHidden;
@@ -227,7 +227,7 @@ namespace ISquared.PocketHTML
 					m_config.SetValue("Options", "HardwareButtonShowsMenu", "True");
 					m_config.SetValue("Options", "MonospacedFont", "True");
 					m_config.SetValue("Options", "HardwareButton", "Hardware1");
-					m_config.SetValue("Options", "ZoomLevel", "2");
+					m_config.SetValue("Options", "ZoomLevel", "1");
 					
 				}
 				else
@@ -329,7 +329,7 @@ namespace ISquared.PocketHTML
 			//firstEnter = true;
 
 			// HACK firstOptions is ugly.  Get rid of it.
-			firstOptions = true;
+			//firstOptions = true;
 
 			// TODO Note the constant.  Change this?
 			tgetfileExists = File.Exists("\\Windows\\tgetfile.dll");
@@ -1493,7 +1493,7 @@ namespace ISquared.PocketHTML
 				}
 				m_optionsPanel.Show();
 
-				firstOptions = false;
+				//firstOptions = false;
 				m_optionsDialogHidden = false;
 				foreach(MenuItem m in m_mainMenu.MenuItems)
 				{
@@ -1764,6 +1764,9 @@ namespace ISquared.PocketHTML
 			m_btnTags.ImageIndex = 0;
 			m_btnPreview.ImageIndex = 1;
 			Debug.WriteLine("Set indices");
+
+			Debug.WriteLine("Creating HTML control");
+			m_editorPanel.HtmlControl.CreateHTMLControl();
 
 			Debug.WriteLine("Loading complete");
 		}

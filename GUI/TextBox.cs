@@ -196,7 +196,7 @@ namespace OpenNETCF.Windows.Forms
         private TextBoxStyle style;
 		private Regex m_reLeadingSpaces;
 		private bool m_autoIndent;
-		private bool m_indenting;
+		//private bool m_indenting;
 
 		public bool AutoIndent
 		{
@@ -221,7 +221,7 @@ namespace OpenNETCF.Windows.Forms
 				RegexOptions.IgnorePatternWhitespace);
 
 			m_firstEnter = true;
-			m_indenting = false;
+			//m_indenting = false;
 
 			KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
 			KeyDown += new KeyEventHandler(textBox1_KeyDown);
