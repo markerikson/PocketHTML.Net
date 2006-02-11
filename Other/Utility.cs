@@ -52,7 +52,8 @@ namespace ISquared
 			return version.ToString();
 		}
 
-		public static String DecodeData(Stream stream)
+		public static string DecodeData(Stream stream, Encoding defaultEncoding)
+		//public static String DecodeData(Stream stream)
 		{
 
 			//
@@ -102,7 +103,7 @@ namespace ISquared
 			Encoding e = null;
 			if (charset == null)
 			{
-				e = Encoding.ASCII; //default encoding
+				e = defaultEncoding;//Encoding.UTF8; //default encoding
 			}
 			else
 			{
@@ -114,7 +115,7 @@ namespace ISquared
 				{
 					Console.WriteLine("Exception: GetEncoding: " + charset);
 					Console.WriteLine(ee.ToString());
-					e = Encoding.ASCII;
+					e = Encoding.UTF8;
 				}
 			}
 
