@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
-
+using System.Text;
 
 namespace ISquared.PocketHTML
 {
@@ -11,14 +11,44 @@ namespace ISquared.PocketHTML
 	{
 		private Button buttonOK;
 		private Button buttonCancel;
-		//private OptionsThingy ot;
 		private DialogResult m_result;
 
 		private Hashtable m_tagHash;
+		private Hashtable m_checkboxHash;
 		private Ayende.Configuration config;
 		private PocketHTMLEditor maineditor;
 		private string[] currentButtonValues;
-		private string[] boolnames;
+		private string[,] boolnames = new string[,]
+		{
+			{"XHTMLTags","XHTML-style single tags"},
+			{"TextWrap", "Wrap editor text"},
+			{"PageWrap", "Wrap page preview"},
+			{"ClearType", "Use ClearType in preview"},			
+			{"IndentHTML", "Indent HTML tags"},
+			{"AutoIndent", "Auto-indent on Enter"},
+			{"MonospacedFont", "Use monospaced font"},
+		};
+
+		private string[,] encodingnames = new string[,]
+		{
+			{"Arabic (Windows)",             		"windows-1256"},
+			{"Baltic (ISO)",                 		"iso-8859-4"},
+			{"Central European (ISO)",      		"iso-8859-2"},
+			{"Chinese Simplified (GB2312)",  	"gb2312"} ,     
+			{"Chinese Traditional (Big5)",   	"big5"},
+			{"Cyrillic (KOI8-R)",           		"koi8-r"},          	
+			{"Cyrillic (Windows)",          		"windows-1251"},
+			{"Greek (ISO)",                  		"iso-8859-7"},  	
+			{"Hebrew (Windows)",             		"windows-1255"},
+			{"Japanese (JIS)",               		"iso-2022-jp"}, 
+			{"Korean",                       		"ks_c_5601-1987"},
+			{"Thai (Windows)",               		"windows-874"},
+			{"Turkish (ISO)",                		"iso-8859-9"},
+			{"Unicode (UTF-8)",              		"utf-8"},
+			{"US-ASCII",                     		"us-ascii"},
+        	{"Vietnamese (Windows)",        		"windows-1258"},
+			{"Western European (ISO)",       	"iso-8859-1"} , 
+		};
 
 		private Panel m_innerPanel;
 
@@ -27,26 +57,23 @@ namespace ISquared.PocketHTML
 		private TabControl tabControl1;
 		private TabPage tabPage1;
 		private TabPage tabPage2;
-		private CheckBox cbAutoIndent;
-		private CheckBox cbIndentHTML;
-		private CheckBox cbClearType;
-		private CheckBox cbXHTML;
-		private CheckBox cbPageWrap;
-		private CheckBox cbTextWrap;
 		private ComboBox m_comboButtonNumber;
 		private Label label5;
 		private Label label4;
 		private Label label2;
 		private Label label1;
 		private ComboBox m_comboButtonLabel;
-		private CheckBox cbMonospacedFont;
+		
 		private Label label6;
 		private Label label3;
 		private NumericUpDown nudHardwareButton;
 		private CheckBox cbHardwareButtons;
-		private CheckBox[] boxes;
 		private ComboBox m_comboZoomLevel;
 		private Label m_lblZoomLevel;
+		private ListView m_lvOptions;
+		private Label m_lblDefaultEncoding;
+		private ComboBox m_comboDefaultEncoding;
+		private Button m_btnTestEncoding;
 		#endregion
 
 		public DialogResult Result
@@ -79,7 +106,7 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-		internal String[] BoolNames
+		internal String[,] BoolNames
 		{
 			get
 			{
@@ -87,17 +114,10 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-		internal CheckBox[] CheckBoxes
-		{
-			get
-			{
-				return boxes;
-			}
-		}
-		
-
 		public OptionsPanel(PocketHTMLEditor parent)
 		{
+			m_checkboxHash = new Hashtable();
+
 			InitializeHeader();
 			InitializeOptionsControls();
 
@@ -111,6 +131,8 @@ namespace ISquared.PocketHTML
 			currentButtonValues = new string[16];
 
 			m_tagHash = parent.TagHash;
+			
+
 			ICollection ickeys = m_tagHash.Keys;
 			string[] keys = new string[ickeys.Count];
 			ickeys.CopyTo(keys, 0);
@@ -121,16 +143,6 @@ namespace ISquared.PocketHTML
 				m_comboButtonLabel.Items.Add(s);
 			}
 
-			// TODO This is hardcoded.  Fix it somehow?
-			boolnames = new string[]{"XHTMLTags", "TextWrap", "PageWrap", "ClearType",
-										"IndentHTML", "AutoIndent", "HardwareButtonShowsMenu",
-										"MonospacedFont"};
-			boxes = new CheckBox[]{cbXHTML, cbTextWrap, cbPageWrap, cbClearType, 
-									cbIndentHTML, cbAutoIndent, cbHardwareButtons,
-									cbMonospacedFont};
-
-			//ResetCheckboxes();
-			//ResetValues();
 			Reset();
 
 		}
@@ -144,9 +156,7 @@ namespace ISquared.PocketHTML
 			this.buttonOK.Text = "OK";
 			this.buttonOK.Click += new EventHandler(buttonOK_Click);
 			this.Controls.Add(buttonOK);
-			// 
-			// buttonCancel
-			// 
+
 			buttonCancel = new Button();
 			this.buttonCancel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
 			this.buttonCancel.Location = new System.Drawing.Point(188, 2);
@@ -161,13 +171,7 @@ namespace ISquared.PocketHTML
 			m_innerPanel = new Panel();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.cbMonospacedFont = new System.Windows.Forms.CheckBox();
-			this.cbAutoIndent = new System.Windows.Forms.CheckBox();
-			this.cbIndentHTML = new System.Windows.Forms.CheckBox();
-			this.cbClearType = new System.Windows.Forms.CheckBox();
-			this.cbXHTML = new System.Windows.Forms.CheckBox();
-			this.cbPageWrap = new System.Windows.Forms.CheckBox();
-			this.cbTextWrap = new System.Windows.Forms.CheckBox();
+
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -178,40 +182,38 @@ namespace ISquared.PocketHTML
 			this.label4 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.m_comboButtonLabel = new System.Windows.Forms.ComboBox();
+			m_lvOptions = new ListView();
+			m_comboButtonLabel = new ComboBox();
+			m_comboDefaultEncoding = new ComboBox();
 			m_comboZoomLevel = new ComboBox();
 			m_lblZoomLevel = new Label();
+			m_lblDefaultEncoding = new Label();
+			m_btnTestEncoding = new Button();
 
 			this.ClientSize = new System.Drawing.Size(240, 294);
 
 			m_innerPanel.Location = new Point(2, 30);
-			m_innerPanel.Size = new Size(240, 240);
+			m_innerPanel.Size = new Size(236, 240);
 			m_innerPanel.Parent = this;
 
 			tabControl1.Parent = m_innerPanel;
 			tabControl1.Bounds = m_innerPanel.ClientRectangle;
-			
-			//this.tabControl1.Controls.Add(this.tabPage1);
-			//this.tabControl1.Controls.Add(this.tabPage2);
 
 			tabPage1.Parent = tabControl1;
 			tabPage2.Parent = tabControl1;
-			//this.Controls.Add(this.tabControl1);
-			//m_innerPanel.Controls.Add(tabControl1);
-
 
 			this.tabControl1.SelectedIndex = 0;
-			
 
-			cbMonospacedFont.Parent = tabPage1;
-			cbAutoIndent.Parent = tabPage1;
-			cbIndentHTML.Parent = tabPage1;
-			cbClearType.Parent = tabPage1;
-			cbXHTML.Parent = tabPage1;
-			cbPageWrap.Parent = tabPage1;
-			cbTextWrap.Parent = tabPage1;
+			m_lvOptions.Parent = tabPage1;
+
 			m_lblZoomLevel.Parent = tabPage1;
 			m_comboZoomLevel.Parent = tabPage1;
+			m_comboDefaultEncoding.Parent = tabPage1;
+			m_lblDefaultEncoding.Parent = tabPage1;
+			m_btnTestEncoding.Parent = tabPage1;
+
+			tabPage1.Bounds = tabControl1.Bounds;
+			tabPage2.Bounds = tabControl1.Bounds;
 
 			label1.Parent = tabPage2;
 			label2.Parent = tabPage2;
@@ -224,77 +226,25 @@ namespace ISquared.PocketHTML
 			m_comboButtonNumber.Parent = tabPage2;
 			cbHardwareButtons.Parent = tabPage2;
 
+			m_lvOptions.Bounds = new Rectangle(0, 0, 236, 124);
+			ColumnHeader header = new ColumnHeader();
+			header.Text = "Options";
+			header.Width = 195;
+			m_lvOptions.View = View.Details;
+			m_lvOptions.Columns.Add(header);
+			m_lvOptions.HeaderStyle = ColumnHeaderStyle.None;
+			m_lvOptions.CheckBoxes = true;
+
+			for (int i = 0; i < boolnames.GetLength(0); i++)
+			{
+				ListViewItem lvi = new ListViewItem();
+				lvi.Text = boolnames[i,1];
+				m_lvOptions.Items.Add(lvi);
+
+				m_checkboxHash[boolnames[i, 0]] = lvi;
+			}
 
 
-
-			// 
-			// tabControl1
-			// 
-
-			
-			
-			
-			
-			// 
-			// tabPage1
-			// 
-			
-			// 
-			// cbMonospacedFont
-			// 
-			this.cbMonospacedFont.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbMonospacedFont.Location = new System.Drawing.Point(7, 136);
-			this.cbMonospacedFont.Size = new System.Drawing.Size(164, 16);
-			this.cbMonospacedFont.Text = "Monospaced font";
-			// 
-			// cbAutoIndent
-			// 
-			this.cbAutoIndent.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbAutoIndent.Location = new System.Drawing.Point(7, 70);
-			this.cbAutoIndent.Size = new System.Drawing.Size(136, 16);
-			this.cbAutoIndent.Text = "Autoindent on Enter";
-			// 
-			// cbIndentHTML
-			// 
-			this.cbIndentHTML.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbIndentHTML.Location = new System.Drawing.Point(7, 48);
-			this.cbIndentHTML.Size = new System.Drawing.Size(128, 16);
-			this.cbIndentHTML.Text = "Indent HTML tags";
-			// 
-			// cbClearType
-			// 
-			this.cbClearType.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbClearType.Location = new System.Drawing.Point(7, 114);
-			this.cbClearType.Size = new System.Drawing.Size(164, 16);
-			this.cbClearType.Text = "Use ClearType in preview";
-			// 
-			// cbXHTML
-			// 
-			this.cbXHTML.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbXHTML.Location = new System.Drawing.Point(7, 92);
-			this.cbXHTML.Size = new System.Drawing.Size(160, 16);
-			this.cbXHTML.Text = "XHTML-style single tags";
-			// 
-			// cbPageWrap
-			// 
-			this.cbPageWrap.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbPageWrap.Location = new System.Drawing.Point(7, 26);
-			this.cbPageWrap.Size = new System.Drawing.Size(128, 16);
-			this.cbPageWrap.Text = "Wrap page preview";
-			// 
-			// cbTextWrap
-			// 
-			this.cbTextWrap.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbTextWrap.Location = new System.Drawing.Point(7, 4);
-			this.cbTextWrap.Size = new System.Drawing.Size(128, 16);
-			this.cbTextWrap.Text = "Wrap editor text";
-			// 
-			// tabPage2
-			// 
-			
-			// 
-			// label6
-			// 
 			this.label6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
 			this.label6.Location = new System.Drawing.Point(7, 4);
 			this.label6.Size = new System.Drawing.Size(137, 20);
@@ -356,18 +306,34 @@ namespace ISquared.PocketHTML
 			this.m_comboButtonNumber.Size = new System.Drawing.Size(36, 22);
 			this.m_comboButtonNumber.SelectedIndexChanged += new System.EventHandler(this.comboButtonNumber_SelectedIndexChanged);
 
-			m_lblZoomLevel.Text = "Preview zoom level: ";
-			m_lblZoomLevel.Bounds = new Rectangle(7, 166, 100, 16);
+			m_lblZoomLevel.Text = "Preview zoom level:";
+			m_lblZoomLevel.Bounds = new Rectangle(4, 130, 112, 16);
 			m_comboZoomLevel.Items.Add("0");
 			m_comboZoomLevel.Items.Add("1");
 			m_comboZoomLevel.Items.Add("2");
 			m_comboZoomLevel.Items.Add("3");
 			m_comboZoomLevel.Items.Add("4");
-			m_comboZoomLevel.Bounds = new Rectangle(110, 166, 40, 22);
-			
-			// 
-			// label5
-			// 
+			m_comboZoomLevel.Bounds = new Rectangle(124, 130, 40, 22);
+
+
+
+			m_lblDefaultEncoding.Text = "Default text encoding:";
+			m_lblDefaultEncoding.Bounds = new Rectangle(4, 160, 180, 16);
+
+			m_comboDefaultEncoding.Bounds = new Rectangle(4, 180, 180, 22);
+			for (int i = 0; i < encodingnames.GetLength(0); i++)
+			{
+				m_comboDefaultEncoding.Items.Add(encodingnames[i, 0]);
+			}
+
+			m_btnTestEncoding.Text = "Test";
+			m_btnTestEncoding.Bounds = new Rectangle(188, 180, 40, 20);
+			m_btnTestEncoding.Click += new EventHandler(m_btnTestEncoding_Click);
+
+
+				// 
+				// label5
+				// 
 			this.label5.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
 			this.label5.Location = new System.Drawing.Point(93, 27);
 			this.label5.Size = new System.Drawing.Size(36, 20);
@@ -399,61 +365,44 @@ namespace ISquared.PocketHTML
 			this.m_comboButtonLabel.Location = new System.Drawing.Point(129, 27);
 			this.m_comboButtonLabel.Size = new System.Drawing.Size(108, 22);
 			this.m_comboButtonLabel.SelectedIndexChanged += new System.EventHandler(this.comboButtonLabel_SelectedIndexChanged);
-			// 
-			// OptionsThingy
-			// 
 			
-
-			/*
-			this.tabPage1.Controls.Add(this.cbMonospacedFont);
-			this.tabPage1.Controls.Add(this.cbAutoIndent);
-			this.tabPage1.Controls.Add(this.cbIndentHTML);
-			this.tabPage1.Controls.Add(this.cbClearType);
-			this.tabPage1.Controls.Add(this.cbXHTML);
-			this.tabPage1.Controls.Add(this.cbPageWrap);
-			this.tabPage1.Controls.Add(this.cbTextWrap);
-			*/
-
-			
-			//this.tabPage1.Location = new System.Drawing.Point(0, 0);
-			//this.tabPage1.Size = new System.Drawing.Size(236, 240);
 			this.tabPage1.Text = "Options";
-			tabPage1.Bounds = tabControl1.Bounds;
-
-			/*
-			this.tabPage2.Controls.Add(this.label6);
-			this.tabPage2.Controls.Add(this.label3);
-			this.tabPage2.Controls.Add(this.nudHardwareButton);
-			this.tabPage2.Controls.Add(this.cbHardwareButtons);
-			this.tabPage2.Controls.Add(this.comboBox2);
-			this.tabPage2.Controls.Add(this.label5);
-			this.tabPage2.Controls.Add(this.label4);
-			this.tabPage2.Controls.Add(this.label2);
-			this.tabPage2.Controls.Add(this.label1);
-			this.tabPage2.Controls.Add(this.comboBox1);
-			*/
-
-			
-
 			this.tabPage2.Text = "QuickTags";
-			tabPage2.Bounds = tabControl1.Bounds;
+			
 		}
 
-		// HACK This is ugly.  There's gotta be a better way.  Oh, and no 240x320, either.
-		/*
-		internal void Load(PocketHTMLEditor phe)
+		void m_btnTestEncoding_Click(object sender, EventArgs e)
 		{
-			ot = new OptionsThingy(this, phe);
-			ot.Location = new Point(0, 24);
-			ot.Size = new Size(240, 200);
-			ot.Show();
+			string selectedEncodingFullName = (string)m_comboDefaultEncoding.SelectedItem;
+			string selectedEncodingShortName = string.Empty;
+			for (int i = 0; i < encodingnames.GetLength(0); i++)
+			{
+				if (encodingnames[i, 0] == selectedEncodingFullName)
+				{
+					selectedEncodingShortName = encodingnames[i, 1];
+					break;
+				}
+			}
+
+			string resultMessage = string.Empty;
+			MessageBoxIcon mbi = MessageBoxIcon.Exclamation;
+			try
+			{
+				Encoding.GetEncoding(selectedEncodingShortName);
+				resultMessage = "This encoding is supported on this device.";
+			}
+			catch(PlatformNotSupportedException)
+			{
+				resultMessage = "This encoding is NOT supported on this device.";
+				mbi = MessageBoxIcon.Hand;
+			}
+
+			MessageBox.Show(resultMessage, "Encoding Test Results", 
+							MessageBoxButtons.OK, mbi, MessageBoxDefaultButton.Button1);
 		}
-		*/
 
 		internal void Reset()
-		{
-			//ot.ResetValues();
-			//ot.ResetCheckboxes();			
+		{		
 			ResetValues();
 			ResetCheckboxes();
 
@@ -473,12 +422,6 @@ namespace ISquared.PocketHTML
 			Pen p = new Pen(Color.Black);
 			g.DrawLine(p, 0, DpiHelper.Scale(23), DpiHelper.Scale(240), DpiHelper.Scale(23));
 		}
-/*
-		internal void ResizePanel(Microsoft.WindowsCE.Forms.InputPanel inputPanel1)
-		{
-
-		}
-		*/
 
 		private void comboButtonLabel_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -516,10 +459,13 @@ namespace ISquared.PocketHTML
 				Config.SetValue("Button Tags", buttonname, cbv[i]);
 			}
 
-			for(int i = 0; i < BoolNames.Length; i++)
+			for(int i = 0; i < boolnames.GetLength(0); i++)
 			{
-				string boolvalue = CheckBoxes[i].Checked.ToString();
-				string name = BoolNames[i];
+				string name = boolnames[i, 0];
+				ListViewItem lvi = (ListViewItem)m_checkboxHash[name];
+				string boolvalue = lvi.Checked.ToString();
+				//string boolvalue = CheckBoxes[i].Checked.ToString();
+				
 				Config.SetValue("Options", name, boolvalue);
 			}
 
@@ -528,6 +474,19 @@ namespace ISquared.PocketHTML
 			Config.SetValue("Options", "HardwareButton", sButtonNumber);
 
 			Config.SetValue("Options", "ZoomLevel", (String)m_comboZoomLevel.SelectedItem);
+
+			string selectedEncodingFullName = (string)m_comboDefaultEncoding.SelectedItem;
+			string selectedEncodingShortName = string.Empty;
+			for(int i = 0; i < encodingnames.GetLength(0); i++)
+			{
+				if(encodingnames[i, 0] == selectedEncodingFullName)
+				{
+					selectedEncodingShortName = encodingnames[i, 1];
+					break;
+				}
+			}
+
+			Config.SetValue("Options", "DefaultEncoding", selectedEncodingShortName);
 
 			m_result = DialogResult.OK;
 			((PocketHTMLEditor)Parent).MenuToolsOptions_Click(sender, e);
@@ -541,14 +500,14 @@ namespace ISquared.PocketHTML
 
 		internal void ResetCheckboxes()
 		{
-			for (int i = 0; i < boolnames.Length; i++)
+			for (int i = 0; i < boolnames.GetLength(0); i++)
 			{
 
-				string name = boolnames[i];
+				string name = boolnames[i, 0];
 				bool chk = config.GetBool("Options", name);
-				boxes[i].Checked = chk;
+				ListViewItem lvi = (ListViewItem)m_checkboxHash[name];
+				lvi.Checked = chk;
 			}
-			//m_comboButtonNumber.SelectedIndex = 0;
 		}
 
 		internal void ResetValues()
@@ -559,7 +518,6 @@ namespace ISquared.PocketHTML
 			{
 				currentButtonValues[i] = (string)buttonTags[buttons[i].Name];
 			}
-			//m_comboButtonNumber.SelectedIndex = 0;
 
 			string hardwareButtonName = config.GetValue("Options", "HardwareButton");
 			string sButtonNumber = hardwareButtonName.Substring(hardwareButtonName.Length - 1);
@@ -570,6 +528,25 @@ namespace ISquared.PocketHTML
 			string zoomLevel = config.GetValue("Options", "ZoomLevel");
 			m_comboZoomLevel.SelectedItem = zoomLevel;
 
+			string encodingName = config.GetValue("Options", "DefaultEncoding");
+
+			int encodingIndex = -1;
+			for(int i = 0; i < encodingnames.GetLength(0); i++)
+			{
+				if(encodingnames[i, 1] == encodingName)
+				{
+					encodingIndex = i;
+					break;
+				}
+			}
+
+			if(encodingIndex == -1)
+			{
+				// UTF-8
+				encodingIndex = 13;
+			}
+
+			m_comboDefaultEncoding.SelectedIndex = encodingIndex;
 		}
 	}
 }

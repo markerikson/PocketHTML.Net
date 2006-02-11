@@ -228,6 +228,7 @@ namespace ISquared.PocketHTML
 					m_config.SetValue("Options", "MonospacedFont", "True");
 					m_config.SetValue("Options", "HardwareButton", "Hardware1");
 					m_config.SetValue("Options", "ZoomLevel", "1");
+					m_config.SetValue("Options", "DefaultEncoding", "utf-8");
 					
 				}
 				else
@@ -1356,7 +1357,16 @@ namespace ISquared.PocketHTML
 		private void LoadFile(string filename)
 		{
 			FileStream fs = new FileStream(filename, FileMode.Open);
-			String contents = Utility.DecodeData(fs);
+			string encodingName = Config.GetValue("Options", "DefaultEncoding");
+			Encoding defaultEncoding = Encoding.UTF8;
+
+			try
+			{
+				defaultEncoding = Encoding.GetEncoding(encodingName);
+			}
+			catch(PlatformNotSupportedException)
+			{}
+			String contents = Utility.DecodeData(fs, defaultEncoding);
 			m_editorPanel.TextBox.Text = contents;
 
 			this.m_saveFileName = filename;
@@ -1403,7 +1413,19 @@ namespace ISquared.PocketHTML
 			m_editorPanel.HtmlControl.CurrentFilename = filename;
 
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
-			StreamWriter sw = new StreamWriter(filename);
+
+			string encodingName = Config.GetValue("Options", "DefaultEncoding");
+
+			Encoding defaultEncoding = Encoding.UTF8;
+
+			try
+			{
+				defaultEncoding = Encoding.GetEncoding(encodingName);
+			}
+			catch (PlatformNotSupportedException)
+			{ }
+
+			StreamWriter sw = new StreamWriter(filename, false, defaultEncoding);
 			sw.WriteLine(m_editorPanel.TextBox.Text);			
 			sw.Close();
 			m_editorPanel.TextBox.Modified = false;
