@@ -32,7 +32,7 @@ namespace ISquared
 			return dir;		
 		}
 
-		public static Icon GetIcon(String name)
+		public static Icon GetIcon(String name, int size)
 		{
 			Assembly execAssembly = Assembly.GetExecutingAssembly();
 			string fullName = execAssembly.GetName().Name + "." + name + ".ico";
@@ -40,7 +40,7 @@ namespace ISquared
 			Stream stream  = execAssembly.GetManifestResourceStream(fullName);
 
 			Debug.WriteLine("Loading icon: " + fullName);
-			Icon icon = new Icon(stream);
+			Icon icon = new Icon(stream, size, size);
 			return icon;
 		}
 
@@ -124,7 +124,8 @@ namespace ISquared
 
 			String s = sr.ReadToEnd();
 
-			return s.ToLower();
+			//return s.ToLower();
+			return s;
 		}
 	}
 }
