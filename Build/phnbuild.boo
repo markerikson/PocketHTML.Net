@@ -194,17 +194,17 @@ def Main(argv as (string)):
 	
 	EnableHighResolution(currDir, newBuildDir)
 		
-#	nircmd = Process()
-#	nircmd.StartInfo.FileName = "nircmdc.exe"
-#	nircmd.StartInfo.CreateNoWindow = true
-#	nircmd.StartInfo.RedirectStandardOutput = true
-#	nircmd.StartInfo.UseShellExecute = false
-#	
-#	infDirs = [newBuildDir, mainDir, templatesDir]
-#	SetupINF(nircmd, currDir, infDirs)
-#	
-#	BuildCab(nircmd, currDir, newBuildDir)
-#	
-#	CreateSetup(nircmd, currDir, newBuildDir, buildMode, versionString)
-#	
-#	print("Build complete")
+	nircmd = Process()
+	nircmd.StartInfo.FileName = "nircmdc.exe"
+	nircmd.StartInfo.CreateNoWindow = true
+	nircmd.StartInfo.RedirectStandardOutput = true
+	nircmd.StartInfo.UseShellExecute = false
+	
+	infDirs = [newBuildDir, mainDir, templatesDir]
+	SetupINF(nircmd, currDir, infDirs)
+	
+	BuildCab(nircmd, currDir, newBuildDir)
+	
+	CreateSetup(nircmd, currDir, newBuildDir, buildMode, versionString)
+	
+	print("Build complete")
