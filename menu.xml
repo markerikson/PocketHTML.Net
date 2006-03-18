@@ -4,9 +4,9 @@
 		<menuitem name="Doctypes">
 			<menuitem name="HTML 2.0" />
 			<menuitem name="HTML 3.2" />
-			<menuitem name="HTML 4.0 Strict" />
-			<menuitem name="HTML 4.0 Transitional" />
-			<menuitem name="HTML 4.0 Frameset" />
+			<menuitem name="HTML 4.01 Strict" />
+			<menuitem name="HTML 4.01 Transitional" />
+			<menuitem name="HTML 4.01 Frameset" />
 			<menuitem name="XHTML 1.0 Strict" />
 			<menuitem name="XHTML 1.0 Transitional" />
 			<menuitem name="XHTML 1.0 Frameset" />
