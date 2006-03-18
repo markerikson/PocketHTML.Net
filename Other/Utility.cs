@@ -115,7 +115,7 @@ namespace ISquared
 				{
 					Console.WriteLine("Exception: GetEncoding: " + charset);
 					Console.WriteLine(ee.ToString());
-					e = Encoding.UTF8;
+					e = new UTF8Encoding(false); //Encoding.UTF8;
 				}
 			}
 

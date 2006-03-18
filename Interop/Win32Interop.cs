@@ -138,6 +138,38 @@ namespace ISquared.Win32Interop
 			IntPtr pControl = GetFocus();
 			return pControl;
 		}
+
+		public static string SystemDirectory
+		{
+			get
+			{
+				try
+				{
+					return GetFolderPath(SpecialFolder.Windows);
+				}
+				catch
+				{
+					return "\\Windows";
+				}
+			}
+		}
+
+
+		public static string GetFolderPath(SpecialFolder folder)
+		{
+			StringBuilder path = new StringBuilder(260 + 2);
+
+			if (!SHGetSpecialFolderPath(IntPtr.Zero, path, (int)folder, 0))
+			{
+				throw new Exception("Error retrieving folder path: " + Marshal.GetLastWin32Error());
+			}
+
+			return path.ToString();
+		}
+
+		[DllImport("coredll.dll", EntryPoint = "SHGetSpecialFolderPath", SetLastError = false)]
+		internal static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, StringBuilder lpszPath, int nFolder, int fCreate);
+
 	}
 
 	public class TGetFile
@@ -275,7 +307,91 @@ namespace ISquared.Win32Interop
 			return result;
 
 		}
+
+		
 	}
+
+	public enum SpecialFolder
+	{
+		// <summary>
+		// Windows CE.NET 4.2 and above
+		// </summary>
+		//VirtualRoot		= 0x00,
+		/// <summary>
+		/// The directory that contains the user's program groups.
+		/// </summary>
+		Programs = 0x02,
+		// <summary>
+		// control panel icons
+		// </summary>
+		//Controls		= 0x03,
+		// <summary>
+		// printers folder
+		// </summary>
+		//Printers		= 0x04,
+		/// <summary>
+		/// The directory that serves as a common repository for documents. (Not supported in Pocket PC and Pocket PC 2002 - "\My Documents").
+		/// </summary>
+		Personal = 0x05,
+		/// <summary>
+		/// The directory that serves as a common repository for the user's favorite items.
+		/// </summary>
+		Favorites = 0x06,
+		/// <summary>
+		/// The directory that corresponds to the user's Startup program group.   The system starts these programs whenever a user starts Windows CE.
+		/// </summary>
+		Startup = 0x07,
+		/// <summary>
+		/// The directory that contains the user's most recently used documents.
+		/// Not supported on Windows Mobile.
+		/// </summary>
+		Recent = 0x08,
+		// <summary>
+		// The directory that contains the Send To menu items.
+		// </summary>
+		//SendTo			= 0x09,
+		// <summary>
+		// Recycle bin.
+		// </summary>
+		//RecycleBin		= 0x0A,
+		/// <summary>
+		/// The directory that contains the Start menu items.
+		/// </summary>
+		StartMenu = 0x0B,
+		/// <summary>
+		/// The directory used to physically store file objects on the desktop.   Do not confuse this directory with the desktop folder itself, which is a virtual folder.
+		/// Not supported on Windows Mobile.
+		/// </summary>
+		DesktopDirectory = 0x10,
+		// <summary>
+		// The "My Computer" folder.
+		// </summary>
+		//MyComputer		= 0x11,
+		// <summary>
+		// Network Neighbourhood
+		// </summary>
+		//NetNeighborhood = 0x12,
+		/// <summary>
+		/// The Fonts folder.
+		/// </summary>
+		Fonts = 0x14,
+		/// <summary>
+		/// The directory that serves as a common repository for application-specific data for the current user.
+		/// Not supported on Windows Mobile.
+		/// </summary>
+		ApplicationData = 0x1a,
+		/// <summary>
+		/// The Windows folder.
+		/// Not supported by Pocket PC and Pocket PC 2002.
+		/// </summary>
+		Windows = 0x24,
+		/// <summary>
+		/// The program files directory.
+		/// </summary>
+		ProgramFiles = 0x26,
+
+	}
+
 
 	internal class ProcessInfo
 	{

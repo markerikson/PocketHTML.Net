@@ -144,8 +144,9 @@ namespace ISquared.PocketHTML
 				{
 					// for XHTML compatibility
 					
-					if(PocketHTMLEditor.Config.GetBool("Options", "XHTMLTags") && 
-						!this.closingTag)
+					if(PocketHTMLEditor.Config.GetBool("Options", "XHTMLTags") 
+						&& !this.closingTag 
+						&& this.shortName != "comment")
 					{
 						sb.Append(" /");
 					}

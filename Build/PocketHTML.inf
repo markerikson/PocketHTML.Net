@@ -23,6 +23,7 @@ pockethtml.ini=2
 tags.xml=2
 menu.xml=2
 filedialogs.dll=2
+HTMLContainer.dll=2
 template1.html=3
 
 [DestinationDirs]
@@ -37,6 +38,7 @@ Shortcuts=0,%CE2%\Start Menu
 "tags.xml"
 "menu.xml"
 "filedialogs.dll"
+HTMLContainer.dll
 
 [Help]
 "PHN.html"

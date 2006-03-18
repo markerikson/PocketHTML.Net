@@ -326,14 +326,8 @@ namespace ISquared.PocketHTML
 			// hook up auto-indent
 			//m_editorPanel.TextBox.KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
 
-
-			//firstEnter = true;
-
-			// HACK firstOptions is ugly.  Get rid of it.
-			//firstOptions = true;
-
-			// TODO Note the constant.  Change this?
-			tgetfileExists = File.Exists("\\Windows\\tgetfile.dll");
+			string tgetfilePath = CoreDLL.SystemDirectory + "\\tgetfile.dll";
+			tgetfileExists = File.Exists(tgetfilePath);
 
 			findindex = 0;
 			m_editorPanel.TagMenuClicked += new EditorPanel.TagMenuClickedHandler(this.InsertTag);
@@ -1265,14 +1259,9 @@ namespace ISquared.PocketHTML
 
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append("HTML files (*.html, *.htm)\0*.html;*.htm\0");
-			sb.Append("ASP files (*.asp, *.aspx)\0*.asp;*.aspx\0");
-			sb.Append("PHP files (*.php)\0*.php\0");
-			sb.Append("XML files (*.xml)\0*.xml\0");
-			sb.Append("Text files (*.txt)\0*.txt\0");
-			sb.Append("All files (*.*)\0*.*\0\0");
+			
 
-			string fileFilter = sb.ToString();
+			
 			int filterIndex = 1;
 			string originalFileName = null;
 
@@ -1321,7 +1310,14 @@ namespace ISquared.PocketHTML
 			}
 
 			if(!tgetfileExists)
-			{
+			{				
+				sb.Append("HTML files (*.html, *.htm)|*.html;*.htm|");
+				sb.Append("ASP files (*.asp, *.aspx)|*.asp;*.aspx|");
+				sb.Append("PHP files (*.php)|*.php|");
+				sb.Append("XML files (*.xml)|*.xml|");
+				sb.Append("Text files (*.txt)|*.txt|");
+				sb.Append("All files (*.*)|*.*");
+				string fileFilter = sb.ToString();
 			
 				FileDialog fd;
 
@@ -1347,6 +1343,14 @@ namespace ISquared.PocketHTML
 			}
 			else
 			{
+				sb.Append("HTML files (*.html, *.htm)\0*.html;*.htm\0");
+				sb.Append("ASP files (*.asp, *.aspx)\0*.asp;*.aspx\0");
+				sb.Append("PHP files (*.php)\0*.php\0");
+				sb.Append("XML files (*.xml)\0*.xml\0");
+				sb.Append("Text files (*.txt)\0*.txt\0");
+				sb.Append("All files (*.*)\0*.*\0\0");
+				string fileFilter = sb.ToString();
+
 				filename = TGetFile.TGetFileName(save, originalFileName, filterIndex, fileFilter, m_saveFileDirectory);
 
 			}
@@ -1358,11 +1362,18 @@ namespace ISquared.PocketHTML
 		{
 			FileStream fs = new FileStream(filename, FileMode.Open);
 			string encodingName = Config.GetValue("Options", "DefaultEncoding");
-			Encoding defaultEncoding = Encoding.UTF8;
+			Encoding defaultEncoding = new UTF8Encoding(false);//Encoding.UTF8;
 
 			try
 			{
-				defaultEncoding = Encoding.GetEncoding(encodingName);
+				if (encodingName == "utf-8")
+				{
+					defaultEncoding = new UTF8Encoding(false);
+				}
+				else
+				{
+					defaultEncoding = Encoding.GetEncoding(encodingName);
+				}
 			}
 			catch(PlatformNotSupportedException)
 			{}
@@ -1416,11 +1427,19 @@ namespace ISquared.PocketHTML
 
 			string encodingName = Config.GetValue("Options", "DefaultEncoding");
 
-			Encoding defaultEncoding = Encoding.UTF8;
+			Encoding defaultEncoding = new UTF8Encoding(false);//Encoding.UTF8;
 
 			try
 			{
-				defaultEncoding = Encoding.GetEncoding(encodingName);
+				if(encodingName == "utf-8")
+				{
+					defaultEncoding = new UTF8Encoding(false);
+				}
+				else
+				{
+					defaultEncoding = Encoding.GetEncoding(encodingName);
+				}
+				
 			}
 			catch (PlatformNotSupportedException)
 			{ }
