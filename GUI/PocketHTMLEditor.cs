@@ -13,6 +13,7 @@ using System.Xml;
 using System.Windows.Forms;
 using Ayende;
 using ISquared.Win32Interop;
+using ISquared.Windows.Forms;
 //using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ using OpenNETCF.Windows.Forms;
 using OpenNETCF.Win32;
 using HardwareButtons;
 using MRUSample;
+using ISquared.PocketHTML;
 
 
 namespace ISquared.PocketHTML
@@ -1091,7 +1093,8 @@ namespace ISquared.PocketHTML
 		{
 			StringBuilder sb = new StringBuilder();
 
-			findmatch = findregex.Match(targetString, index);			
+			findmatch = findregex.Match(targetString, index);	
+			
 
 			bool bRet;
 			if(findmatch.Success)
@@ -1152,7 +1155,7 @@ namespace ISquared.PocketHTML
 				m_editorPanel.TextBox.AutoIndent = m_config.GetBool("Options", "AutoIndent");
 
 				// Update the textbox to use 4-space tabs (4 dialog units per character)
-				Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
+				InteropUtility.SetTabStop(m_editorPanel.TextBox);
 
 				UpdateHardwareButton();
 
@@ -1377,7 +1380,7 @@ namespace ISquared.PocketHTML
 			}
 			catch(PlatformNotSupportedException)
 			{}
-			String contents = Utility.DecodeData(fs, defaultEncoding);
+			String contents = PocketHTMLUtility.DecodeData(fs, defaultEncoding);
 			m_editorPanel.TextBox.Text = contents;
 
 			this.m_saveFileName = filename;
@@ -1386,7 +1389,7 @@ namespace ISquared.PocketHTML
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			m_editorPanel.TextBox.Modified = false;
 
-			Win32Interop.Utility.SetTabStop(m_editorPanel.TextBox);
+			InteropUtility.SetTabStop(m_editorPanel.TextBox);
 
 			m_mruManager.Add(filename);
 		}
@@ -1605,53 +1608,54 @@ namespace ISquared.PocketHTML
 		// TODO Remove 240x320 specific code
 		private void MenuToolsFind_Click(object sender, EventArgs e)
 		{
-			if(this.m_dlgFind == null)
-			{				
-				m_dlgFind = new FindDialog(this);
-				m_dlgFind.FormBorderStyle = FormBorderStyle.None;
-				int x = (240 - m_dlgFind.Width) / 2;
-				int y = 100;
+			if (this.m_dlgFind == null)
+			{
+				m_dlgFind = new FindDialog(m_editorPanel.TextBox);
+				m_dlgFind.ParentForm = this;
+				m_dlgFind.Parent = this;
+				int x = (inputPanel1.VisibleDesktop.Width - m_dlgFind.Width) / 2;//(240 - m_dlgReplace.Width) / 2;
+				int y = (inputPanel1.VisibleDesktop.Height - m_dlgFind.Height) / 2;//100;
 				m_dlgFind.Location = new Point(x, y);
-				m_dlgFind.MinimizeBox = false;
-				m_dlgFind.MaximizeBox = false;
-				m_dlgFind.ControlBox = false;
+				//m_dlgFind.TargetTextbox = textBox1;
+
 			}
 
-			if(m_dlgReplace != null && m_dlgReplace.Visible)
+			if (m_dlgReplace != null && m_dlgReplace.Visible)
 			{
 				m_dlgReplace.Hide();
 			}
 			m_dlgFind.Show();
 			m_dlgFind.BringToFront();
-			m_dlgFind.FindTextBox.Text = m_editorPanel.TextBox.SelectedText;
-			m_dlgFind.FindTextBox.Focus();			
+			m_dlgFind.SearchText = m_editorPanel.TextBox.SelectedText;
 		}
 
 		// TODO Remove 240x320 specific code
 		private void MenuToolsReplace_Click(object sender, EventArgs e)
 		{
-			if(this.m_dlgReplace == null)
-			{				
-				m_dlgReplace = new ReplaceDialog(this);
-				m_dlgReplace.FormBorderStyle = FormBorderStyle.None;
-				int x = (240 - m_dlgReplace.Width) / 2;
-				int y = 100;
+			if (this.m_dlgReplace == null)
+			{
+				m_dlgReplace = new ReplaceDialog(m_editorPanel.TextBox);
+				m_dlgReplace.ParentForm = this;
+				m_dlgReplace.Parent = this;
+				int x = (inputPanel1.VisibleDesktop.Width - m_dlgReplace.Width) / 2;//(240 - m_dlgReplace.Width) / 2;
+				int y = (inputPanel1.VisibleDesktop.Height - m_dlgReplace.Height) / 2;//100;
 				m_dlgReplace.Location = new Point(x, y);
-				m_dlgReplace.MinimizeBox = false;
-				m_dlgReplace.MaximizeBox = false;
-				m_dlgReplace.ControlBox = false;
+				//m_dlgReplace.TargetTextbox = textBox1;
+
 			}
 
-			if(m_dlgFind != null && m_dlgFind.Visible)
+			if (m_dlgFind != null && m_dlgFind.Visible)
 			{
 				m_dlgFind.Hide();
 			}
 
-			m_dlgReplace.FindTextBox.Text = m_editorPanel.TextBox.SelectedText;
+
 			m_dlgReplace.Show();
 			m_dlgReplace.BringToFront();
-			m_dlgReplace.FindTextBox.Focus();	
+			m_dlgReplace.SearchText = m_editorPanel.TextBox.SelectedText;
+
 		}
+			
 
 		private void MenuHelpContents_Click(object sender, EventArgs e)
 		{
@@ -1776,8 +1780,8 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("Loading icons");
 			int iconSize = DpiHelper.Scale(16);
 
-			Icon iconIE = Utility.GetIcon("Graphics.ie", iconSize);
-			Icon iconTag = Utility.GetIcon("Graphics.Tag", iconSize);
+			Icon iconIE = PocketHTMLUtility.GetIcon("Graphics.ie", iconSize);
+			Icon iconTag = PocketHTMLUtility.GetIcon("Graphics.Tag", iconSize);
 
 			Debug.WriteLine("Icons loaded, adding to imagelist");
 

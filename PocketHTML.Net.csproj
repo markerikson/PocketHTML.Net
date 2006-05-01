@@ -105,6 +105,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="GUI\FindDialogBase.cs">
+      <SubType>Form</SubType>
+    </None>
     <Compile Include="GUI\AboutPanel.cs">
     </Compile>
     <Compile Include="GUI\HardwareButtons.cs">
@@ -115,18 +118,18 @@
     <Compile Include="GUI\FindDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\FloatingDialog.cs">
+    <None Include="GUI\FloatingDialog.cs">
       <SubType>Form</SubType>
-    </Compile>
+    </None>
     <Compile Include="GUI\HTMLViewer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUI\INotifiable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUI\IWin32Window.cs">
+    <None Include="GUI\IWin32Window.cs">
       <SubType>Code</SubType>
-    </Compile>
+    </None>
     <Compile Include="GUI\MRUManager.cs" />
     <Compile Include="GUI\OptionsPanel.cs">
     </Compile>
@@ -136,41 +139,41 @@
     <Compile Include="GUI\ReplaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Interop\EM.cs" />
-    <Compile Include="Interop\Enum.cs">
+    <None Include="Interop\EM.cs" />
+    <None Include="Interop\Enum.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUI\TextBox.cs">
+    </None>
+    <None Include="GUI\TextBox.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\GW.cs" />
-    <Compile Include="Interop\MarshalEx.cs">
+    </None>
+    <None Include="Interop\GW.cs" />
+    <None Include="Interop\MarshalEx.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\SWP.cs" />
-    <Compile Include="Interop\Win32Interop.cs">
+    </None>
+    <None Include="Interop\SWP.cs" />
+    <None Include="Interop\Win32Interop.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\WinAPIException.cs">
+    </None>
+    <None Include="Interop\WinAPIException.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interop\WindowHelper.cs">
+    </None>
+    <None Include="Interop\WindowHelper.cs">
       <SubType>Code</SubType>
-    </Compile>
+    </None>
     <None Include="Interop\WindowsMessages.cs">
       <SubType>Code</SubType>
     </None>
-    <Compile Include="Interop\WM.cs" />
+    <None Include="Interop\WM.cs" />
     <Compile Include="Other\Configuration.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Other\DpiHelper.cs" />
+    <None Include="Other\DpiHelper.cs" />
     <Compile Include="Other\HiResDateTime.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Other\Tag.cs">
+    <None Include="Other\Tag.cs">
       <SubType>Code</SubType>
-    </Compile>
+    </None>
     <Compile Include="Other\TcpTraceListener.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -219,6 +222,12 @@
     <Content Include="Templates\template1.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="PocketHTML.Utility\PocketHTML.Utility.csproj">
+      <Project>{BE94A17C-885F-4AAE-A2C8-72B8BE2A5F32}</Project>
+      <Name>PocketHTML.Utility</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

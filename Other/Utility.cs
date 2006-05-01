@@ -5,31 +5,18 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Text;
 
-namespace ISquared
+namespace ISquared.PocketHTML
 {
 	/// <summary>
 	/// Summary description for Utility.
 	/// </summary>
-	public class Utility
+	public class PocketHTMLUtility
 	{
-		public Utility()
+		public PocketHTMLUtility()
 		{
 			//
 			// TODO: Add constructor logic here
 			//
-		}
-
-		public static String GetCurrentDir(bool closingSlash)
-		{
-			String dir =  Path.GetDirectoryName( 
-				Assembly.GetExecutingAssembly().GetName().CodeBase );
-		
-			if(closingSlash)
-			{
-				dir += "\\";
-			}
-
-			return dir;		
 		}
 
 		public static Icon GetIcon(String name, int size)
