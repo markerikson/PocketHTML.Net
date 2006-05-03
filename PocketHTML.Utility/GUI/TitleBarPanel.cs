@@ -11,8 +11,7 @@ namespace ISquared.Windows.Forms
 {
 	public class TitleBarPanel : System.Windows.Forms.Panel
 	{
-		#region working code
-
+		#region members
 		internal bool mouseDown = false;
 		internal Point oldPoint = Point.Empty;
 		private Point startingPoint;
@@ -24,7 +23,9 @@ namespace ISquared.Windows.Forms
 		private IntPtr hDC, hwndForm;
 		private Rectangle rcDraw;
 		private bool bDrawing;
+		#endregion
 
+		#region properties
 		public string Caption
 		{
 			get
@@ -63,7 +64,9 @@ namespace ISquared.Windows.Forms
 				this.oldPoint = value;
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public TitleBarPanel()
 		{
 			m_lblCaption = new Label();
@@ -76,7 +79,9 @@ namespace ISquared.Windows.Forms
 
 			m_lblCaption.Parent = this;
 		}
+		#endregion
 
+		#region Event handlers
 		override protected void OnMouseDown(MouseEventArgs e)
 		{
 			mouseDown = true;
@@ -93,7 +98,6 @@ namespace ISquared.Windows.Forms
 			hPen = CreatePen(PenStyle.PS_DASH, 1, ColorToWin32(Color.Blue));
 
 			// Get Device Context
-			//hDC = GetDC(hwndForm);
 			hDC = GetDC(IntPtr.Zero);
 
 			// Select our pen into context, save the old pen
@@ -116,8 +120,6 @@ namespace ISquared.Windows.Forms
 				finalLocation = currentLocation;
 				
 			}
-
-			//Point correctedPosition = ParentDialog.ParentForm.PointToScreen(currentLocation);
 
 			// stretch it to the current mouse position
 			rcDraw = new Rectangle(finalLocation.X, finalLocation.Y, ParentDialog.Width, ParentDialog.Height);
@@ -142,6 +144,7 @@ namespace ISquared.Windows.Forms
 				{
 					ParentDialog.ParentForm.Refresh();
 				}
+
 				// Update rectangle location
 				rcDraw.X += dx;
 				rcDraw.Y += dy;
@@ -179,7 +182,9 @@ namespace ISquared.Windows.Forms
 				ParentDialog.Location = currentLocation;
 			}
 		}
+		#endregion
 
+		#region Utility functions
 		private int ColorToWin32(Color clr)
 		{
 			return clr.B << 16 + clr.G << 8 + clr.R;
@@ -202,7 +207,6 @@ namespace ISquared.Windows.Forms
 
 			Polyline(hDC, points, 5);
 		}
-
 		#endregion
 
 		#region P/Invoke Definitions

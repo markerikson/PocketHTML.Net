@@ -15,6 +15,7 @@ namespace ISquared.Windows.Forms
 {
 	public class FindDialog : FloatingDialog
 	{
+		#region protected members
 		protected System.Windows.Forms.CheckBox m_cbCase;
 		protected System.Windows.Forms.CheckBox m_cbWord;
 		protected TextBox m_tbFind;
@@ -26,7 +27,9 @@ namespace ISquared.Windows.Forms
 		protected string m_previousSearchPattern = string.Empty;
 
 		private TextBox m_tbTargetTextbox;
+		#endregion
 
+		#region properties
 		public TextBox TargetTextbox
 		{
 			get { return m_tbTargetTextbox; }
@@ -69,7 +72,9 @@ namespace ISquared.Windows.Forms
 				this.m_cbCase.Checked = value;
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public FindDialog(TextBox tb)
 		{
 			this.Visible = false;
@@ -82,23 +87,13 @@ namespace ISquared.Windows.Forms
 			this.Size = new Size(184, 108);
 
 			DpiHelper.AdjustAllControls(this);
-
 		}
 
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-
-			Refresh();
-		}
-
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 		}
+		#endregion
 
 		#region Windows Form Designer generated code
 
@@ -162,15 +157,21 @@ namespace ISquared.Windows.Forms
 
 		#endregion
 
+		#region Event handlers
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+
+			Refresh();
+		}
+
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 		}
 
-
 		void m_btnClose_Click(object sender, EventArgs e)
 		{
-			//this.Close();
 			this.Hide();
 		}
 
@@ -181,7 +182,9 @@ namespace ISquared.Windows.Forms
 				MessageBox.Show("No more matches found", "Find Results");
 			}
 		}
+		#endregion
 
+		#region Search functions
 		protected Regex CreateRegex()
 		{
 			string searchPattern = m_tbFind.Text;
@@ -269,5 +272,6 @@ namespace ISquared.Windows.Forms
 
 			return match.Success;
 		}
+		#endregion
 	}
 }

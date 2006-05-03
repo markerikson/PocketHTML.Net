@@ -1,3 +1,4 @@
+#region comments
 /*=======================================================================================
 
 	OpenNETCF.Windows.Forms.TextBoxEx
@@ -51,8 +52,9 @@
 // -------------------------------
 // - Renamed HWnd property to Handle implementing IWin32Window interface
 
-//
+#endregion
 
+#region using directives
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -60,9 +62,9 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using OpenNETCF.Win32;
 using ISquared.Win32Interop;
-//using ISquared.Win32Interop.WinEnums;
 using System.Text.RegularExpressions;
 using System.Text;
+#endregion
 
 #if DESIGN && STANDALONE
 [assembly: System.CF.Design.RuntimeAssemblyAttribute("OpenNETCF.Windows.Forms.TextBox, Version=1.0.5000.4, Culture=neutral, PublicKeyToken=null")]
@@ -70,6 +72,7 @@ using System.Text;
 
 namespace OpenNETCF.Windows.Forms
 {
+	#region enums
 	/// <summary>
 	/// Specifies the style of the <see cref="TextBoxEx"/>.
 	/// </summary>
@@ -106,7 +109,8 @@ namespace OpenNETCF.Windows.Forms
 		/// A single border is drawn around the textbox.
 		/// </summary>
         FixedSingle
-    }
+	}
+	#endregion
 
 	/// <summary>
 	/// Represents an enhanced TextBox.
@@ -186,7 +190,9 @@ namespace OpenNETCF.Windows.Forms
 #endif
 
 #if !DESIGN
-        private const int GWL_STYLE		= (-16);
+
+		#region private members
+		private const int GWL_STYLE		= (-16);
         private const int ES_UPPERCASE   = 0x0008;
         private const int ES_LOWERCASE   = 0x0010;
         private const int ES_NUMBER     = 0x2000;
@@ -196,20 +202,16 @@ namespace OpenNETCF.Windows.Forms
         private TextBoxStyle style;
 		private Regex m_reLeadingSpaces;
 		private bool m_autoIndent;
-		//private bool m_indenting;
-
-		public bool AutoIndent
-		{
-			get { return m_autoIndent; }
-			set { m_autoIndent = value; }
-		}
 
 		// Keeps the auto-indent function from recursing
 		private bool m_firstEnter;
 
-        protected virtual event EventHandler OnStyleChanged;
+		protected virtual event EventHandler OnStyleChanged;
 
-        public TextBoxEx()
+		#endregion
+
+		#region Constructor
+		public TextBoxEx()
         {
             hwnd = setHwnd();
             defaultStyle = GetWindowLong(hwnd, GWL_STYLE);
@@ -225,7 +227,15 @@ namespace OpenNETCF.Windows.Forms
 
 			KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
 			KeyDown += new KeyEventHandler(textBox1_KeyDown);
-        }
+		}
+		#endregion
+
+		#region properties
+		public bool AutoIndent
+		{
+			get { return m_autoIndent; }
+			set { m_autoIndent = value; }
+		}
 
 		/// <summary>
 		/// Gets the window handle that the control is bound to.
@@ -234,54 +244,50 @@ namespace OpenNETCF.Windows.Forms
         public IntPtr Handle
         {
             get { return hwnd; }
-        }
+		}
 
-        private IntPtr setHwnd()
+		public TextBoxStyle Style
+		{
+			get { return style; }
+			set
+			{
+				style = value;
+				OnTextBoxStyleChanged(null);
+			}
+		}
+
+		public bool CanUndo
+		{
+			get
+			{
+				setHwnd();
+				int result = SendMessage(this.hwnd, (int)EM.CANUNDO, 0, 0);
+				return (result == 1);
+			}
+		}
+
+		public int CurrentLine
+		{
+			get
+			{
+				setHwnd();
+				return SendMessage(this.hwnd, (int)EM.LINEFROMCHAR, -1, 0);
+			}
+		}
+		#endregion
+
+		#region Other functions
+		private IntPtr setHwnd()
         {
             this.Capture = true;
             hwnd = GetCapture();
             this.Capture = false;
 
-			
-
             return hwnd;
-        }
+		}
+		#endregion
 
-        public TextBoxStyle Style
-        {
-            get { return style; }
-            set 
-            { 
-                style = value;
-                OnTextBoxStyleChanged(null);
-            }
-        }
-
-        private void OnTextBoxStyleChanged(EventArgs e)
-        {
-            switch(style)
-            {					
-                case TextBoxStyle.Default:
-                    SetWindowLong(hwnd, GWL_STYLE, defaultStyle);
-                    break;
-                case TextBoxStyle.Numeric:
-                    SetWindowLong(hwnd, GWL_STYLE, defaultStyle|ES_NUMBER);
-                    break;
-                case TextBoxStyle.UpperCase:
-                    SetWindowLong(hwnd, GWL_STYLE, defaultStyle|ES_UPPERCASE);
-                    break;
-                case TextBoxStyle.LowerCase:
-                    SetWindowLong(hwnd, GWL_STYLE, defaultStyle|ES_LOWERCASE);
-                    break;
-                default:
-                    SetWindowLong(hwnd, GWL_STYLE, defaultStyle);
-                    break;
-            }
-
-            if(OnStyleChanged != null)
-                OnStyleChanged(this, e);
-        }
-
+		#region Clipboard functions
 		public void Copy()
 		{
 			setHwnd();
@@ -313,89 +319,13 @@ namespace OpenNETCF.Windows.Forms
 			setHwnd();
 			SendMessage(this.hwnd, (int)WM.CUT, 0, 0);
 		}
-
-		public bool CanUndo
-		{
-			get
-			{
-				setHwnd();
-				int result = SendMessage(this.hwnd, (int)EM.CANUNDO, 0, 0);
-				return (result == 1);
-			}
-		}
-		/*
-		#region Clipboard Support
-		/// <summary>
-		/// Moves the current selection in the <see cref="TextBoxEx"/> to the Clipboard.
-		/// <para><b>New in v1.1</b></para>
-		/// </summary>
-		public void Cut()
-		{
-			//send Cut message
-			SendMessage(this.hwnd, (int)ClipboardMessage.WM_CUT, 0, 0);
-		}
-
-		/// <summary>
-		/// Copies the current selection in the <see cref="TextBoxEx"/> to the Clipboard.
-		/// <para><b>New in v1.1</b></para>
-		/// </summary>
-		public void Copy()
-		{
-			//send Copy message
-			SendMessage(this.hwnd, (int)ClipboardMessage.WM_COPY, 0, 0);
-		}
-
-		/// <summary>
-		/// Replaces the current selection in the <see cref="TextBoxEx"/> with the contents of the Clipboard.
-		/// <para><b>New in v1.1</b></para>
-		/// </summary>
-		public void Paste()
-		{
-			//send Paste message
-			SendMessage(this.hwnd, (int)ClipboardMessage.WM_PASTE, 0, 0);
-		}
-
-		/// <summary>
-		/// Clears all text from the <see cref="TextBoxEx"/> control.
-		/// <para><b>New in v1.1</b></para>
-		/// </summary>
-		public void Clear()
-		{
-			//send Clear message
-			SendMessage(this.hwnd, (int)ClipboardMessage.WM_CLEAR, 0, 0);
-		}
-
-		/// <summary>
-		/// Undoes the last edit operation in the <see cref="TextBoxEx"/>.
-		/// <para><b>New in v1.1</b></para>
-		/// </summary>
-		public void Undo()
-		{
-			//send Undo message
-			SendMessage(this.hwnd, (int)ClipboardMessage.WM_UNDO, 0, 0);
-		}
 		#endregion
-		*/
-		private enum ClipboardMessage : int
-		{
-			WM_CUT  = 0x0300,
-			WM_COPY = 0x0301,
-			WM_PASTE = 0x0302,
-			WM_CLEAR = 0x0303,
-			WM_UNDO = 0x0304,
-		}
 
-		/*
-		public void SelectAll()
-		{
-			SendMessage(this.hwnd, (int)EM.SETSEL, 0, -1);
-		}
-		*/
-
+		#region Text manipulation functions
 		public string GetLeadingSpaces()
 		{
 			setHwnd();
-			IntPtr pTB = this.hwnd;//CoreDLL.GetHandle(m_editorPanel.TextBox);
+			IntPtr pTB = this.hwnd;
 			int currentLine = CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0);
 			
 			return GetLeadingSpaces(currentLine);
@@ -404,8 +334,7 @@ namespace OpenNETCF.Windows.Forms
 		public string GetLeadingSpaces(int lineNumber)
 		{
 			setHwnd();
-			IntPtr pTB = this.hwnd;//CoreDLL.GetHandle(m_editorPanel.TextBox);
-			//int currentLine = CoreDLL.SendMessage(pTB, (int)EM.LINEFROMCHAR, -1, 0);
+			IntPtr pTB = this.hwnd;
 
 			StringBuilder lineText;
 			int charIndex = CoreDLL.SendMessage(pTB, (int)EM.LINEINDEX, lineNumber, 0);
@@ -438,7 +367,6 @@ namespace OpenNETCF.Windows.Forms
 		public void DoAutoIndent()
 		{
 			string spaces = GetLeadingSpaces();
-			//IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
 			CoreDLL.SendMessageString(this.hwnd, (int)EM.REPLACESEL, 0, "\r\n" + spaces);
 		}
 
@@ -453,23 +381,12 @@ namespace OpenNETCF.Windows.Forms
 			setHwnd();
 			return SendMessage(this.hwnd, (int)EM.LINEINDEX, lineNumber, 0); ;
 		}
-
-		public int CurrentLine
-		{
-			get
-			{
-				setHwnd();
-				return SendMessage(this.hwnd, (int)EM.LINEFROMCHAR, -1, 0); 
-			}
-		}
-
+		
 		public void IndentSelection()
 		{
 			if (SelectionLength == 0)
 			{
-				//SelectedText = "\t";
 				ReplaceSelection("\t");
-				//SelectionStart += 1;
 				SelectionLength = 0;
 
 				Focus();
@@ -493,9 +410,7 @@ namespace OpenNETCF.Windows.Forms
 						break;
 				}
 			}
-			//Cut(); 
-			//Text = Text.Insert(start,soep); 
-			//SelectedText = soep;
+
 			ReplaceSelection(soep);
 			SelectionStart = start;
 			SelectionLength = soep.Length;
@@ -513,9 +428,7 @@ namespace OpenNETCF.Windows.Forms
 				{
 					SelectionStart -= 1;
 					SelectionLength = 1;
-					//SelectedText = "";
 					ReplaceSelection("");
-					//SendMessage(this.Handle, (int)EM.SCROLLCARET, 0, 0);
 				}
 
 				Focus();
@@ -573,9 +486,6 @@ namespace OpenNETCF.Windows.Forms
 				}
 			}
 
-			//Cut(); 
-			//Text = Text.Insert(start,soep); 
-			//SelectedText = soep;
 			ReplaceSelection(soep);
 
 			SelectionStart = start;
@@ -583,6 +493,33 @@ namespace OpenNETCF.Windows.Forms
 			SelectionLength = soep.Length;
 
 			Focus();
+		}
+		#endregion
+
+		#region Event handlers
+		private void OnTextBoxStyleChanged(EventArgs e)
+		{
+			switch (style)
+			{
+				case TextBoxStyle.Default:
+					SetWindowLong(hwnd, GWL_STYLE, defaultStyle);
+					break;
+				case TextBoxStyle.Numeric:
+					SetWindowLong(hwnd, GWL_STYLE, defaultStyle | ES_NUMBER);
+					break;
+				case TextBoxStyle.UpperCase:
+					SetWindowLong(hwnd, GWL_STYLE, defaultStyle | ES_UPPERCASE);
+					break;
+				case TextBoxStyle.LowerCase:
+					SetWindowLong(hwnd, GWL_STYLE, defaultStyle | ES_LOWERCASE);
+					break;
+				default:
+					SetWindowLong(hwnd, GWL_STYLE, defaultStyle);
+					break;
+			}
+
+			if (OnStyleChanged != null)
+				OnStyleChanged(this, e);
 		}
 
 		private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -603,11 +540,8 @@ namespace OpenNETCF.Windows.Forms
 						{
 							IndentSelection();
 							e.Handled = true;
-						}
-						
-					}
-
-					
+						}						
+					}					
 					break;
 				}
 			}
@@ -667,6 +601,7 @@ namespace OpenNETCF.Windows.Forms
 				}
 			}
 		}
+		#endregion
 
 		#region -------------------- P/Invokes --------------------
 		[DllImport("coredll.dll")] 

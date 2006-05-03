@@ -1,23 +1,27 @@
+#region using directives
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using System.Text;
+#endregion
 
 namespace ISquared.PocketHTML
 {
-
 	class OptionsPanel : System.Windows.Forms.Panel
 	{
-		private Button buttonOK;
-		private Button buttonCancel;
+		#region private members
+		private Button m_btnOK;
+		private Button m_btnCancel;
 		private DialogResult m_result;
+		private Panel m_innerPanel;
 
-		private Hashtable m_tagHash;
-		private Hashtable m_checkboxHash;
-		private Ayende.Configuration config;
-		private PocketHTMLEditor maineditor;
-		private string[] currentButtonValues;
+		private Hashtable m_htTags;
+		private Hashtable m_htCheckboxes;
+		private Ayende.Configuration m_config;
+		private PocketHTMLEditor m_mainEditor;
+		private string[] m_currentButtonValues;
+
 		private string[,] boolnames = new string[,]
 		{
 			{"XHTMLTags","XHTML-style single tags"},
@@ -49,11 +53,10 @@ namespace ISquared.PocketHTML
         	{"Vietnamese (Windows)",        		"windows-1258"},
 			{"Western European (ISO)",       	"iso-8859-1"} , 
 		};
-
-		private Panel m_innerPanel;
+		#endregion
 
 		#region Options dialog controls
-		
+
 		private TabControl tabControl1;
 		private TabPage tabPage1;
 		private TabPage tabPage2;
@@ -76,6 +79,7 @@ namespace ISquared.PocketHTML
 		private Button m_btnTestEncoding;
 		#endregion
 
+		#region properties
 		public DialogResult Result
 		{
 			get
@@ -94,7 +98,7 @@ namespace ISquared.PocketHTML
 		{
 			get
 			{
-				return currentButtonValues;
+				return m_currentButtonValues;
 			}
 		}
 
@@ -102,7 +106,7 @@ namespace ISquared.PocketHTML
 		{
 			get
 			{
-				return config;
+				return m_config;
 			}
 		}
 
@@ -113,27 +117,24 @@ namespace ISquared.PocketHTML
 				return boolnames;
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public OptionsPanel(PocketHTMLEditor parent)
 		{
-			m_checkboxHash = new Hashtable();
-
 			InitializeHeader();
 			InitializeOptionsControls();
-
-			maineditor = parent;
-
 			DpiHelper.AdjustAllControls(this);
 
-			this.config = PocketHTMLEditor.Config;
-			maineditor = parent;
+			m_mainEditor = parent;
+			this.m_config = PocketHTMLEditor.Config;
 
-			currentButtonValues = new string[16];
+			m_currentButtonValues = new string[16];
 
-			m_tagHash = parent.TagHash;
-			
+			m_htCheckboxes = new Hashtable();
+			m_htTags = parent.TagHash;			
 
-			ICollection ickeys = m_tagHash.Keys;
+			ICollection ickeys = m_htTags.Keys;
 			string[] keys = new string[ickeys.Count];
 			ickeys.CopyTo(keys, 0);
 			Array.Sort(keys);
@@ -144,26 +145,27 @@ namespace ISquared.PocketHTML
 			}
 
 			Reset();
-
 		}
+		#endregion
 
+		#region Setup functions
 		private void InitializeHeader()
 		{
-			buttonOK = new Button();
-			this.buttonOK.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
-			this.buttonOK.Location = new System.Drawing.Point(155, 2);
-			this.buttonOK.Size = new System.Drawing.Size(30, 20);
-			this.buttonOK.Text = "OK";
-			this.buttonOK.Click += new EventHandler(buttonOK_Click);
-			this.Controls.Add(buttonOK);
+			m_btnOK = new Button();
+			this.m_btnOK.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
+			this.m_btnOK.Location = new System.Drawing.Point(155, 2);
+			this.m_btnOK.Size = new System.Drawing.Size(30, 20);
+			this.m_btnOK.Text = "OK";
+			this.m_btnOK.Click += new EventHandler(buttonOK_Click);
+			this.Controls.Add(m_btnOK);
 
-			buttonCancel = new Button();
-			this.buttonCancel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
-			this.buttonCancel.Location = new System.Drawing.Point(188, 2);
-			this.buttonCancel.Size = new System.Drawing.Size(50, 20);
-			this.buttonCancel.Text = "Cancel";
-			this.buttonCancel.Click +=new EventHandler(buttonCancel_Click);
-			this.Controls.Add(buttonCancel);					
+			m_btnCancel = new Button();
+			this.m_btnCancel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
+			this.m_btnCancel.Location = new System.Drawing.Point(188, 2);
+			this.m_btnCancel.Size = new System.Drawing.Size(50, 20);
+			this.m_btnCancel.Text = "Cancel";
+			this.m_btnCancel.Click +=new EventHandler(buttonCancel_Click);
+			this.Controls.Add(m_btnCancel);					
 		}
 
 		private void InitializeOptionsControls()
@@ -241,7 +243,7 @@ namespace ISquared.PocketHTML
 				lvi.Text = boolnames[i,1];
 				m_lvOptions.Items.Add(lvi);
 
-				m_checkboxHash[boolnames[i, 0]] = lvi;
+				m_htCheckboxes[boolnames[i, 0]] = lvi;
 			}
 
 
@@ -368,9 +370,70 @@ namespace ISquared.PocketHTML
 			
 			this.tabPage1.Text = "Options";
 			this.tabPage2.Text = "QuickTags";
-			
+
 		}
 
+		internal void Reset()
+		{
+			ResetValues();
+			ResetCheckboxes();
+
+			m_comboButtonNumber.SelectedIndex = 0;
+		}
+
+		internal void ResetCheckboxes()
+		{
+			for (int i = 0; i < boolnames.GetLength(0); i++)
+			{
+
+				string name = boolnames[i, 0];
+				bool chk = m_config.GetBool("Options", name);
+				ListViewItem lvi = (ListViewItem)m_htCheckboxes[name];
+				lvi.Checked = chk;
+			}
+		}
+
+		internal void ResetValues()
+		{
+			Hashtable buttonTags = m_mainEditor.ButtonTags;
+			NamedButton[] buttons = m_mainEditor.Buttons;
+			for (int i = 0; i < m_currentButtonValues.Length; i++)
+			{
+				m_currentButtonValues[i] = (string)buttonTags[buttons[i].Name];
+			}
+
+			string hardwareButtonName = m_config.GetValue("Options", "HardwareButton");
+			string sButtonNumber = hardwareButtonName.Substring(hardwareButtonName.Length - 1);
+			int buttonNumber = Int32.Parse(sButtonNumber);
+
+			nudHardwareButton.Value = buttonNumber;
+
+			string zoomLevel = m_config.GetValue("Options", "ZoomLevel");
+			m_comboZoomLevel.SelectedItem = zoomLevel;
+
+			string encodingName = m_config.GetValue("Options", "DefaultEncoding");
+
+			int encodingIndex = -1;
+			for (int i = 0; i < encodingnames.GetLength(0); i++)
+			{
+				if (encodingnames[i, 1] == encodingName)
+				{
+					encodingIndex = i;
+					break;
+				}
+			}
+
+			if (encodingIndex == -1)
+			{
+				// UTF-8
+				encodingIndex = 13;
+			}
+
+			m_comboDefaultEncoding.SelectedIndex = encodingIndex;
+		}
+		#endregion
+
+		#region Event handlers
 		void m_btnTestEncoding_Click(object sender, EventArgs e)
 		{
 			string selectedEncodingFullName = (string)m_comboDefaultEncoding.SelectedItem;
@@ -400,15 +463,7 @@ namespace ISquared.PocketHTML
 			MessageBox.Show(resultMessage, "Encoding Test Results", 
 							MessageBoxButtons.OK, mbi, MessageBoxDefaultButton.Button1);
 		}
-
-		internal void Reset()
-		{		
-			ResetValues();
-			ResetCheckboxes();
-
-			m_comboButtonNumber.SelectedIndex = 0;
-		}
-
+		
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint (e);
@@ -426,18 +481,18 @@ namespace ISquared.PocketHTML
 		private void comboButtonLabel_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			string text = (string)m_comboButtonLabel.SelectedItem;
-			Tag t = (Tag)m_tagHash[text];
+			Tag t = (Tag)m_htTags[text];
 			label2.Text = t.StartTag;
 
 			int idx = m_comboButtonNumber.SelectedIndex;
-			currentButtonValues[idx] = text;
+			m_currentButtonValues[idx] = text;
 
 		}
 
 		private void comboButtonNumber_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			int num = m_comboButtonNumber.SelectedIndex;
-			string refname = currentButtonValues[num];//maineditor.GetButtonString(num);
+			string refname = m_currentButtonValues[num];
 			int index = m_comboButtonLabel.Items.IndexOf(refname);
 			m_comboButtonLabel.SelectedIndex = index;
 
@@ -462,9 +517,8 @@ namespace ISquared.PocketHTML
 			for(int i = 0; i < boolnames.GetLength(0); i++)
 			{
 				string name = boolnames[i, 0];
-				ListViewItem lvi = (ListViewItem)m_checkboxHash[name];
+				ListViewItem lvi = (ListViewItem)m_htCheckboxes[name];
 				string boolvalue = lvi.Checked.ToString();
-				//string boolvalue = CheckBoxes[i].Checked.ToString();
 				
 				Config.SetValue("Options", name, boolvalue);
 			}
@@ -497,56 +551,7 @@ namespace ISquared.PocketHTML
 			m_result = DialogResult.Cancel;
 			((PocketHTMLEditor)Parent).MenuToolsOptions_Click(sender, e);
 		}
+		#endregion
 
-		internal void ResetCheckboxes()
-		{
-			for (int i = 0; i < boolnames.GetLength(0); i++)
-			{
-
-				string name = boolnames[i, 0];
-				bool chk = config.GetBool("Options", name);
-				ListViewItem lvi = (ListViewItem)m_checkboxHash[name];
-				lvi.Checked = chk;
-			}
-		}
-
-		internal void ResetValues()
-		{
-			Hashtable buttonTags = maineditor.ButtonTags;
-			NamedButton[] buttons = maineditor.Buttons;
-			for (int i = 0; i < currentButtonValues.Length; i++)
-			{
-				currentButtonValues[i] = (string)buttonTags[buttons[i].Name];
-			}
-
-			string hardwareButtonName = config.GetValue("Options", "HardwareButton");
-			string sButtonNumber = hardwareButtonName.Substring(hardwareButtonName.Length - 1);
-			int buttonNumber = Int32.Parse(sButtonNumber);
-
-			nudHardwareButton.Value = buttonNumber;
-
-			string zoomLevel = config.GetValue("Options", "ZoomLevel");
-			m_comboZoomLevel.SelectedItem = zoomLevel;
-
-			string encodingName = config.GetValue("Options", "DefaultEncoding");
-
-			int encodingIndex = -1;
-			for(int i = 0; i < encodingnames.GetLength(0); i++)
-			{
-				if(encodingnames[i, 1] == encodingName)
-				{
-					encodingIndex = i;
-					break;
-				}
-			}
-
-			if(encodingIndex == -1)
-			{
-				// UTF-8
-				encodingIndex = 13;
-			}
-
-			m_comboDefaultEncoding.SelectedIndex = encodingIndex;
-		}
 	}
 }

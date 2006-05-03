@@ -1,24 +1,17 @@
+#region using directives
 using System;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
 using System.Diagnostics;
 using System.Text;
+#endregion
 
 namespace ISquared.PocketHTML
 {
-	/// <summary>
-	/// Summary description for Utility.
-	/// </summary>
 	public class PocketHTMLUtility
 	{
-		public PocketHTMLUtility()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-
+		#region Utility functions
 		public static Icon GetIcon(String name, int size)
 		{
 			Assembly execAssembly = Assembly.GetExecutingAssembly();
@@ -40,13 +33,7 @@ namespace ISquared.PocketHTML
 		}
 
 		public static string DecodeData(Stream stream, Encoding defaultEncoding)
-		//public static String DecodeData(Stream stream)
 		{
-
-			//
-			// first see if content length header has charset = calue
-			//
-			// save data to a memorystream
 			string charset = null;
 			MemoryStream rawdata = new MemoryStream();
 			byte[] buffer = new byte[1024];
@@ -112,8 +99,8 @@ namespace ISquared.PocketHTML
 
 			String s = sr.ReadToEnd();
 
-			//return s.ToLower();
 			return s;
 		}
+		#endregion
 	}
 }

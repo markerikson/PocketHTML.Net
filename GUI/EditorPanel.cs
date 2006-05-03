@@ -1,3 +1,4 @@
+#region using directives
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -5,41 +6,37 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.IO;
-//using CKIUtil.Controls.HTMLViewer;
 using OpenNETCF.Windows.Forms;
 using ISquared.Win32Interop;
 using OpenNETCF.Win32;
-//using ISquared.Win32Interop.WinEnums;
-
-
+#endregion
 
 namespace ISquared.PocketHTML
 {
-
 	class EditorPanel : System.Windows.Forms.Panel
 	{
+		#region Delegates
 		public delegate bool TagMenuClickedHandler (string tagname);
 		public TagMenuClickedHandler TagMenuClicked;
+		#endregion
 
-		private System.Windows.Forms.Panel buttonPanel;
-		private System.Windows.Forms.Panel viewerPanel;
-		private AboutPanel aboutPanel;
-		private System.Windows.Forms.Panel tbPanel;
-		//private System.Windows.Forms.TextBox textBox1;
+		#region private members
+		private System.Windows.Forms.Panel m_pnlButtons;
+		private System.Windows.Forms.Panel m_pnlViewer;
+		private AboutPanel m_pnlAbout;
+		private System.Windows.Forms.Panel m_pnlTextbox;
+
+		private HTMLViewer m_htmlControl;
 		private OpenNETCF.Windows.Forms.TextBoxEx m_textbox;
-		private IntPtr pTB;
-		private System.Collections.Hashtable menuTags;
-		private System.Windows.Forms.ContextMenu contextTop;
-		private NamedButton[] buttons;
-		private bool showAbout;
-
-		private HTMLViewer htmlControl;
-
-		private Menu currentMenu;		
 		
-		/// <summary>
-		/// Property Tb (TextBox)
-		/// </summary>
+		private System.Windows.Forms.ContextMenu m_mnuContextTags;
+		private Menu m_currentMenu;
+		private NamedButton[] m_buttons;
+
+		private System.Collections.Hashtable m_htMenuTags;
+		#endregion
+
+		#region properties
 		public TextBoxEx TextBox
 		{
 			get
@@ -52,62 +49,57 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-		
-		/// <summary>
-		/// Property HtmlControl (HTMLViewer)
-		/// </summary>
-		
 		public HTMLViewer HtmlControl
 		{
 			get
 			{
-				return this.htmlControl;
+				return this.m_htmlControl;
 			}
 			set
 			{
-				this.htmlControl = value;
+				this.m_htmlControl = value;
 			}
 		}		
 		
 		// TODO Is there a better way to handle this than exposing the buttons as a property?
 
-		/// <summary>
-		/// Property Buttons (NamedButton[])
-		/// </summary>
 		public NamedButton[] Buttons
 		{
 			get
 			{
-				return this.buttons;
+				return this.m_buttons;
 			}
 			set
 			{
-				this.buttons = value;
+				this.m_buttons = value;
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public EditorPanel()
 		{
 			Initialize();
 
-			this.viewerPanel.Hide();
-			showAbout = true;
+			this.m_pnlViewer.Hide();
 		}
+		#endregion
 
+		#region Setup methods
 		public void Initialize()
 		{
-			menuTags = new Hashtable();
+			m_htMenuTags = new Hashtable();
 
 			#region form setup
 			
-			buttonPanel = new Panel();
-			buttonPanel.Parent = this;
+			m_pnlButtons = new Panel();
+			m_pnlButtons.Parent = this;
 
-			viewerPanel = new Panel();
-			viewerPanel.Parent = this;
+			m_pnlViewer = new Panel();
+			m_pnlViewer.Parent = this;
 
-			tbPanel = new Panel();
-			tbPanel.Parent = this;
+			m_pnlTextbox = new Panel();
+			m_pnlTextbox.Parent = this;
 
 			m_textbox = new TextBoxEx();
 			this.m_textbox.AcceptsTab = true;
@@ -117,25 +109,12 @@ namespace ISquared.PocketHTML
 			this.m_textbox.Multiline = true;
 			this.m_textbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.m_textbox.Text = "";
-			m_textbox.Parent = tbPanel;
+			m_textbox.Parent = m_pnlTextbox;
 
 			// TODO Can I delay-load this, too?
-			htmlControl = new HTMLViewer();
-			htmlControl.Bounds = viewerPanel.Bounds;
-			htmlControl.Parent = viewerPanel;
-			/*
-			m_browser = new WebBrowser();
-			m_browser.Bounds = viewerPanel.Bounds;
-			m_browser.Parent = viewerPanel;
-			m_browser.BorderStyle = BorderStyle.None;
-			*/
-
-			//htmlControl.CreateHTMLControl();
-
-			int width = 30;
-			int height = 16;
-			int y = 0;
-			int x = 0;
+			m_htmlControl = new HTMLViewer();
+			m_htmlControl.Bounds = m_pnlViewer.Bounds;
+			m_htmlControl.Parent = m_pnlViewer;
 
 			this.Buttons = new NamedButton[16];
 
@@ -144,28 +123,22 @@ namespace ISquared.PocketHTML
 				NamedButton nb = new NamedButton();
 				nb.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
 				nb.Name = "button" + Convert.ToString(i + 1);
-				nb.Parent = buttonPanel;
-				this.buttons[i] = nb;
+				nb.Parent = m_pnlButtons;
+				this.m_buttons[i] = nb;
 			}
 
-			pTB = CoreDLL.GetHandle(m_textbox);
+			IntPtr pTB = CoreDLL.GetHandle(m_textbox);
 			CoreDLL.SendMessage(pTB, (int)EM.LIMITTEXT, 0xFFFFFFF, 0);
 
 			#endregion
 
-			contextTop = new ContextMenu();
-			m_textbox.ContextMenu = contextTop;
-			currentMenu = contextTop;
+			m_mnuContextTags = new ContextMenu();
+			m_textbox.ContextMenu = m_mnuContextTags;
+			m_currentMenu = m_mnuContextTags;
 
 			MakeMenuXTR();
-
-			//UpdateLayout();
-
 		}
 
-		//protected override void OnResize(EventArgs e)
-		//{
-		//	base.OnResize(e);
 		public void UpdateLayout()
 		{
 			if (Screen.PrimaryScreen.Bounds.Width > Screen.PrimaryScreen.Bounds.Height)
@@ -182,14 +155,10 @@ namespace ISquared.PocketHTML
 
 		private void LayoutPortrait()
 		{
-			int availableWidth = Screen.PrimaryScreen.WorkingArea.Width;
-			int availableHeight = Screen.PrimaryScreen.WorkingArea.Height;
-
 			this.Bounds = new Rectangle(0, 0, 240, 270);
-			buttonPanel.Bounds = new Rectangle(0, 238, 240, 32);
-			viewerPanel.Bounds = new Rectangle(0, 0, 240, 237);
-			tbPanel.Bounds = new Rectangle(0, 0, 240, 237);
-
+			m_pnlButtons.Bounds = new Rectangle(0, 238, 240, 32);
+			m_pnlViewer.Bounds = new Rectangle(0, 0, 240, 237);
+			m_pnlTextbox.Bounds = new Rectangle(0, 0, 240, 237);
 
 			this.m_textbox.Size = new System.Drawing.Size(240, 237);
 
@@ -221,9 +190,9 @@ namespace ISquared.PocketHTML
 			int availableHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
 			this.Bounds = new Rectangle(0, 0, availableWidth, 188);
-			buttonPanel.Bounds = new Rectangle(0, this.Height - 32, this.Width, 32);
-			viewerPanel.Bounds = new Rectangle(0, 0, this.Width, this.Height);
-			tbPanel.Bounds = new Rectangle(0, 0, this.Width, this.Height);
+			m_pnlButtons.Bounds = new Rectangle(0, this.Height - 32, this.Width, 32);
+			m_pnlViewer.Bounds = new Rectangle(0, 0, this.Width, this.Height);
+			m_pnlTextbox.Bounds = new Rectangle(0, 0, this.Width, this.Height);
 
 
 			this.m_textbox.Size = new System.Drawing.Size(this.Width, this.Height - 32);
@@ -254,6 +223,7 @@ namespace ISquared.PocketHTML
 		{
 			string filename = Utility.GetCurrentDir(true) + "menu.xml";
 
+			// If menu.xml doesn't exist, we're pretty much dead anyway.
 			if(!File.Exists(filename))
 			{
 				throw new Exception("The file menu.xml could not be found.  Please make sure that menu.xml is in the same directory as pockethtml.exe");
@@ -274,10 +244,10 @@ namespace ISquared.PocketHTML
 			MenuItem sep = new MenuItem();
 			sep.Text = "-";
 
-			currentMenu.MenuItems.Add(copy);
-			currentMenu.MenuItems.Add(cut);
-			currentMenu.MenuItems.Add(paste);
-			currentMenu.MenuItems.Add(sep);
+			m_currentMenu.MenuItems.Add(copy);
+			m_currentMenu.MenuItems.Add(cut);
+			m_currentMenu.MenuItems.Add(paste);
+			m_currentMenu.MenuItems.Add(sep);
 
 
 			while(xtr.Read())
@@ -297,12 +267,12 @@ namespace ISquared.PocketHTML
 							newItem.Click += eh;
 							newItem.Text = name;
 							newItem.Tag = name;
-							currentMenu.MenuItems.Add(newItem);
+							m_currentMenu.MenuItems.Add(newItem);
 
 							if(!xtr.IsEmptyElement)
 							{
-								stack.Push(currentMenu);
-								currentMenu = newItem;
+								stack.Push(m_currentMenu);
+								m_currentMenu = newItem;
 							}
 
 						}
@@ -315,19 +285,20 @@ namespace ISquared.PocketHTML
 							continue;
 						}
 
-						currentMenu = (Menu)stack.Pop();
+						m_currentMenu = (Menu)stack.Pop();
 						break;		
 					}
 				}
 			}
 			xtr.Close();
 		}
+		#endregion
 
+		#region Tag insertion methods
 		private TagMenuItem InsertMenuItem(string text, bool handler, MenuItem menu)
 		{
 			return InsertMenuItem(text, String.Empty, handler, menu);
 		}
-
 
 		private TagMenuItem InsertMenuItem(string text, string tag, bool handler, 
 			MenuItem menu)
@@ -354,63 +325,57 @@ namespace ISquared.PocketHTML
 			return tmi;
 		}
 
+		private void TagMenuItem_Click(object sender, EventArgs e)
+		{
+			TagMenuItem tmi = sender as TagMenuItem;
+
+			if (TagMenuClicked != null)
+			{
+				TagMenuClicked(tmi.Tag);
+			}
+		}
+		#endregion
+
+		#region Panel management
 		internal void SwapPanels(bool showHTML)
 		{
 			if(showHTML)
 			{
-				tbPanel.Hide();
-				viewerPanel.Show();
-				viewerPanel.BringToFront();
+				m_pnlTextbox.Hide();
+				m_pnlViewer.Show();
+				m_pnlViewer.BringToFront();
 
 				/* TODO Do I really need to check this every time it gets swapped, or can it be 
 						just when the options are changed?
 				*/
 				bool ct = PocketHTMLEditor.Config.GetBool("Options", "ClearType");
 				
-				if (htmlControl.Source != m_textbox.Text ||//(htmlControl.HtmlString != tb.Text) ||
-					(ct != htmlControl.EnableClearType))
+				if (m_htmlControl.Source != m_textbox.Text ||
+					(ct != m_htmlControl.EnableClearType))
 									
 				{
-					//htmlControl.ClearType = ct;
-					//htmlControl.HtmlString = tb.Text;
-					htmlControl.EnableClearType = ct;
-					htmlControl.Source = m_textbox.Text;
+					m_htmlControl.EnableClearType = ct;
+					m_htmlControl.Source = m_textbox.Text;
 				}	
-				 
-				/*
-				if(ct != m_browser.EnableClearType)
-				{
-					m_browser.EnableClearType = ct;
-				}
-				
-				m_browser.DocumentText = m_textbox.Text;
-				*/
 			}
 			else
 			{
-				viewerPanel.Hide();
-				tbPanel.Show();
-				tbPanel.BringToFront();
+				m_pnlViewer.Hide();
+				m_pnlTextbox.Show();
+				m_pnlTextbox.BringToFront();
 			}
 		}
 
 		internal void ShowAbout()
 		{
-			if(showAbout)
+			if(this.m_pnlAbout == null)
 			{
-				if(this.aboutPanel == null)
-				{
-					aboutPanel = new AboutPanel();
-					aboutPanel.Parent = this;
-					aboutPanel.Bounds = new Rectangle(0, 0, 240, 236);					
-				}
-				aboutPanel.Show();
-				aboutPanel.BringToFront();
+				m_pnlAbout = new AboutPanel();
+				m_pnlAbout.Parent = this;
+				m_pnlAbout.Bounds = new Rectangle(0, 0, 240, 236);					
 			}
-			else
-			{
-				aboutPanel.Hide();
-			}			
+			m_pnlAbout.Show();
+			m_pnlAbout.BringToFront();
 		}
 
 		internal void ResizePanel(Microsoft.WindowsCE.Forms.InputPanel inputPanel1)
@@ -418,44 +383,32 @@ namespace ISquared.PocketHTML
 			Rectangle visible;
 			visible = inputPanel1.VisibleDesktop;
 			int scaledSize = DpiHelper.Scale(32);
+
 			if (inputPanel1.Enabled == true)
 			{
-				viewerPanel.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
-				tbPanel.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
-				buttonPanel.Top = visible.Height - scaledSize;
+				m_pnlViewer.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
+				m_pnlTextbox.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
+				m_pnlButtons.Top = visible.Height - scaledSize;
 			}
 			else
 			{
-				viewerPanel.Height = this.ClientSize.Height - scaledSize;
-				tbPanel.Height = this.ClientSize.Height - scaledSize;
-				buttonPanel.Top = this.ClientSize.Height - scaledSize;
+				m_pnlViewer.Height = this.ClientSize.Height - scaledSize;
+				m_pnlTextbox.Height = this.ClientSize.Height - scaledSize;
+				m_pnlButtons.Top = this.ClientSize.Height - scaledSize;
 			}
 
-			m_textbox.Height = tbPanel.Height;
-			htmlControl.Bounds = viewerPanel.ClientRectangle;
-			//m_browser.Bounds = viewerPanel.ClientRectangle;
-			//m_browser.BorderStyle = BorderStyle.Fixed3D;
-			//m_browser.Height -= 2;
+			m_textbox.Height = m_pnlTextbox.Height;
+			m_htmlControl.Bounds = m_pnlViewer.ClientRectangle;
 		}
+		#endregion
 
-		private void TagMenuItem_Click(object sender, EventArgs e)
-		{
-			TagMenuItem tmi = sender as TagMenuItem;			
-
-			if(TagMenuClicked != null)
-			{
-				TagMenuClicked(tmi.Tag);
-			}
-		}
+		
 	} 
 
 	internal class TagMenuItem : MenuItem
 	{
 		private string tag;
 		
-		/// <summary>
-		/// Property Tag (string)
-		/// </summary>
 		public string Tag
 		{
 			get

@@ -1,3 +1,4 @@
+#region using directives
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -5,6 +6,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Xml;
 using System.Collections;
+#endregion
 
 namespace ISquared.Debugging
 {
@@ -15,11 +17,19 @@ namespace ISquared.Debugging
 	/// </summary>
 	public class TcpTraceListener : TraceListener, IDisposable
 	{
+		#region members
 		/// <summary>
 		/// The message a TcpTraceListener sends when it is no longer needed
 		/// </summary>
 		public static string end = "*END_DEBUG*";
 
+		private string server = String.Empty;
+		private int serverPort = 0;
+		private TcpClient tcpClient = null;
+		private NetworkStream stream = null;
+		#endregion
+
+		#region Constructors / setup
 		[Conditional("DEBUG")]
 		/// <summary>
 		/// Call this method to hook to the Debug infrastructure a 
@@ -87,6 +97,18 @@ namespace ISquared.Debugging
 			ConnectToServer();
 		}
 
+		/// <summary>
+		/// Attempts a connection to the server and obtains a stream to
+		/// communicate with it
+		/// </summary>
+		private void ConnectToServer()
+		{
+			tcpClient = new TcpClient(server, serverPort);
+			stream = tcpClient.GetStream();
+		}
+		#endregion
+
+		#region Writing functions
 		public override void Write(string message)
 		{
 			SendString(message);
@@ -98,38 +120,6 @@ namespace ISquared.Debugging
 			SendString(msg);
 		}
 
-		public override void Close()
-		{
-			if (stream != null)
-			{
-				try
-				{
-					SendString(end);
-					stream.Flush();
-					stream.Close();
-					stream = null;
-				}
-				catch
-				{
-				}
-			}
-			if (tcpClient != null)
-			{
-				try
-				{
-					tcpClient.Close();
-					tcpClient = null;
-				}
-				catch(Exception)
-				{
-				}
-			}
-		}
-	
-		public void Dispose()
-		{
-			Close();
-		}
 
 		/// <summary>
 		/// Sends the argument to the server (Unicode encoded)
@@ -145,21 +135,14 @@ namespace ISquared.Debugging
 					stream.Write(data, 0, data.Length);
 					stream.Flush();
 				}
-				catch(Exception)
+				catch (Exception)
 				{
 				}
 			}
 		}
+		#endregion
 
-		/// <summary>
-		/// Attempts a connection to the server and obtains a stream to
-		/// communicate with it
-		/// </summary>
-		private void ConnectToServer()
-		{
-			tcpClient = new TcpClient(server, serverPort);
-			stream = tcpClient.GetStream();
-		}
+		#region Reading functions
 
 		/// <summary>
 		/// Reads the server name and port from the specified configuration file
@@ -191,10 +174,10 @@ namespace ISquared.Debugging
 					ReadAddAttributes(rd, tb);
 				}
 
-				server = (String) tb["TcpTraceServer"];
-				port = Int32.Parse((String) tb["TcpTracePort"]);
+				server = (String)tb["TcpTraceServer"];
+				port = Int32.Parse((String)tb["TcpTracePort"]);
 			}
-			catch(XmlException xmlEx)
+			catch (XmlException xmlEx)
 			{
 				Console.WriteLine(xmlEx.Message);
 			}
@@ -227,10 +210,42 @@ namespace ISquared.Debugging
 
 			return retVal;
 		}
+		#endregion
 
-		private string server = String.Empty;
-		private int serverPort = 0;
-		private TcpClient tcpClient = null;
-		private NetworkStream stream = null;
+		#region Other functions
+		public override void Close()
+		{
+			if (stream != null)
+			{
+				try
+				{
+					SendString(end);
+					stream.Flush();
+					stream.Close();
+					stream = null;
+				}
+				catch
+				{
+				}
+			}
+			if (tcpClient != null)
+			{
+				try
+				{
+					tcpClient.Close();
+					tcpClient = null;
+				}
+				catch(Exception)
+				{
+				}
+			}
+		}
+	
+		public void Dispose()
+		{
+			Close();
+		}
+		#endregion
+
 	}
 }

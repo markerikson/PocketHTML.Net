@@ -1,24 +1,28 @@
+#region using directives
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-//using ISquared.Win32Interop.WinEnums;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace ISquared.Windows.Forms
 {
-	public class FloatingDialog : System.Windows.Forms.Form//, IDialogForm
+	public class FloatingDialog : System.Windows.Forms.Form
 	{
+		#region members
 		protected TitleBarPanel m_pnlTitle;
 		protected Panel m_pnlContent;
 		protected Pen m_penBlack;
 		protected bool m_moving;
 
 		private Form m_frmParent;
+		#endregion
 
+		#region properties
 		public Form ParentForm
 		{
 			get
@@ -50,7 +54,9 @@ namespace ISquared.Windows.Forms
 				return m_pnlContent;
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public FloatingDialog()
 		{
 			InitializeComponent();
@@ -63,12 +69,8 @@ namespace ISquared.Windows.Forms
 
 			m_moving = false;
 			m_penBlack = new Pen(Color.Black);
-
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -110,6 +112,9 @@ namespace ISquared.Windows.Forms
 		}
 		#endregion
 
+		#endregion
+
+		#region Event handlers
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -133,14 +138,6 @@ namespace ISquared.Windows.Forms
 			//DpiHelper.AdjustAllControls(this);
 		}
 
-
-		internal void Moving(bool m)
-		{
-			m_moving = m;
-
-			m_pnlContent.Visible = !m;
-		}
-
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;
@@ -156,10 +153,8 @@ namespace ISquared.Windows.Forms
 			g.DrawRectangle(m_penBlack, r);
 
 		}
+		#endregion
 
 	}
-
-
-
 }
 

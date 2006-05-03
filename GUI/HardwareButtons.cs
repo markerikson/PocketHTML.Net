@@ -1,3 +1,4 @@
+#region using directives
 using System;
 using System.Drawing;
 using System.Collections;
@@ -5,12 +6,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Microsoft.WindowsCE.Forms;
 using System.Runtime.InteropServices;
-
+#endregion
 namespace HardwareButtons
 {
-	/// <summary>
-	/// Summary description for HButtons.
-	/// </summary>
+	#region enums
 	public enum KeyModifiers
 	{
 		None = 0,
@@ -39,45 +38,7 @@ namespace HardwareButtons
 		Hardware4 = 8,
 		Hardware5 = 16,
 	}
-	/*
-	public class HButtons : System.Windows.Forms.Form
-	{
-		myMessageWindow messageWindow;
-		public HButtons()
-		{
-			this.messageWindow = new myMessageWindow(this); RegisterHKeys.RegisterRecordKey(this.messageWindow.Hwnd);
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-		}
-		public static void Main()
-		{
-			Application.Run(new HButtons());
-		}
-		public void ButtonPressed(int button)
-		{
-			switch (button)
-			{
-				case (int)KeysHardware.Hardware1:
-					MessageBox.Show("Button 1 pressed!");
-					break;
-				case (int)KeysHardware.Hardware2:
-					MessageBox.Show("Button 2 pressed!");
-					break;
-				case (int)KeysHardware.Hardware3:
-					MessageBox.Show("Button 3 pressed!");
-					break;
-				case (int)KeysHardware.Hardware4:
-					MessageBox.Show("Button 4 pressed!");
-					break;
-			}
-
-		}
-
-	}
-	*/
+	#endregion
 
 	public delegate void HardwareButtonPressedHandler(int button);
 
@@ -85,12 +46,11 @@ namespace HardwareButtons
 	{
 		public event HardwareButtonPressedHandler HardwareButtonPressed;
 
-
 		public const int WM_HOTKEY = 0x0312;
-		//HButtons example;
-		public HardwareButtonMessageWindow()//HButtons example)
-		{
-			//this.example = example;
+
+		#region Constructor
+		public HardwareButtonMessageWindow()
+		{			
 		}
 
 		protected override void WndProc(ref Message msg)
@@ -102,14 +62,15 @@ namespace HardwareButtons
 					{
 						HardwareButtonPressed(msg.WParam.ToInt32());
 					}
-					//example.ButtonPressed(msg.WParam.ToInt32());
 					return;
 			}
 			base.WndProc(ref msg);
 		}
+		#endregion
 	}
 	public class RegisterHKeys
 	{
+		#region P/Invokes
 		[DllImport("coredll.dll", SetLastError = true)]
 		public static extern bool RegisterHotKey(
 		IntPtr hWnd, // handle to window
@@ -124,6 +85,11 @@ namespace HardwareButtons
 			int id // hot key identifier 			
 			);
 
+		[DllImport("coredll.dll")]
+		private static extern bool UnregisterFunc1(KeyModifiers
+		modifiers, int keyID);
+		#endregion
+
 		private static RegisterButtons m_registeredButtons = RegisterButtons.None;
 
 		public static RegisterButtons RegisteredButtons
@@ -132,11 +98,7 @@ namespace HardwareButtons
 			set { m_registeredButtons = value; }
 		}
 
-
-		[DllImport("coredll.dll")]
-		private static extern bool UnregisterFunc1(KeyModifiers
-		modifiers, int keyID);
-
+		#region Hardware functions
 		public static void UnregisterRecordKey(IntPtr hWnd, RegisterButtons buttons)
 		{
 			if ((buttons & RegisterButtons.Hardware1) == RegisterButtons.Hardware1)
@@ -207,7 +169,6 @@ namespace HardwareButtons
 
 			RegisteredButtons = buttons;
 		}
-
-
+		#endregion
 	}
 }

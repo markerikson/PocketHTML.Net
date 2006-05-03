@@ -22,6 +22,7 @@
 //
 //==========================================================================================
 
+#region using directives
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -39,6 +40,7 @@ using OpenNETCF.Windows.Forms;
 using Microsoft.WindowsCE.Forms;
 #endif
 #endif
+#endregion
 
 namespace OpenNETCF.Windows.Forms
 {
@@ -60,19 +62,6 @@ namespace OpenNETCF.Windows.Forms
 		//do a border?
 		private BorderStyle m_border = BorderStyle.FixedSingle;
 
-
-		#if !DESIGN
-		//the messagewindow (parent of native control)
-		//private ControlMessageWindow m_msgwnd;
-		
-
-		//handle to htmlview dll
-		//private IntPtr m_module;
-			
-		//running app instance handle
-		//private IntPtr m_instance;
-		#endif
-
 		//current settings
 		private string m_url = "";
 		private string m_source = "";
@@ -88,48 +77,21 @@ namespace OpenNETCF.Windows.Forms
 
 		#endregion
 
-		
-
 		#region Constructor
-		/// <summary>
-		/// Creates a new instance of HTMLViewer.
-		/// </summary>
 		public HTMLViewer()
 		{
 			m_sink = new WindowSink();
-			/*
-
-			#if !DESIGN
-			//load htmlview module
-			m_module = CoreDLL.LoadLibrary("htmlview.dll");
-
-			//get instance handle
-			m_instance = CoreDLL.GetModuleHandle(null);
-
-			//init htmlcontrol
-			int result = InitHTMLControl(m_instance);
-			
-			//setup messagewindow
-			m_msgwnd = new ControlMessageWindow(this, "DISPLAYCLASS", ControlMessageWindow.ControlMessageWindowFlags.IgnoreFocus);
-			m_msgwnd.BorderStyle = m_border;
-			#endif
-
-			this.EnableContextMenu = true;
-			*/
 		}
-		#endregion
+		
 
 		public void CreateHTMLControl()
 		{
-			//if(this._parentForm== null)
-			//	throw new Exception("Parent form cannot be null");
-
-			//this.CreateHTMLControl(FindWindowCE(null,this._parentForm.Text),this._htmlCtrl_Left ,this._htmlCtrl_Top ,this._htmlCtrl_Width ,this._htmlCtrl_Height);
 			m_handle = CoreDLL.GetHandle(this);
 
 			m_html = CreateChildHTMLControl(m_handle, m_sink.Hwnd);
-
 		}
+
+		#endregion
 
 		#region Properties
 
@@ -186,7 +148,6 @@ namespace OpenNETCF.Windows.Forms
 				if(value)
 					intval = -1;
 
-				//m_msgwnd.SendMessage((int)HtmlMessage.EnableContextMenu, 0, intval);
 				CoreDLL.SendMessage(m_html, (int)HtmlMessage.EnableContextMenu, 0, intval);
 #endif
 			}
@@ -204,7 +165,6 @@ namespace OpenNETCF.Windows.Forms
 		{
 			get
 			{
-				//return m_msgwnd.ParentHWnd;
 				return m_html;
 			}
 		}
@@ -224,7 +184,6 @@ namespace OpenNETCF.Windows.Forms
 			get
 			{
 				#if !DESIGN
-				//return (int)m_msgwnd.SendMessage((int)HtmlMessage.LayoutHeight, 0, 0);
 				return CoreDLL.SendMessage(m_html, (int)HtmlMessage.LayoutHeight, 0, 0);
 				#else
 				return 0;
@@ -245,7 +204,6 @@ namespace OpenNETCF.Windows.Forms
 			get
 			{
 #if !DESIGN
-				//return (int)m_msgwnd.SendMessage((int)HtmlMessage.LayoutWidth, 0, 0);
 				return CoreDLL.SendMessage(m_html, (int)HtmlMessage.LayoutWidth, 0, 0);
 #else
 				return 0;
@@ -277,7 +235,6 @@ namespace OpenNETCF.Windows.Forms
 				IntPtr stringptr = MarshalEx.StringToHGlobalUni(value + '\0');
 				
 				//send message to native control
-				//m_msgwnd.SendMessage((int)HtmlMessage.Navigate, 0, (int)stringptr);
 				CoreDLL.SendMessage(m_html, (int)HtmlMessage.Navigate, 0, (int)stringptr);
 
 				//free native memory
@@ -398,7 +355,6 @@ namespace OpenNETCF.Windows.Forms
 				if(value)
 					intval = -1;
 				
-				//m_msgwnd.SendMessage((int)HtmlMessage.EnableClearType, 0, intval);
 				CoreDLL.SendMessage(m_html, (int)HtmlMessage.EnableClearType, 0, intval);
 #endif
 			}
@@ -431,7 +387,6 @@ namespace OpenNETCF.Windows.Forms
 				if(value)
 					intval = -1;
 				
-				//m_msgwnd.SendMessage((int)HtmlMessage.EnableShrink, 0, intval);
 				CoreDLL.SendMessage(m_html, (int)HtmlMessage.EnableShrink, 0, intval);
 #endif
 			}
@@ -463,7 +418,6 @@ namespace OpenNETCF.Windows.Forms
 				if(value)
 					intval = -1;
 				
-				//m_msgwnd.SendMessage((int)HtmlMessage.EnableScripting, 0, intval);
 				CoreDLL.SendMessage(m_html, (int)HtmlMessage.EnableScripting, 0, intval);
 #endif
 			}
@@ -471,8 +425,7 @@ namespace OpenNETCF.Windows.Forms
 		#endregion
 
 		#endregion
-
-		
+				
 
 		#region Public Methods
 
@@ -502,7 +455,6 @@ namespace OpenNETCF.Windows.Forms
 				iplain = -1;
 
 			//send message to native control adding to current text
-			//m_msgwnd.SendMessage((int)HtmlMessage.AddTextW, iplain, (int)stringptr);
 			CoreDLL.SendMessage(m_html, (int)HtmlMessage.AddTextW, iplain, (int)stringptr);
 
 			//free native memory
@@ -519,7 +471,6 @@ namespace OpenNETCF.Windows.Forms
 		{
 #if !DESIGN
 			//send message to native control indicating end of source text
-			//m_msgwnd.SendMessage((int)HtmlMessage.EndOfSource, 0, 0);
 			CoreDLL.SendMessage(m_html, (int)HtmlMessage.EndOfSource, 0, 0);
 #endif
 		}
@@ -534,7 +485,6 @@ namespace OpenNETCF.Windows.Forms
 			//clear local text
 			this.Text = "";
 #if !DESIGN
-			//m_msgwnd.SendMessage((int)HtmlMessage.Clear, 0, 0);
 			CoreDLL.SendMessage(m_html, (int)HtmlMessage.Clear, 0, 0);
 #endif
 		}
@@ -548,7 +498,6 @@ namespace OpenNETCF.Windows.Forms
 		{
 #if !DESIGN
 			//send message
-			//m_msgwnd.SendMessage((int)HtmlMessage.SelectAll, 0, 0);
 			CoreDLL.SendMessage(m_html, (int)HtmlMessage.SelectAll, 0, 0);
 #endif
 		}
@@ -964,11 +913,15 @@ namespace OpenNETCF.Windows.Forms
 
 	internal class WindowSink : Microsoft.WindowsCE.Forms.MessageWindow
 	{
+
+		#region Private members
 		private const int WM_USER = 1024;
 		private const int WM_IMAGENOTIFY = WM_USER + 42;
 
 		private string m_fileName;
+		#endregion
 
+		#region Properties
 		public string CurrentFilename
 		{
 			get
@@ -980,18 +933,21 @@ namespace OpenNETCF.Windows.Forms
 				m_fileName = value;
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public WindowSink()
 		{
-			CurrentFilename = null;//"\\Program Files\\HTMLDLLHost\\test1.html";
+			CurrentFilename = null;
 		}
-
 
 		protected override void WndProc(ref Message msg)
 		{
 			if (msg.Msg == WM_IMAGENOTIFY)
 			{
 				string fileName = Marshal.PtrToStringUni(msg.WParam);
+
+				// ignore non-local filenames
 				if (fileName.StartsWith("http")
 					|| fileName.StartsWith("ftp")
 					|| CurrentFilename == null)
@@ -1006,13 +962,13 @@ namespace OpenNETCF.Windows.Forms
 					fileName = currentPath + "\\" + fileName;
 				}
 
+				// Write the current filename to the pointer in lParam
 				unsafe
 				{
 					char* szFileName = (char*)msg.LParam;
 
 					for (int i = 0; i < fileName.Length; i++)
 					{
-
 						*szFileName = fileName[i];
 						szFileName++;
 					}
@@ -1023,6 +979,7 @@ namespace OpenNETCF.Windows.Forms
 			}
 
 		}
+		#endregion
 	}
 
 }

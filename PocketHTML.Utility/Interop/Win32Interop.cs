@@ -1,12 +1,14 @@
+#region using directives
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-
+#endregion
 
 namespace ISquared.Win32Interop
 {
 	public class CoreDLL
 	{
+		#region P/Invokes
 		[DllImport("coredll.dll",EntryPoint="SendMessage")]
 		public static extern int SendMessageGetLine(IntPtr _WindowHandler, int
 			_WM_USER, int _data, StringBuilder sb );
@@ -67,14 +69,27 @@ namespace ISquared.Win32Interop
 		[DllImport("coredll", EntryPoint="LoadLibraryW", SetLastError=true)]
 		public static extern IntPtr LoadLibraryCE( string lpszLib );
 
-		public static IntPtr LoadLibrary(string library)
-		{
-			IntPtr ret = LoadLibraryCE(library);
-			if ( ret.ToInt32() <= 31 & ret.ToInt32() >= 0)
-				throw new /*WinAPI*/Exception("Failed to load library " + library + ", code: " + Marshal.GetLastWin32Error());
-			return ret;
-		}
+		[DllImport("coredll", EntryPoint = "FormatMessageW", SetLastError = false)]
+		public static extern int FormatMessage(FormatMessageFlags dwFlags, int lpSource, int dwMessageId, int dwLanguageId, out IntPtr lpBuffer, int nSize, int[] Arguments);
 
+
+		[DllImport("CoreDll.DLL",
+			 SetLastError = true)]
+		public extern static int CreateProcess(String fileName, String cmdLine,
+											IntPtr lpProcessAttributes,
+											IntPtr lpThreadAttributes,
+											Int32 boolInheritHandles,
+											Int32 dwCreationFlags,
+											IntPtr lpEnvironment,
+											IntPtr lpszCurrentDir,
+											byte[] si,
+											ProcessInfo pi);
+
+
+		[DllImport("coredll.dll", EntryPoint = "SHGetSpecialFolderPath", SetLastError = false)]
+		public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, StringBuilder lpszPath, int nFolder, int fCreate);
+
+		#endregion
 
 		#region Format Message Flags Enumeration
 		/// <summary>
@@ -116,21 +131,14 @@ namespace ISquared.Win32Interop
 		}
 		#endregion
 
-		[DllImport("coredll", EntryPoint="FormatMessageW", SetLastError=false)]
-		public static extern int FormatMessage(FormatMessageFlags dwFlags, int lpSource, int dwMessageId, int dwLanguageId, out IntPtr lpBuffer, int nSize, int[] Arguments );
-
-
-		[DllImport("CoreDll.DLL", 
-			 SetLastError=true)]
-		public extern static int CreateProcess( String fileName, String cmdLine,
-											IntPtr lpProcessAttributes,
-											IntPtr lpThreadAttributes,
-											Int32 boolInheritHandles,
-											Int32 dwCreationFlags,
-											IntPtr lpEnvironment,
-											IntPtr lpszCurrentDir,
-											byte [] si,
-											ProcessInfo pi );
+		#region Utility functions
+		public static IntPtr LoadLibrary(string library)
+		{
+			IntPtr ret = LoadLibraryCE(library);
+			if (ret.ToInt32() <= 31 & ret.ToInt32() >= 0)
+				throw new /*WinAPI*/Exception("Failed to load library " + library + ", code: " + Marshal.GetLastWin32Error());
+			return ret;
+		}
 
 		public static IntPtr GetHandle(System.Windows.Forms.Control c)
 		{
@@ -166,20 +174,21 @@ namespace ISquared.Win32Interop
 
 			return path.ToString();
 		}
-
-		[DllImport("coredll.dll", EntryPoint = "SHGetSpecialFolderPath", SetLastError = false)]
-		public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, StringBuilder lpszPath, int nFolder, int fCreate);
+		#endregion
 
 	}
 
 	public class TGetFile
 	{
+		#region P/Invokes
 		[DllImport("filedialogs.dll")]				
 		public static extern bool tGetOpen1(int i1, int i2, int i3, IntPtr p1);
 
 		[DllImport("filedialogs.dll")]				
 		public static extern bool tGetSave1(int i1, int i2, int i3, IntPtr p1);
+		#endregion
 
+		#region TGetFileName
 		public static string TGetFileName(bool save, string originalFileName, int initialFilter, 
 											string fileFilter, string initialDirectory) 
 		{
@@ -208,32 +217,23 @@ namespace ISquared.Win32Interop
 			ofn.reservedInt = 0;
 			ofn.flagsEx = 0;
 
-
-			//string html = "HTML Files (*.html, *.htm)\0*.html;*.htm\0Text files (*.txt)\0*.txt\0All files (*.*)\0*.*\0\0";
-			
 			ofn.filter = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * fileFilter.Length);
 			InteropUtility.StringToPointer(fileFilter, ofn.filter);
-
-
+			
 			ofn.filterIndex = initialFilter;
 					
 
 			int OFN_OVERWRITEPROMPT = 0x02;
-			ofn.flags |= OFN_OVERWRITEPROMPT;
-		
-			ofn.file = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * 256);
-						
-			ofn.maxFile = 256;
-		
+			ofn.flags |= OFN_OVERWRITEPROMPT;		
+			ofn.file = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * 256);						
+			ofn.maxFile = 256;		
 			ofn.fileTitle = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * 64);
-			ofn.maxFileTitle = 64;	
-			
+			ofn.maxFileTitle = 64;				
 
 			if(initialDirectory == null)
 			{
 				initialDirectory = "\\";
 			}
-			//Win32Interop.Utility.InsertString(initialDirectory, ofn.initialDir);
 
 			ofn.initialDir = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * initialDirectory.Length);
 			InteropUtility.StringToPointer(initialDirectory, ofn.initialDir);
@@ -243,24 +243,10 @@ namespace ISquared.Win32Interop
 				InteropUtility.StringToPointer(originalFileName, ofn.file);
 			}
 
-			/*
-						string title = String.Empty;
-						ofn.title = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * title.Length);
-						StringToPointer(title, ofn.title);
-
-						if(saveas)
-						{
-							title = "Open"
-
-						}
-						*/
-
 			ofn.structSize = Marshal.SizeOf( ofn );
 			
 			IntPtr pOFN = CoreDLL.LocalAllocCE(0x40, 512);
 			Marshal.StructureToPtr(ofn, pOFN, false);
-			
-			
 		
 			bool res;
 			
@@ -285,16 +271,12 @@ namespace ISquared.Win32Interop
 				OpenFileName ofn2 = (OpenFileName)Marshal.PtrToStructure(pOFN, typeof(OpenFileName));
 				if(save && (ofn2.filterIndex == 1))
 				{
-					//int idx = result.LastIndexOf(".");
-					//string justname = result.Substring(0, idx);
-					//result = justname + ".html";
 					int idx = result.LastIndexOf(".htm");
 					if(idx == -1)
 					{
 						result += ".html";
 					}
-				}
-				
+				}				
 			}
 			
 			CoreDLL.LocalFreeCE(ofn.file);
@@ -305,12 +287,12 @@ namespace ISquared.Win32Interop
 			CoreDLL.LocalFreeCE(pOFN);
 
 			return result;
-
 		}
+		#endregion
 
-		
 	}
 
+	#region Enums and structs
 	public enum SpecialFolder
 	{
 		// <summary>
@@ -392,7 +374,6 @@ namespace ISquared.Win32Interop
 
 	}
 
-
 	public class ProcessInfo
 	{
 		public int hProcess = 0;
@@ -401,8 +382,38 @@ namespace ISquared.Win32Interop
 		public int ThreadID = 0;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct OpenFileName
+	{
+		public int structSize;
+		public IntPtr dlgOwner;
+		public IntPtr instance;
+		public IntPtr filter;
+		public String customFilter;
+		public int maxCustFilter;
+		public int filterIndex;
+		public IntPtr file;
+		public int maxFile;
+		public IntPtr fileTitle;
+		public int maxFileTitle;
+		public IntPtr initialDir;
+		public IntPtr title;
+		public int flags;
+		public short fileOffset;
+		public short fileExtension;
+		public String defExt;
+		public IntPtr custData;
+		public IntPtr hook;
+		public String templateName;
+		public IntPtr reservedPtr;
+		public int reservedInt;
+		public int flagsEx;
+	}
+	#endregion
+
 	public class InteropUtility
 	{
+		#region String functions
 		public unsafe static string PointerToString(IntPtr ptr)   
 		{   
 			int i;   
@@ -435,7 +446,9 @@ namespace ISquared.Win32Interop
 			ip = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * st.Length);
 			StringToPointer(st, ip);
 		}
+		#endregion
 
+		#region Other functions
 		public static void SetTabStop(System.Windows.Forms.TextBox textBox)
 		{
 			IntPtr pTB = CoreDLL.GetHandle(textBox);
@@ -443,60 +456,8 @@ namespace ISquared.Win32Interop
 			int[] stops = { 16 };
 			int result = CoreDLL.SendMessage(pTB, EM_SETTABSTOPS, 1, stops);
 		}
+		#endregion
 	}
-
-	[StructLayout(LayoutKind.Sequential)]  
-	public struct OpenFileName 
-	{
-		public int		structSize;
-		public IntPtr	dlgOwner;
-		public IntPtr	instance;
-		public IntPtr filter;
-		public String	customFilter;
-		public int		maxCustFilter;
-		public int		filterIndex;
-		public IntPtr file;
-		public int		maxFile;
-		public IntPtr fileTitle;
-		public int		maxFileTitle;
-		public IntPtr initialDir;
-		public IntPtr title;
-		public int		flags;
-		public short	fileOffset;
-		public short	fileExtension;
-		public String	defExt;
-		public IntPtr	custData;
-		public IntPtr	hook;
-		public String	templateName;
-		public IntPtr	reservedPtr;
-		public int		reservedInt;
-		public int		flagsEx ;
-	}
-
-
-
-	[StructLayout(LayoutKind.Sequential)]
-	public struct LOGFONT 
-	{ 
-		public int lfHeight; 
-		public int lfWidth; 
-		public int lfEscapement; 
-		public int lfOrientation; 
-		public int lfWeight; 
-		public byte lfItalic; 
-		public byte lfUnderline; 
-		public byte lfStrikeOut; 
-		public byte lfCharSet; 
-		public byte lfOutPrecision ; 
-		public byte lfClipPrecision ; 
-		public byte lfQuality ; 
-		public byte lfPitchAndFamily ; 
-		public string lfFaceName; 
-	} 
-
-
- 
-
 }
 
  

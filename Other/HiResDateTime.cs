@@ -1,8 +1,11 @@
+#region using directives
 using System;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace ISquared.Debugging
 {
+	#region comments
 	/// <summary>
 	/// A class providing DateTime objects with millisecond resolution, for
 	/// Compact Framework applications.
@@ -15,6 +18,7 @@ namespace ISquared.Debugging
 	/// 0 milliseconds, as does DateTime.Now. <see href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/sysinfo/base/getsystemtimeadjustment.asp">GetSystemTimeAdjustment</see>
 	/// is not implemented in the Compact Framework.
 	/// </remarks>
+	#endregion
 	public class HiResDateTime
 	{
 		[DllImport("coredll.dll")]

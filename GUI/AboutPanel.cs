@@ -1,3 +1,4 @@
+#region using directives
 using System;
 using System.Drawing;
 using System.Collections;
@@ -5,14 +6,13 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
+#endregion
 
 namespace ISquared.PocketHTML
 {
-	/// <summary>
-	/// Summary description for AboutDialog.
-	/// </summary>
 	public class AboutPanel : System.Windows.Forms.Panel
 	{
+		#region private members
 		private System.Windows.Forms.Label m_lblISquared;
 		private System.Windows.Forms.Label m_lblPocketHTML;
 		private System.Windows.Forms.Label m_lblVersion;
@@ -20,7 +20,9 @@ namespace ISquared.PocketHTML
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Label m_lblMessage;
 		private System.Windows.Forms.Label m_lblURL;
-	
+		#endregion
+
+		#region Constructor
 		public AboutPanel()
 		{
 			InitializeComponent();
@@ -34,6 +36,9 @@ namespace ISquared.PocketHTML
 			string buildNumber = Utility.AssemblyVersion();
 			m_lblVersion.Text = PocketHTMLEditor.VersionText +"\r\n" + buildNumber;
 
+			string aboutMessage = @"PocketHTML.Net is donationware.  Loosely translated, that means that if you like this program and continue to use it, I'd appreciate it if you registered it for $5.  But, since I hate reg keys and crippleware, this program is fully functional and no registration is required.  Of course, if you like it enough to send more than $5, that would be appreciated too. See the website for donation instructions.";
+			m_lblMessage.Text = aboutMessage;
+
 			DpiHelper.AdjustAllControls(this);
 		}
 
@@ -44,6 +49,7 @@ namespace ISquared.PocketHTML
 		{
 			base.Dispose( disposing );
 		}
+		#endregion
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -106,7 +112,6 @@ namespace ISquared.PocketHTML
 			this.m_lblMessage.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
 			this.m_lblMessage.Location = new System.Drawing.Point(0, 84);
 			this.m_lblMessage.Size = new System.Drawing.Size(240, 120);
-			this.m_lblMessage.Text = @"PocketHTML.Net is donationware.  Loosely translated, that means that if you like this program and continue to use it, I'd appreciate it if you registered it for $5.  But, since I hate reg keys and crippleware, this program is fully functional and no registration is required.  Of course, if you like it enough to send more than $5, that would be appreciated too. See the website for donation instructions.";
 			this.m_lblMessage.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// AboutPanel
@@ -122,10 +127,12 @@ namespace ISquared.PocketHTML
 		}
 		#endregion
 
+		#region Event handlers
 		private void button1_Click(object sender, EventArgs e)
 		{
 			this.Hide();
 		}
+		#endregion
 
 	}
 }

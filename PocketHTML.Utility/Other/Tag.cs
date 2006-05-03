@@ -1,6 +1,7 @@
+#region using directives
 using System;
-//using Ayende;
 using System.Text;
+#endregion
 
 namespace ISquared.PocketHTML
 {
@@ -9,6 +10,7 @@ namespace ISquared.PocketHTML
 	/// </summary>
 	public class Tag : IComparable
 	{
+		#region private members
 		private string val;
 		private string displayName;
 		private bool closingTag;
@@ -22,20 +24,9 @@ namespace ISquared.PocketHTML
 		private bool angleBrackets;
 
 		private static bool m_xhtmlTags = true;
+		#endregion
 
-		/*
-		private Configuration config;
-		
-
-		public Configuration Config
-		{
-			set
-			{
-				this.config = value;
-			}
-		}
-		*/
-
+		#region properties
 		static public bool XHTMLTags
 		{
 			get
@@ -90,21 +81,6 @@ namespace ISquared.PocketHTML
 			{
 				this.innerTags = value;
 			}
-		}
-
-		public Tag()
-		{
-			displayName = String.Empty;
-			val = String.Empty;
-			closingTag = false;
-			defaultInnerTag = String.Empty;
-			shortName = String.Empty;
-			defaultAttributes = new String[0];
-			startTag = String.Empty;
-			endTag = String.Empty;
-			innerTags = false;
-			angleBrackets = true;
-			//config = null;
 		}
 
 		/// <summary>
@@ -264,6 +240,24 @@ namespace ISquared.PocketHTML
 
 			}
 		}
+		#endregion
+
+		#region Constructor
+		public Tag()
+		{
+			displayName = String.Empty;
+			val = String.Empty;
+			closingTag = false;
+			defaultInnerTag = String.Empty;
+			shortName = String.Empty;
+			defaultAttributes = new String[0];
+			startTag = String.Empty;
+			endTag = String.Empty;
+			innerTags = false;
+			angleBrackets = true;
+			//config = null;
+		}
+		#endregion
 
 		#region IComparable Members
 
@@ -281,12 +275,11 @@ namespace ISquared.PocketHTML
 
 		#endregion
 
+		#region Other functions
 		public Tag Clone()
 		{
 			return (Tag)this.MemberwiseClone();
-
-
-
 		}
+		#endregion
 	}
 }

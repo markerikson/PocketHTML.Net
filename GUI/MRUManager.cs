@@ -1,13 +1,14 @@
+#region using directives
 using System;
-
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Collections;
-//using Microsoft.Win32;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+#endregion
 
+#region Comments
 // MRI list manager.
 //
 // Written by: Alex Farber
@@ -77,13 +78,10 @@ public class Form1 : System.Windows.Forms.Form, IMRUClient
 //
 // Owner form OpenMRUFile function is called when user selects file
 // from MRU list.
-
-
-
+#endregion
 
 namespace MRUSample
 {
-
     /// <summary>
     /// Interface which should be implemented by owner form
     /// to use MRUManager.
@@ -120,25 +118,6 @@ namespace MRUSample
         private const string regEntryName = "file";  // entry name to keep MRU (file0, file1...)
 
 
-        #endregion
-
-        #region Windows API
-
-        // BOOL PathCompactPathEx(          
-        //    LPTSTR pszOut,
-        //    LPCTSTR pszSrc,
-        //    UINT cchMax,
-        //    DWORD dwFlags
-        //    );
-
-		/*
-        [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]    
-        private static extern bool PathCompactPathEx(
-            StringBuilder pszOut, 
-            string pszPath,
-            int cchMax, 
-            int reserved); 
-        */
         #endregion
 
         #region Constructor
@@ -555,42 +534,6 @@ namespace MRUSample
 			return pathname;
 		}
 
-        /// <summary>
-        /// Load MRU list from Registry.
-        /// Called from Initialize.
-        /// </summary>
-		/*
-        private void LoadMRU()
-        {
-            string sKey, s;
-
-            try
-            {
-                mruList.Clear();
-
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(registryPath);
-
-                if ( key != null )
-                {
-                    for ( int i = 0; i < maxNumberOfFiles; i++ )
-                    {
-                        sKey = regEntryName + i.ToString();
-
-                        s = (string)key.GetValue(sKey, "");
-
-                        if ( s.Length == 0 )
-                            break;
-
-                        mruList.Add(s);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("Loading MRU from Registry failed: " + ex.Message);
-            }
-        }
-		*/
 
         /// <summary>
         /// Get display file name from full name.
@@ -600,44 +543,8 @@ namespace MRUSample
         private string GetDisplayName(string fullName)
         {
 			return ShortenPathname(fullName, MaxDisplayNameLength);
-			//return fullName;
-			/*
-            // if file is in current directory, show only file name
-            FileInfo fileInfo = new FileInfo(fullName);
 
-            if ( fileInfo.DirectoryName == currentDirectory )
-                return GetShortDisplayName(fileInfo.Name, maxDisplayLength);
-
-            return GetShortDisplayName(fullName, maxDisplayLength);
-			*/ 
         }
-
-        /// <summary>
-        /// Truncate a path to fit within a certain number of characters 
-        /// by replacing path components with ellipses.
-        /// 
-        /// This solution is provided by CodeProject and GotDotNet C# expert
-        /// Richard Deeming.
-        /// 
-        /// </summary>
-        /// <param name="longName">Long file name</param>
-        /// <param name="maxLen">Maximum length</param>
-        /// <returns>Truncated file name</returns>
-		/*
-        private string GetShortDisplayName(string longName, int maxLen)
-        {
-            StringBuilder pszOut = new StringBuilder(maxLen + maxLen + 2);  // for safety
-
-            if ( PathCompactPathEx(pszOut, longName, maxLen, 0) )
-            {
-                return pszOut.ToString();
-            }
-            else
-            {
-                return longName;
-            }
-        }
-		*/
         #endregion
 
 	}

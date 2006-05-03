@@ -69,9 +69,6 @@
     <Compile Include="Interop\WindowHelper.cs" />
     <None Include="Interop\WindowsMessages.cs" />
     <Compile Include="Interop\WM.cs" />
-    <None Include="GUI\PopupDialog.cs">
-      <SubType>Form</SubType>
-    </None>
     <Compile Include="Other\DpiHelper.cs" />
     <Compile Include="Other\Tag.cs" />
     <Compile Include="Other\Utility.cs" />

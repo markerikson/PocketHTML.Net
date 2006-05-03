@@ -105,9 +105,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="GUI\FindDialogBase.cs">
-      <SubType>Form</SubType>
-    </None>
     <Compile Include="GUI\AboutPanel.cs">
     </Compile>
     <Compile Include="GUI\HardwareButtons.cs">
@@ -118,18 +115,12 @@
     <Compile Include="GUI\FindDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="GUI\FloatingDialog.cs">
-      <SubType>Form</SubType>
-    </None>
     <Compile Include="GUI\HTMLViewer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUI\INotifiable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="GUI\IWin32Window.cs">
-      <SubType>Code</SubType>
-    </None>
     <Compile Include="GUI\MRUManager.cs" />
     <Compile Include="GUI\OptionsPanel.cs">
     </Compile>
@@ -139,41 +130,12 @@
     <Compile Include="GUI\ReplaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="Interop\EM.cs" />
-    <None Include="Interop\Enum.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="GUI\TextBox.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="Interop\GW.cs" />
-    <None Include="Interop\MarshalEx.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="Interop\SWP.cs" />
-    <None Include="Interop\Win32Interop.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="Interop\WinAPIException.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="Interop\WindowHelper.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="Interop\WindowsMessages.cs">
-      <SubType>Code</SubType>
-    </None>
-    <None Include="Interop\WM.cs" />
     <Compile Include="Other\Configuration.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Other\DpiHelper.cs" />
     <Compile Include="Other\HiResDateTime.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Other\Tag.cs">
-      <SubType>Code</SubType>
-    </None>
     <Compile Include="Other\TcpTraceListener.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -204,8 +166,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="filedialogs.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="FileDialogs.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="HTMLContainer.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

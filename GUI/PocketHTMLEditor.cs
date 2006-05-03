@@ -1,5 +1,6 @@
 #define TRACE
 
+#region Using directives
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -14,7 +15,6 @@ using System.Windows.Forms;
 using Ayende;
 using ISquared.Win32Interop;
 using ISquared.Windows.Forms;
-//using ISquared.Win32Interop.WinEnums;
 using Microsoft.WindowsCE.Forms;
 using System.Diagnostics;
 using ISquared.Debugging;
@@ -24,13 +24,14 @@ using OpenNETCF.Win32;
 using HardwareButtons;
 using MRUSample;
 using ISquared.PocketHTML;
-
+#endregion
 
 namespace ISquared.PocketHTML
 {	
 	public class PocketHTMLEditor : Form, IMRUClient
 	{
-		static void Main() 
+		#region Main
+		public static void Main() 
 		{
 			Application.Run(new PocketHTMLEditor());
 			try
@@ -49,13 +50,11 @@ namespace ISquared.PocketHTML
 				Application.Exit();
 				//throw e;
 			}
-			
+
 		}
+		#endregion
 
 		#region private members
-
-		// TODO is this actually even used?
-		private ImageList il;
 		private MainMenu m_mainMenu;
 		private MRUManager m_mruManager;
 
@@ -66,22 +65,17 @@ namespace ISquared.PocketHTML
 		
 		// just used to keep from writing "\r\n" all the time
 		private string newline;
+
 		// Name of the current file
 		private string m_saveFileName;
 		private string m_saveFileDirectory;
-		// TODO actually used?
-		private ArrayList textList;
-		// used by GetLeadingSpaces() to capture the number of beginning spaces
-		//Regex reLeadingSpaces;
-		// TODO actually used?
-		Regex reNewLine;
+
 		private OptionsPanel m_optionsPanel;
 		private EditorPanel m_editorPanel;
-		private Match findmatch;
-		// TODO Not entirely sure if this is actually used
-		private int findindex;
 		internal FindDialog m_dlgFind;
 		private ReplaceDialog m_dlgReplace;
+
+		#region Menu items
 		private MenuItem m_menuFileOpen;
 		private MenuItem m_menuEditUndo;
 		private MenuItem m_menuEditCopy;
@@ -90,18 +84,6 @@ namespace ISquared.PocketHTML
 		private MenuItem m_menuEditClear;
 		private MenuItem m_menuEditSelectAll;
 		private MenuItem m_menuFileSave;
-
-		// Holds all the Tag objects, keyed to the short name or the normal name
-		private Hashtable m_tagHash;
-		// Maps a button name (ie, "button1") to a tag name
-		private Hashtable buttonTags;
-
-		private HardwareButtonMessageWindow m_hardwareButtons;
-
-		//private bool firstOptions;
-		private bool tgetfileExists;
-		//private PHNOptions options;
-		private bool m_optionsDialogHidden;
 		private MenuItem menuItem4;
 		private MenuItem m_menuFileExit;
 		private MenuItem m_menuFileSaveAs;
@@ -114,17 +96,13 @@ namespace ISquared.PocketHTML
 		private ImageList imageList1;
 		private MenuItem m_menuToolsFind;
 		private MenuItem m_menuToolsReplace;
-		private MenuItem menuItem2;
-		private ToolBar toolBar1;
+		private MenuItem menuItem2;		
 		private MenuItem m_menuHelp;
 		private MenuItem m_menuHelpAbout;
 		private MenuItem m_menuHelpContents;
 		private MenuItem m_menuFileNew;
 		private MenuItem m_menuFileNewBlank;
 		private MenuItem m_menuFileNewBasic;
-		private System.Windows.Forms.ToolBarButton m_btnPreview;
-		private System.Windows.Forms.ToolBarButton m_btnTags;
-		private Microsoft.WindowsCE.Forms.InputPanel inputPanel1;
 		private MenuItem m_menuToolsRefreshTemplates;
 		private MenuItem menuItem1;
 		private MenuItem menuItem5;
@@ -134,11 +112,30 @@ namespace ISquared.PocketHTML
 		private MenuItem m_menuEditUnindent;
 		private MenuItem menuItem7;
 		private System.Windows.Forms.MenuItem MenuFileClose;
+		#endregion
+
+		private ToolBar toolBar1;
+
+		// Holds all the Tag objects, keyed to the short name or the normal name
+		private Hashtable m_tagHash;
+		// Maps a button name (ie, "button1") to a tag name
+		private Hashtable buttonTags;
+
+		private HardwareButtonMessageWindow m_hardwareButtons;
+
+		private bool tgetfileExists;
+		//private PHNOptions options;
+		private bool m_optionsDialogHidden;
+		
+		private System.Windows.Forms.ToolBarButton m_btnPreview;
+		private System.Windows.Forms.ToolBarButton m_btnTags;
+		private Microsoft.WindowsCE.Forms.InputPanel inputPanel1;
+
+		
 		
 		
 
 		#endregion
-
 
 		#region properties
 		public Hashtable ButtonTags
@@ -203,6 +200,7 @@ namespace ISquared.PocketHTML
 
 			try
 			{
+				// If there's no ini file, set up default options
 				if(!File.Exists(inifile))
 				{
 					m_config = new Configuration();
@@ -288,16 +286,9 @@ namespace ISquared.PocketHTML
 			{
 				m_editorPanel.Buttons[i].Click += tagClick;
 			}
-			
-			// TODO Delay-load this panel
 
-			/*
-			
-			
-			*/
 			m_editorPanel.BringToFront();
 			m_optionsDialogHidden = true;
-			
 			
 			m_saveFileName = String.Empty;
 			m_saveFileDirectory = "\\My Documents";
@@ -317,21 +308,10 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("Options setup complete");
 
 			newline = "\r\n";
-			textList = new ArrayList();
-						
-			reNewLine = new Regex(
-				@"\r\n",
-				RegexOptions.IgnoreCase
-				| RegexOptions.Multiline
-				| RegexOptions.IgnorePatternWhitespace);
-
-			// hook up auto-indent
-			//m_editorPanel.TextBox.KeyPress += new KeyPressEventHandler(textBox1_KeyPress);
 
 			string tgetfilePath = CoreDLL.SystemDirectory + "\\tgetfile.dll";
 			tgetfileExists = File.Exists(tgetfilePath);
 
-			findindex = 0;
 			m_editorPanel.TagMenuClicked += new EditorPanel.TagMenuClickedHandler(this.InsertTag);
 			
 			this.ContextMenu = m_editorPanel.TextBox.ContextMenu;
@@ -362,16 +342,11 @@ namespace ISquared.PocketHTML
 
 			Debug.WriteLine("PHE constructor complete");
 
-			//m_editorPanel.Browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(Browser_DocumentCompleted);
 		}
 
-#endregion
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -417,7 +392,6 @@ namespace ISquared.PocketHTML
 			this.m_menuHelpAbout = new System.Windows.Forms.MenuItem();
 			this.m_menuHelpContents = new System.Windows.Forms.MenuItem();
 			this.imageList1 = new System.Windows.Forms.ImageList();
-			this.il = new System.Windows.Forms.ImageList();
 			this.m_btnTags = new System.Windows.Forms.ToolBarButton();
 			this.toolBar1 = new System.Windows.Forms.ToolBar();
 			this.m_btnPreview = new System.Windows.Forms.ToolBarButton();
@@ -627,10 +601,6 @@ namespace ISquared.PocketHTML
 			// 
 			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
 			// 
-			// il
-			// 
-			this.il.ImageSize = new System.Drawing.Size(16, 16);
-			// 
 			// m_btnTags
 			// 
 			this.m_btnTags.ImageIndex = 0;
@@ -666,63 +636,9 @@ namespace ISquared.PocketHTML
 
 		}
 		#endregion
-
-
-		private void RefreshTemplates()
-		{
-			Debug.WriteLine("Checking templates");
-			m_menuFileNew.MenuItems.Clear();
-			m_menuFileNew.MenuItems.Add(m_menuFileNewBlank);
-			m_menuFileNew.MenuItems.Add(m_menuFileNewBasic);
-
-			string templatePath = Utility.GetCurrentDir(true) + "templates";
-
-			if (Directory.Exists(templatePath))
-			{
-				Debug.WriteLine("Templates exist");
-				string[] templates = Directory.GetFiles(templatePath, "*.htm*");
-
-				Array.Sort(templates);
-
-				foreach (string template in templates)
-				{
-					MenuItem item = new MenuItem();
-					int index = template.LastIndexOf("\\");
-					string filename = template.Substring(index + 1);
-					item.Text = filename;
-					item.Click += new EventHandler(MenuFileNewOther_Click);
-					m_menuFileNew.MenuItems.Add(item);
-				}
-			}
-			else
-			{
-				Debug.WriteLine("Templates directory not found");
-			}
-			Debug.WriteLine("Templates check complete");
-		}
+#endregion
 		
-		/// <summary>
-		/// Called whenever the Input Panel is enabled or disabled
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void inputPanel1_EnabledChanged(object sender, EventArgs e)
-		{			
-			Rectangle visible;
-			visible = inputPanel1.VisibleDesktop;
-
-			if(m_optionsDialogHidden)
-			{
-				m_editorPanel.ResizePanel(inputPanel1);
-			}
-				/*
-			else
-			{
-				optionsDialog.ResizePanel(inputPanel1);
-			}
-			*/
-		}
-
+		#region Tag insertion functions
 		/// <summary>
 		/// Called whenever the user clicks one of the QuickTag buttons
 		/// </summary>
@@ -740,13 +656,6 @@ namespace ISquared.PocketHTML
 				return;
 			}
 			InsertTag(tag);
-		}
-
-		// TODO Not currently used
-		internal string GetButtonString(int buttonnum)
-		{
-			String name = m_editorPanel.Buttons[buttonnum].Name;
-			return (string)buttonTags[name];
 		}
 
 		/// <summary>
@@ -971,9 +880,11 @@ namespace ISquared.PocketHTML
 
 			m_editorPanel.TextBox.Modified = true;
 
-			return true;			
+			return true;
 		}
+		#endregion
 
+		#region Setup functions
 		private void LoadTagsXTR()
 		{		
 			string filename = Utility.GetCurrentDir(true) + "tags.xml";
@@ -1079,66 +990,20 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="targetString"></param>
-		/// <param name="index"></param>
-		/// <param name="findregex"></param>
-		/// <param name="scroll"></param>
-		/// <returns></returns>
-		// HACK This is horribly intertwined with FloatingDialog.  There's gotta be a better way
-		internal bool Find(string targetString, int index,
-			Regex findregex, bool scroll)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			findmatch = findregex.Match(targetString, index);	
-			
-
-			bool bRet;
-			if(findmatch.Success)
-			{				
-				m_editorPanel.TextBox.Select(findmatch.Index, findmatch.Length);
-				findindex = findmatch.Index;
-
-				if(scroll)
-				{
-					IntPtr pTB = CoreDLL.GetHandle(m_editorPanel.TextBox);
-					CoreDLL.SendMessage(pTB, (int)EM.SCROLLCARET, 0, 0);
-				}
-
-				bRet = true;
-			}
-			else
-			{
-				findmatch = null;
-				findindex = 0;
-				bRet = false;
-			}
-			
-			return bRet;
-		}
-
 		private void SetupOptions()
 		{
 			try
 			{
 				bool tw = m_config.GetBool("Options", "TextWrap");
 				Debug.WriteLine("TextWrap: " + tw);
-				//Debug.WriteLine("ed: " + m_editorPanel.ToString());
-				//Debug.WriteLine("ed.TextBox: " + m_editorPanel.TextBox.ToString());
 
 				m_editorPanel.TextBox.WordWrap = tw;
 				Debug.WriteLine("Set TextWrap");
 
 				m_editorPanel.HtmlControl.ShrinkMode = m_config.GetBool("Options", "PageWrap");
-				//bool wrapPreview = m_config.GetBool("Options", "PageWrap");
-				//m_editorPanel.Browser.EnableShrink = wrapPreview;
 				Debug.WriteLine("Set PageWrap");
 
 				int zoomLevel = int.Parse(m_config.GetValue("Options", "ZoomLevel"));
-				//m_editorPanel.Browser.ZoomLevel = zoomLevel;
 				m_editorPanel.HtmlControl.ZoomLevel = zoomLevel;
 
 				if(m_editorPanel.TextBox.WordWrap)
@@ -1177,9 +1042,11 @@ namespace ISquared.PocketHTML
 			{
 				Debug.WriteLine("Caught exception: " + e.ToString());
 			}
-			
-		}
 
+		}
+		#endregion
+
+		#region Hardware button functions
 		private void UpdateHardwareButton()
 		{
 			UpdateHardwareButton(true);
@@ -1192,7 +1059,6 @@ namespace ISquared.PocketHTML
 			if (useHardwareButton && activate)
 			{
 				string buttonName = m_config.GetValue("Options", "HardwareButton");
-				//Debug.WriteLine("Button name: " + buttonName);
 				RegisterButtons buttons = (RegisterButtons)EnumEx.Parse(typeof(RegisterButtons), buttonName);
 
 				if (buttons != RegisterHKeys.RegisteredButtons)
@@ -1207,6 +1073,63 @@ namespace ISquared.PocketHTML
 			}
 		}
 
+		public void HardwareButtonPressed(int buttonNumber)
+		{
+			ContextMenu.Show(this, new Point(80, 160));
+		}
+		#endregion
+
+		#region File menu handlers
+		private void MenuFileSave_Click(object sender, EventArgs e)
+		{
+			SaveFile(false);
+		}
+
+		private void MenuFileOpen_Click(object sender, EventArgs e)
+		{
+			OpenFile();
+		}
+
+		private void MenuFileSaveAs_Click(object sender, EventArgs e)
+		{
+			SaveFile(true);
+		}
+
+		private void MenuFileClose_Click(object sender, EventArgs e)
+		{
+			DialogResult dr = CloseFile();
+			if (dr != DialogResult.Cancel)
+			{
+				m_editorPanel.TextBox.Text = String.Empty;
+				m_editorPanel.TextBox.Modified = false;
+				this.m_saveFileName = String.Empty;
+			}
+		}
+
+		private void MenuFileExit_Click(object sender, EventArgs e)
+		{
+			this.Close();
+		}
+
+		private void MenuFileNewBlank_Click(object sender, EventArgs e)
+		{
+			NewFile("blank");
+		}
+
+		private void MenuFileNewBasic_Click(object sender, EventArgs e)
+		{
+			NewFile("basic");
+		}
+
+		private void MenuFileNewOther_Click(object sender, EventArgs e)
+		{
+			MenuItem item = sender as MenuItem;
+			NewFile(item.Text);
+
+		}
+		#endregion
+
+		#region Edit menu handlers
 		private void MenuUndo_Click(object sender, EventArgs e)
 		{
 			m_editorPanel.TextBox.Undo();
@@ -1238,11 +1161,133 @@ namespace ISquared.PocketHTML
 			m_editorPanel.TextBox.SelectAll();
 		}
 
-		private void MenuFileOpen_Click(object sender, EventArgs e)
+		private void m_menuEditIndent_Click(object sender, EventArgs e)
 		{
-			OpenFile();
+			m_editorPanel.TextBox.IndentSelection();
 		}
 
+		private void m_menuEditUnindent_Click(object sender, EventArgs e)
+		{
+			m_editorPanel.TextBox.UnindentSelection();
+		}
+
+		private void m_menuEdit_Popup(object sender, EventArgs e)
+		{
+			m_menuEditUndo.Enabled = m_editorPanel.TextBox.CanUndo;
+		}
+		#endregion
+
+		#region Tools menu handlers
+		internal void MenuToolsOptions_Click(object sender, EventArgs e)
+		{
+			if (m_optionsDialogHidden)
+			{
+				m_editorPanel.Hide();
+
+				if (m_optionsPanel == null)
+				{
+					Debug.WriteLine("Loading OptionsPanel");
+					m_optionsPanel = new OptionsPanel(this);
+					Debug.WriteLine("OptionsDialog created");
+					m_optionsPanel.Bounds = new Rectangle(0, 0, DpiHelper.Scale(240), DpiHelper.Scale(270));
+					m_optionsPanel.Parent = this;
+				}
+				else
+				{
+					m_optionsPanel.Reset();
+				}
+				m_optionsPanel.Show();
+
+				m_optionsDialogHidden = false;
+				foreach (MenuItem m in m_mainMenu.MenuItems)
+				{
+					m.Enabled = false;
+				}
+			}
+			else
+			{
+				if (m_optionsPanel.Result == DialogResult.OK)
+				{
+					SetupButtons();
+					SetupOptions();
+				}
+
+				m_optionsPanel.Hide();
+				m_editorPanel.Show();
+				m_optionsDialogHidden = true;
+				foreach (MenuItem m in m_mainMenu.MenuItems)
+				{
+					m.Enabled = true;
+				}
+
+				inputPanel1_EnabledChanged(sender, e);
+				m_editorPanel.TextBox.Focus();
+			}
+		}
+
+		private void MenuToolsFind_Click(object sender, EventArgs e)
+		{
+			if (this.m_dlgFind == null)
+			{
+				m_dlgFind = new FindDialog(m_editorPanel.TextBox);
+				m_dlgFind.ParentForm = this;
+				m_dlgFind.Parent = this;
+				int x = (inputPanel1.VisibleDesktop.Width - m_dlgFind.Width) / 2;
+				int y = (inputPanel1.VisibleDesktop.Height - m_dlgFind.Height) / 2;
+				m_dlgFind.Location = new Point(x, y);
+			}
+
+			if (m_dlgReplace != null && m_dlgReplace.Visible)
+			{
+				m_dlgReplace.Hide();
+			}
+			m_dlgFind.Show();
+			m_dlgFind.BringToFront();
+			m_dlgFind.SearchText = m_editorPanel.TextBox.SelectedText;
+		}
+
+		private void MenuToolsReplace_Click(object sender, EventArgs e)
+		{
+			if (this.m_dlgReplace == null)
+			{
+				m_dlgReplace = new ReplaceDialog(m_editorPanel.TextBox);
+				m_dlgReplace.ParentForm = this;
+				m_dlgReplace.Parent = this;
+				int x = (inputPanel1.VisibleDesktop.Width - m_dlgReplace.Width) / 2;
+				int y = (inputPanel1.VisibleDesktop.Height - m_dlgReplace.Height) / 2;
+				m_dlgReplace.Location = new Point(x, y);
+			}
+
+			if (m_dlgFind != null && m_dlgFind.Visible)
+			{
+				m_dlgFind.Hide();
+			}
+
+			m_dlgReplace.Show();
+			m_dlgReplace.BringToFront();
+			m_dlgReplace.SearchText = m_editorPanel.TextBox.SelectedText;
+		}
+
+		private void m_menuToolsRefreshTemplates_Click(object sender, EventArgs e)
+		{
+			RefreshTemplates();
+		}
+		#endregion
+
+		#region Help menu handlers
+		private void MenuHelpContents_Click(object sender, EventArgs e)
+		{
+			CoreDLL.CreateProcess("peghelp.exe", @"\Windows\PHN.html#contents", IntPtr.Zero,
+				IntPtr.Zero, 0, 0, IntPtr.Zero, IntPtr.Zero, null, null);
+		}
+
+		private void MenuHelpAbout_Click(object sender, EventArgs e)
+		{
+			m_editorPanel.ShowAbout();
+		}
+		#endregion
+
+		#region New/open/save functions
 		private void OpenFile()
 		{
 			string filename = GetFileName(false);
@@ -1261,9 +1306,6 @@ namespace ISquared.PocketHTML
 			string filename = String.Empty;			
 
 			StringBuilder sb = new StringBuilder();
-
-			
-
 			
 			int filterIndex = 1;
 			string originalFileName = null;
@@ -1333,8 +1375,8 @@ namespace ISquared.PocketHTML
 				{
 					fd = new OpenFileDialog();
 				}
-				//OpenFileDialog ofd = new OpenFileDialog();
-				fd.Filter = fileFilter;//"HTML files (*.html)|*.html;|All files (*.*)|*.*";
+
+				fd.Filter = fileFilter;
 				fd.InitialDirectory = m_saveFileDirectory;
 				fd.FilterIndex = filterIndex;
 				DialogResult dr = fd.ShowDialog();
@@ -1384,7 +1426,6 @@ namespace ISquared.PocketHTML
 			m_editorPanel.TextBox.Text = contents;
 
 			this.m_saveFileName = filename;
-			//m_editorPanel.Browser.CurrentFileName = filename;
 			m_editorPanel.HtmlControl.CurrentFilename = filename;
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 			m_editorPanel.TextBox.Modified = false;
@@ -1394,47 +1435,41 @@ namespace ISquared.PocketHTML
 			m_mruManager.Add(filename);
 		}
 
-		private void MenuFileSave_Click(object sender, EventArgs e)
-		{
-			SaveFile(false);
-		}
-
 		private bool SaveFile(bool saveas)
 		{
 			string filename = String.Empty;
 			Debug.WriteLine("Saving file.  saveas: " + saveas);
 			Debug.WriteLine("Current file name: " + m_saveFileName);
 
-			if( (m_saveFileName == String.Empty) ||
-				(saveas) )
+			if ((m_saveFileName == String.Empty) ||
+				(saveas))
 			{
 				filename = GetFileName(true);
-				
-				
+
+
 			}
 			else
 			{
 				filename = m_saveFileName;
-			}			
-				
-			if(filename == String.Empty)
+			}
+
+			if (filename == String.Empty)
 			{
 				return false;
 			}
 
 			m_saveFileName = filename;
-			//m_editorPanel.Browser.CurrentFileName = filename;
 			m_editorPanel.HtmlControl.CurrentFilename = filename;
 
 			m_saveFileDirectory = Path.GetDirectoryName(filename);
 
 			string encodingName = Config.GetValue("Options", "DefaultEncoding");
 
-			Encoding defaultEncoding = new UTF8Encoding(false);//Encoding.UTF8;
+			Encoding defaultEncoding = new UTF8Encoding(false);
 
 			try
 			{
-				if(encodingName == "utf-8")
+				if (encodingName == "utf-8")
 				{
 					defaultEncoding = new UTF8Encoding(false);
 				}
@@ -1442,13 +1477,13 @@ namespace ISquared.PocketHTML
 				{
 					defaultEncoding = Encoding.GetEncoding(encodingName);
 				}
-				
+
 			}
 			catch (PlatformNotSupportedException)
 			{ }
 
 			StreamWriter sw = new StreamWriter(filename, false, defaultEncoding);
-			sw.WriteLine(m_editorPanel.TextBox.Text);			
+			sw.WriteLine(m_editorPanel.TextBox.Text);
 			sw.Close();
 			m_editorPanel.TextBox.Modified = false;
 			m_mruManager.Add(filename);
@@ -1459,7 +1494,7 @@ namespace ISquared.PocketHTML
 		private DialogResult CloseFile()
 		{
 			DialogResult dr = DialogResult.No;
-			if(m_editorPanel.TextBox.Modified)
+			if (m_editorPanel.TextBox.Modified)
 			{
 				dr = MessageBox.Show("You have unsaved changes.  Do you want to save before you quit?",
 					"Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
@@ -1479,6 +1514,60 @@ namespace ISquared.PocketHTML
 			return dr;
 		}
 
+		private void NewFile(string template)
+		{
+			DialogResult dr = CloseFile();
+			if (dr != DialogResult.Cancel)
+			{
+				string templateText = String.Empty;
+				switch (template)
+				{
+					case "blank":
+						templateText = String.Empty;
+						break;
+					case "basic":
+						templateText = "<html>\r\n<body>\r\n\r\n\r\n</body>\r\n</html>";
+						m_editorPanel.TextBox.Modified = true;
+						break;
+					default:
+						string filename = Utility.GetCurrentDir(true) + "templates\\" + template;
+						if (File.Exists(filename))
+						{
+							string originalDirectory = m_saveFileDirectory;
+							LoadFile(filename);
+							m_mruManager.Remove(filename);
+							m_saveFileName = String.Empty;
+							m_saveFileDirectory = originalDirectory;
+							m_editorPanel.TextBox.Modified = true;
+							return;
+						}
+						break;
+				}
+				m_editorPanel.TextBox.Text = templateText;
+				m_editorPanel.TextBox.Modified = false;
+				this.m_saveFileName = String.Empty;
+
+			}
+		}
+		#endregion
+
+		#region Event handlers
+		/// <summary>
+		/// Called whenever the Input Panel is enabled or disabled
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void inputPanel1_EnabledChanged(object sender, EventArgs e)
+		{
+			Rectangle visible;
+			visible = inputPanel1.VisibleDesktop;
+
+			if (m_optionsDialogHidden)
+			{
+				m_editorPanel.ResizePanel(inputPanel1);
+			}
+		}
+
 		private void PocketHTMLEditor_Closing(object sender, CancelEventArgs e)
 		{
 			Debug.WriteLine("Program close requested");
@@ -1491,7 +1580,6 @@ namespace ISquared.PocketHTML
 			else
 			{
 				m_editorPanel.HtmlControl.Dispose();
-				//m_editorPanel.Browser.Dispose();
 
 				string[] recentFiles = m_mruManager.FileNames;
 
@@ -1524,232 +1612,6 @@ namespace ISquared.PocketHTML
 			}			
 		}
 
-		internal void MenuToolsOptions_Click(object sender, EventArgs e)
-		{
-			if(m_optionsDialogHidden)
-			{
-				m_editorPanel.Hide();
-				// HACK Ugly hack.  Gotta be a better way to do it.
-				if(m_optionsPanel == null)//firstOptions))
-				{
-					Debug.WriteLine("Loading OptionsPanel");
-					m_optionsPanel = new OptionsPanel(this);
-					Debug.WriteLine("OptionsDialog created");
-					m_optionsPanel.Bounds = new Rectangle(0, 0, DpiHelper.Scale(240), DpiHelper.Scale(270));
-					m_optionsPanel.Parent = this;
-
-					//m_optionsPanel.Load(this);
-					
-				}
-				else
-				{
-					m_optionsPanel.Reset();					
-				}
-				m_optionsPanel.Show();
-
-				//firstOptions = false;
-				m_optionsDialogHidden = false;
-				foreach(MenuItem m in m_mainMenu.MenuItems)
-				{
-					m.Enabled = false;
-				}
-			}
-			else
-			{
-				if(m_optionsPanel.Result == DialogResult.OK)
-				{
-					SetupButtons();
-					SetupOptions();
-				}
-				
-				m_optionsPanel.Hide();
-				m_editorPanel.Show();
-				m_optionsDialogHidden = true;
-				foreach(MenuItem m in m_mainMenu.MenuItems)
-				{
-					m.Enabled = true;
-				}
-				
-				inputPanel1_EnabledChanged(sender, e);
-				m_editorPanel.TextBox.Focus();				
-			}
-		}
-
-		private void MenuFileSaveAs_Click(object sender, EventArgs e)
-		{
-			SaveFile(true);
-		}
-
-		private void MenuFileClose_Click(object sender, EventArgs e)
-		{
-			DialogResult dr = CloseFile();
-			if(dr != DialogResult.Cancel)
-			{
-				m_editorPanel.TextBox.Text = String.Empty;
-				m_editorPanel.TextBox.Modified = false;
-				this.m_saveFileName = String.Empty;
-			}
-		}
-
-		private void MenuFileExit_Click(object sender, EventArgs e)
-		{
-			this.Close();			
-		}
-
-		// TODO Remove 240x320 specific code
-		private void toolBarButton1_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
-		{
-			if(e.Button == this.m_btnTags)
-			{
-				this.ContextMenu.Show(this, new Point(80, 160));;
-			}
-				
-			else if(e.Button == this.m_btnPreview)
-			{
-				m_editorPanel.SwapPanels(e.Button.Pushed);
-			}		
-		}
-
-		public void HardwareButtonPressed(int buttonNumber)
-		{
-			ContextMenu.Show(this, new Point(80, 160));
-		}
-
-		// TODO Remove 240x320 specific code
-		private void MenuToolsFind_Click(object sender, EventArgs e)
-		{
-			if (this.m_dlgFind == null)
-			{
-				m_dlgFind = new FindDialog(m_editorPanel.TextBox);
-				m_dlgFind.ParentForm = this;
-				m_dlgFind.Parent = this;
-				int x = (inputPanel1.VisibleDesktop.Width - m_dlgFind.Width) / 2;//(240 - m_dlgReplace.Width) / 2;
-				int y = (inputPanel1.VisibleDesktop.Height - m_dlgFind.Height) / 2;//100;
-				m_dlgFind.Location = new Point(x, y);
-				//m_dlgFind.TargetTextbox = textBox1;
-
-			}
-
-			if (m_dlgReplace != null && m_dlgReplace.Visible)
-			{
-				m_dlgReplace.Hide();
-			}
-			m_dlgFind.Show();
-			m_dlgFind.BringToFront();
-			m_dlgFind.SearchText = m_editorPanel.TextBox.SelectedText;
-		}
-
-		// TODO Remove 240x320 specific code
-		private void MenuToolsReplace_Click(object sender, EventArgs e)
-		{
-			if (this.m_dlgReplace == null)
-			{
-				m_dlgReplace = new ReplaceDialog(m_editorPanel.TextBox);
-				m_dlgReplace.ParentForm = this;
-				m_dlgReplace.Parent = this;
-				int x = (inputPanel1.VisibleDesktop.Width - m_dlgReplace.Width) / 2;//(240 - m_dlgReplace.Width) / 2;
-				int y = (inputPanel1.VisibleDesktop.Height - m_dlgReplace.Height) / 2;//100;
-				m_dlgReplace.Location = new Point(x, y);
-				//m_dlgReplace.TargetTextbox = textBox1;
-
-			}
-
-			if (m_dlgFind != null && m_dlgFind.Visible)
-			{
-				m_dlgFind.Hide();
-			}
-
-
-			m_dlgReplace.Show();
-			m_dlgReplace.BringToFront();
-			m_dlgReplace.SearchText = m_editorPanel.TextBox.SelectedText;
-
-		}
-			
-
-		private void MenuHelpContents_Click(object sender, EventArgs e)
-		{
-			CoreDLL.CreateProcess("peghelp.exe", @"\Windows\PHN.html#contents", IntPtr.Zero,
-				IntPtr.Zero, 0, 0, IntPtr.Zero, IntPtr.Zero, null, null);
-		}
-
-		private void MenuHelpAbout_Click(object sender, EventArgs e)
-		{
-			m_editorPanel.ShowAbout();
-		}
-
-		private void MenuFileNewBlank_Click(object sender, EventArgs e)
-		{
-			NewFile("blank");
-		}
-
-		private void MenuFileNewBasic_Click(object sender, EventArgs e)
-		{
-			NewFile("basic");
-		}
-
-		private void MenuFileNewOther_Click(object sender, EventArgs e)
-		{
-			MenuItem item = sender as MenuItem;
-			NewFile(item.Text);
-			
-		}
-
-		private void NewFile(string template)
-		{
-			DialogResult dr = CloseFile();
-			if(dr != DialogResult.Cancel)
-			{
-				string templateText = String.Empty;
-				switch(template)
-				{
-					case "blank":
-						templateText = String.Empty;
-						break;
-					case "basic":
-						templateText = "<html>\r\n<body>\r\n\r\n\r\n</body>\r\n</html>";
-						m_editorPanel.TextBox.Modified = true;
-						break;
-					default:
-						string filename = Utility.GetCurrentDir(true) + "templates\\" + template;
-						if(File.Exists(filename))
-						{
-							string originalDirectory = m_saveFileDirectory;
-							LoadFile(filename);
-							m_mruManager.Remove(filename);
-							m_saveFileName = String.Empty;
-							m_saveFileDirectory = originalDirectory;
-							m_editorPanel.TextBox.Modified = true;
-							return;
-						}				
-						break;
-				}
-				m_editorPanel.TextBox.Text = templateText;
-				m_editorPanel.TextBox.Modified = false;
-				this.m_saveFileName = String.Empty;
-				
-			}
-		}
-
-		private void m_menuToolsRefreshTemplates_Click(object sender, EventArgs e)
-		{
-			RefreshTemplates();
-		}
-
-
-		#region IMRUClient Members
-
-		void IMRUClient.OpenMRUFile(string fileName)
-		{
-			if(CloseFile() == DialogResult.Yes)
-			{
-				LoadFile(fileName);
-			}
-			
-		}
-
-		#endregion
-
 		private void PocketHTMLEditor_Activated(object sender, EventArgs e)
 		{
 			Debug.WriteLine("Main form activated");
@@ -1762,26 +1624,6 @@ namespace ISquared.PocketHTML
 			UpdateHardwareButton(false);
 		}
 
-		private void m_menuEditIndent_Click(object sender, EventArgs e)
-		{
-			m_editorPanel.TextBox.IndentSelection();
-		}
-
-		private void m_menuEditUnindent_Click(object sender, EventArgs e)
-		{
-			m_editorPanel.TextBox.UnindentSelection();
-		}
-
-		private void m_menuEdit_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void m_menuEdit_Popup(object sender, EventArgs e)
-		{
-			m_menuEditUndo.Enabled = m_editorPanel.TextBox.CanUndo;
-		}
-		
 		private void PocketHTMLEditor_Load(object sender, EventArgs e)
 		{
 			// Retrieve the embedded toolbar graphics.  Needed because
@@ -1805,11 +1647,8 @@ namespace ISquared.PocketHTML
 			sb.Append(iconTag);
 			Debug.WriteLine(sb.ToString());
 
-			
-
 			Debug.WriteLine("Icons added, setting indices");
 
-			
 			Size size1 = new Size(iconSize, iconSize);
 			imageList1.ImageSize = size1;
 
@@ -1831,8 +1670,71 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("PocketHTML closed");
 		}
 
+		// TODO Remove 240x320 specific code
+		private void toolBarButton1_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
+		{
+			if (e.Button == this.m_btnTags)
+			{
+				this.ContextMenu.Show(this, new Point(80, 160)); ;
+			}
 
-} // end of PocketHTMLEditor
+			else if (e.Button == this.m_btnPreview)
+			{
+				m_editorPanel.SwapPanels(e.Button.Pushed);
+			}
+		}
+		#endregion
+
+		#region IMRUClient Members
+
+		void IMRUClient.OpenMRUFile(string fileName)
+		{
+			if(CloseFile() == DialogResult.Yes)
+			{
+				LoadFile(fileName);
+			}
+			
+		}
+
+		#endregion
+
+		#region Other functions
+		private void RefreshTemplates()
+		{
+			Debug.WriteLine("Checking templates");
+			m_menuFileNew.MenuItems.Clear();
+			m_menuFileNew.MenuItems.Add(m_menuFileNewBlank);
+			m_menuFileNew.MenuItems.Add(m_menuFileNewBasic);
+
+			string templatePath = Utility.GetCurrentDir(true) + "templates";
+
+			if (Directory.Exists(templatePath))
+			{
+				Debug.WriteLine("Templates exist");
+				string[] templates = Directory.GetFiles(templatePath, "*.htm*");
+
+				Array.Sort(templates);
+
+				foreach (string template in templates)
+				{
+					MenuItem item = new MenuItem();
+					int index = template.LastIndexOf("\\");
+					string filename = template.Substring(index + 1);
+					item.Text = filename;
+					item.Click += new EventHandler(MenuFileNewOther_Click);
+					m_menuFileNew.MenuItems.Add(item);
+				}
+			}
+			else
+			{
+				Debug.WriteLine("Templates directory not found");
+			}
+			Debug.WriteLine("Templates check complete");
+		}
+		#endregion
+
+
+	} // end of PocketHTMLEditor
 
 
 	class NamedButton : Button

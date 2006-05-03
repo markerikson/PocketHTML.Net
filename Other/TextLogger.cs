@@ -1,11 +1,14 @@
+#region using directives
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Diagnostics;
+#endregion
 
 namespace ISquared.Debugging
 {
+	#region comments
 	/// <summary>
 	/// A lightweight logging class for Compact Framework applications.
 	/// </summary>
@@ -29,8 +32,10 @@ namespace ISquared.Debugging
 	/// <example>
 	/// </example>
 	/// </remarks>
+	#endregion
 	public class TextTraceListener : TraceListener, IDisposable
 	{
+		#region members
 		const string DefaultPrefix  = "isquared";
 		const int    RetentionCount = 7; // Number of logs to keep when housekeeping
 
@@ -45,7 +50,9 @@ namespace ISquared.Debugging
 
 		static StreamWriter writer = null;
 		private static TextTraceListener listener = null;
+		#endregion
 
+		#region Constructors / setup
 		public static void InstallListener()
 		{
 			if(listener == null)
@@ -82,7 +89,9 @@ namespace ISquared.Debugging
 		private TextTraceListener()
 		{
 		}
+		#endregion
 
+		#region properties
 		/// <summary>
 		/// Gets or sets a value indicating whether or not to perform operations
 		/// on log files, including the writing of log messages.
@@ -184,7 +193,9 @@ namespace ISquared.Debugging
 				return new LogFlushType[]{LogFlushType.AutoClose, LogFlushType.AutoFlush, LogFlushType.Manual};
 			}
 		}
+		#endregion
 
+		#region Management functions
 		/// <summary>
 		/// Flushes the log stream if it is open.
 		/// </summary>
@@ -248,6 +259,38 @@ namespace ISquared.Debugging
 			File.Delete(logPath);
 		}
 
+		private void Open()
+		{
+			if (!Enabled)
+				return;
+
+			if (writer == null)
+				writer = new StreamWriter(LogPath, true);
+		}
+
+		private static void Housekeeping()
+		{
+			if (!Enabled)
+				return;
+
+			// Remove all but the most recent 7 log files. 
+			string[] paths = Directory.GetFiles(logDir);
+			ArrayList logfiles = new ArrayList();
+
+			foreach (string path in paths)
+			{
+				if (logfile_re.IsMatch(path))
+					logfiles.Add(new Logfile(path));
+			}
+
+			logfiles.Sort();
+
+			for (int i = RetentionCount; i < logfiles.Count; i++)
+				((Logfile)logfiles[i]).Delete();
+		}
+		#endregion
+
+		#region Logging functions
 		/// <summary>
 		/// Log a message. Syntax as for String.Format.
 		/// A time stamp, including hundredths of a second, is
@@ -323,37 +366,18 @@ namespace ISquared.Debugging
 			string msg = String.Format("{0}\n", message);
 			Log(message);
 		}
+		#endregion
 
-		private void Open()
+		#region IDisposable Members
+
+		public void Dispose()
 		{
-			if (!Enabled)
-				return;
-
-			if (writer == null)
-				writer = new StreamWriter(LogPath, true);
+			Close();
 		}
 
-		private static void Housekeeping()
-		{
-			if (!Enabled)
-				return;
+		#endregion
 
-			// Remove all but the most recent 7 log files. 
-			string[]  paths    = Directory.GetFiles(logDir);
-			ArrayList logfiles = new ArrayList();
-
-			foreach (string path in paths)
-			{
-				if (logfile_re.IsMatch(path))
-					logfiles.Add(new Logfile(path));
-			}
-
-			logfiles.Sort();
-
-			for (int i = RetentionCount; i < logfiles.Count; i++)
-				((Logfile) logfiles[i]).Delete();
-		}
-
+		#region Helpers
 		/// <summary>
 		/// A class that encapsulates log files for sorting (descending)
 		/// </summary>
@@ -400,13 +424,7 @@ namespace ISquared.Debugging
 			/// </summary>
 			Manual
 		}
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			Close();
-		}
-
 		#endregion
+
 	}
 }

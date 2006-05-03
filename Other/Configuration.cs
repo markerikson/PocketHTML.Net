@@ -1,6 +1,8 @@
+#region using directives
 using System;
 using System.IO;
 using System.Collections;
+#endregion
 
 namespace Ayende
 {
@@ -15,6 +17,7 @@ namespace Ayende
 	/// </summary>
 	public class Configuration
 	{
+		#region private members
 		/// <summary>
 		/// The key is a string, the value is another Hashtable, which contains the values.
 		/// </summary>
@@ -23,7 +26,9 @@ namespace Ayende
 		/// This contains values without Section
 		/// </summary>
 		System.Collections.Hashtable Values;
+		#endregion
 
+		#region Constructors
 		/// <summary>
 		/// Construct an empty configuration
 		/// </summary>
@@ -43,7 +48,9 @@ namespace Ayende
 			Values = new System.Collections.Hashtable();
 			Parse(tr);
 		}
-	
+		#endregion
+
+		#region Get values
 		/// <summary>
 		/// Get a value from the class
 		/// </summary>
@@ -88,6 +95,27 @@ namespace Ayende
 			}
 		}
 
+		public bool GetBool(string section, string valuename)
+		{
+			string stored = GetValue(section, valuename);
+			bool result = Convert.ToBoolean(stored);
+			return result;
+		}
+
+		public int GetSectionCount(string section)
+		{
+			System.Collections.Hashtable sectionTable = (System.Collections.Hashtable)Sections[section];
+
+			if (sectionTable != null)
+			{
+				return sectionTable.Count;
+			}
+
+			return 0;
+		}
+		#endregion
+
+		#region Value existence
 		/// <summary>
 		/// Checks if a spesified section is in the class
 		/// </summary>
@@ -127,7 +155,9 @@ namespace Ayende
 		{
 			return Values.Contains(ValueName);
 		}
+		#endregion
 
+		#region Set values
 		/// <summary>
 		/// Set a value in the configuration data
 		/// </summary>
@@ -156,8 +186,7 @@ namespace Ayende
 		{
 			Values[ValueName] = Value;
 		}
-
-
+		
 		/// <summary>
 		/// Add a section to the class, attempts to add a section already existing are ignored.
 		/// </summary>
@@ -167,7 +196,9 @@ namespace Ayende
 			System.Collections.Hashtable New = new System.Collections.Hashtable();
 			Sections[NewSection] = New;
 		}
+		#endregion
 
+		#region I/O functions
 		/// <summary>
 		/// Saves the class data in the form of INI file into the TextWriter
 		/// </summary>
@@ -269,7 +300,9 @@ namespace Ayende
 				}
 			}
 		}
+		#endregion
 
+		#region Removal functions
 		public void RemoveValue(string Section, string ValueName)
 		{
 			System.Collections.Hashtable SectionTable = (System.Collections.Hashtable)Sections[Section];
@@ -292,25 +325,6 @@ namespace Ayende
 			else
 				throw new Exceptions.SectionDoesntExistException();
 		}
-
-		public bool GetBool(string section, string valuename)
-		{
-			string stored = GetValue(section, valuename);
-			bool result = Convert.ToBoolean(stored);
-			return result;
-		}
-
-		public int GetSectionCount(string section)
-		{
-			System.Collections.Hashtable sectionTable = (System.Collections.Hashtable)Sections[section];
-
-			if(sectionTable != null)
-			{
-				return sectionTable.Count;
-			}
-
-			return 0;
-		}
-
+		#endregion
 	}
 }

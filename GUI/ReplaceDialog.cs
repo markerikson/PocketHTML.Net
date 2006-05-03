@@ -1,3 +1,4 @@
+#region using directives
 using System;
 using System.Drawing;
 using System.Collections;
@@ -5,16 +6,20 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using ISquared.Windows.Forms;
+#endregion
 
 namespace ISquared.Windows.Forms
 {
 	public class ReplaceDialog : FindDialog
 	{
+		#region private members
 		private System.Windows.Forms.TextBox m_tbReplace;
 		private System.Windows.Forms.Label m_lblReplace;
 		private System.Windows.Forms.Button m_btnReplace;
 		private System.Windows.Forms.Button m_btnReplaceAll;
+		#endregion
 
+		#region properties
 		public string ReplaceText
 		{
 			get
@@ -27,7 +32,9 @@ namespace ISquared.Windows.Forms
 				m_tbReplace.Focus();
 			}
 		}
+		#endregion
 
+		#region Constructor
 		public ReplaceDialog(TextBox tb)
 			: base(tb)
 		{
@@ -45,6 +52,7 @@ namespace ISquared.Windows.Forms
 		{
 			base.Dispose(disposing);
 		}
+		#endregion
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -128,7 +136,7 @@ namespace ISquared.Windows.Forms
 		}
 		#endregion
 
-
+		#region Event handlers
 		private void buttonReplace_Click(object sender, EventArgs e)
 		{
 			if (TargetTextbox == null)
@@ -174,5 +182,6 @@ namespace ISquared.Windows.Forms
 
 			MessageBox.Show(counter.ToString() + " item(s) replaced", "Replace Results");
 		}
+		#endregion
 	}
 }
