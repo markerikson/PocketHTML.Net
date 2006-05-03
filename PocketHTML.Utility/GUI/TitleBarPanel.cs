@@ -20,7 +20,7 @@ namespace ISquared.Windows.Forms
 		private FloatingDialog m_dlgParent;
 
 		private IntPtr hPen, hOldPen;
-		private IntPtr hDC, hwndForm;
+		private IntPtr hDC;
 		private Rectangle rcDraw;
 		private bool bDrawing;
 		#endregion
@@ -89,8 +89,8 @@ namespace ISquared.Windows.Forms
 			startingPoint = new Point(e.X, e.Y);
 
 			// Direct all mouse events to canvas
-			ParentDialog.ParentForm.Capture = true;
-			hwndForm = GetCapture();
+			//ParentDialog.ParentForm.Capture = true;
+			//hwndForm = GetCapture();
 
 			this.Capture = true;
 
@@ -172,7 +172,8 @@ namespace ISquared.Windows.Forms
 				this.Capture = false;
 				bDrawing = false;
 				DeleteObject(SelectObject(hDC, hOldPen));
-				ReleaseDC(hwndForm, hDC);
+				//ReleaseDC(hwndForm, hDC);
+				ReleaseDC(IntPtr.Zero, hDC);
 
 				Point currentLocation = ParentDialog.Location;
 				currentLocation.X += dx;

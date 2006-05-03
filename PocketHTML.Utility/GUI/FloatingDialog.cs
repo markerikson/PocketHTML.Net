@@ -67,6 +67,8 @@ namespace ISquared.Windows.Forms
 			this.MinimizeBox = false;
 			this.MaximizeBox = false;
 
+			m_pnlTitle.ParentDialog = this;
+
 			m_moving = false;
 			m_penBlack = new Pen(Color.Black);
 		}

@@ -142,9 +142,9 @@
     <Compile Include="Other\TextLogger.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Other\Utility.cs">
+    <None Include="Other\Utility.cs">
       <SubType>Code</SubType>
-    </Compile>
+    </None>
     <None Include="Graphics\PocketHTML.ico" />
     <Content Include="pockethtml.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

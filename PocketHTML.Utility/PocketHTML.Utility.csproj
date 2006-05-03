@@ -67,9 +67,10 @@
     <Compile Include="Interop\Win32Interop.cs" />
     <Compile Include="Interop\WinAPIException.cs" />
     <Compile Include="Interop\WindowHelper.cs" />
-    <None Include="Interop\WindowsMessages.cs" />
+    <Compile Include="Interop\WindowsMessages.cs" />
     <Compile Include="Interop\WM.cs" />
     <Compile Include="Other\DpiHelper.cs" />
+    <Compile Include="Other\PocketHTMLUtility.cs" />
     <Compile Include="Other\Tag.cs" />
     <Compile Include="Other\Utility.cs" />
   </ItemGroup>

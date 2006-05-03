@@ -122,6 +122,9 @@ namespace ISquared.PocketHTML
 		#region Constructor
 		public OptionsPanel(PocketHTMLEditor parent)
 		{
+			// First used inside InitializeOptionsControls
+			m_htCheckboxes = new Hashtable();
+
 			InitializeHeader();
 			InitializeOptionsControls();
 			DpiHelper.AdjustAllControls(this);
@@ -131,7 +134,7 @@ namespace ISquared.PocketHTML
 
 			m_currentButtonValues = new string[16];
 
-			m_htCheckboxes = new Hashtable();
+			
 			m_htTags = parent.TagHash;			
 
 			ICollection ickeys = m_htTags.Keys;

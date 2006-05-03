@@ -94,8 +94,8 @@ namespace ISquared.PocketHTML
 		private MenuItem m_menuTools;
 		private MenuItem m_menuToolsOptions;
 		private ImageList imageList1;
-		private MenuItem m_menuToolsFind;
-		private MenuItem m_menuToolsReplace;
+		private MenuItem m_menuEditFind;
+		private MenuItem m_menuEditReplace;
 		private MenuItem menuItem2;		
 		private MenuItem m_menuHelp;
 		private MenuItem m_menuHelpAbout;
@@ -108,16 +108,15 @@ namespace ISquared.PocketHTML
 		private MenuItem menuItem5;
 		private MenuItem m_menuFileRecentFiles;
 		private MenuItem menuItem8;
-		private MenuItem m_menuEditIndent;
-		private MenuItem m_menuEditUnindent;
-		private MenuItem menuItem7;
+		private MenuItem m_menuToolsIndent;
+		private MenuItem m_menuToolsUnindent;
 		private System.Windows.Forms.MenuItem MenuFileClose;
 		#endregion
 
 		private ToolBar toolBar1;
 
 		// Holds all the Tag objects, keyed to the short name or the normal name
-		private Hashtable m_tagHash;
+		private Hashtable m_htTags;
 		// Maps a button name (ie, "button1") to a tag name
 		private Hashtable buttonTags;
 
@@ -129,6 +128,8 @@ namespace ISquared.PocketHTML
 		
 		private System.Windows.Forms.ToolBarButton m_btnPreview;
 		private System.Windows.Forms.ToolBarButton m_btnTags;
+		private MenuItem m_menuToolsRefreshTags;
+		private MenuItem m_menuToolsLaunchTagEditor;
 		private Microsoft.WindowsCE.Forms.InputPanel inputPanel1;
 
 		
@@ -156,7 +157,7 @@ namespace ISquared.PocketHTML
 		{
 			get
 			{
-				return this.m_tagHash;
+				return this.m_htTags;
 			}
 		}
 
@@ -293,14 +294,14 @@ namespace ISquared.PocketHTML
 			m_saveFileName = String.Empty;
 			m_saveFileDirectory = "\\My Documents";
 
-			m_tagHash = new Hashtable();
+			m_htTags = new Hashtable();
 			buttonTags = new Hashtable();
 
 			m_hardwareButtons = new HardwareButtonMessageWindow();
 			m_hardwareButtons.HardwareButtonPressed += new HardwareButtonPressedHandler(HardwareButtonPressed);
 			
 			Debug.WriteLine("Loading tags");
-			LoadTagsXTR();
+			m_htTags = PocketHTMLShared.LoadTagsXTR();
 			Debug.WriteLine("Tags loaded, loading buttons");
 			SetupButtons();
 			Debug.WriteLine("Buttons created, checking options");
@@ -378,16 +379,17 @@ namespace ISquared.PocketHTML
 			this.m_menuEditClear = new System.Windows.Forms.MenuItem();
 			this.m_menuEditSelectAll = new System.Windows.Forms.MenuItem();
 			this.menuItem8 = new System.Windows.Forms.MenuItem();
-			this.m_menuEditIndent = new System.Windows.Forms.MenuItem();
-			this.m_menuEditUnindent = new System.Windows.Forms.MenuItem();
-			this.menuItem7 = new System.Windows.Forms.MenuItem();
+			this.m_menuEditFind = new System.Windows.Forms.MenuItem();
+			this.m_menuEditReplace = new System.Windows.Forms.MenuItem();
 			this.m_menuTools = new System.Windows.Forms.MenuItem();
 			this.m_menuToolsOptions = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
+			this.m_menuToolsLaunchTagEditor = new System.Windows.Forms.MenuItem();
+			this.m_menuToolsRefreshTags = new System.Windows.Forms.MenuItem();
 			this.m_menuToolsRefreshTemplates = new System.Windows.Forms.MenuItem();
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
-			this.m_menuToolsFind = new System.Windows.Forms.MenuItem();
-			this.m_menuToolsReplace = new System.Windows.Forms.MenuItem();
+			this.m_menuToolsIndent = new System.Windows.Forms.MenuItem();
+			this.m_menuToolsUnindent = new System.Windows.Forms.MenuItem();
 			this.m_menuHelp = new System.Windows.Forms.MenuItem();
 			this.m_menuHelpAbout = new System.Windows.Forms.MenuItem();
 			this.m_menuHelpContents = new System.Windows.Forms.MenuItem();
@@ -481,9 +483,8 @@ namespace ISquared.PocketHTML
 			this.m_menuEdit.MenuItems.Add(this.m_menuEditClear);
 			this.m_menuEdit.MenuItems.Add(this.m_menuEditSelectAll);
 			this.m_menuEdit.MenuItems.Add(this.menuItem8);
-			this.m_menuEdit.MenuItems.Add(this.m_menuEditIndent);
-			this.m_menuEdit.MenuItems.Add(this.m_menuEditUnindent);
-			this.m_menuEdit.MenuItems.Add(this.menuItem7);
+			this.m_menuEdit.MenuItems.Add(this.m_menuEditFind);
+			this.m_menuEdit.MenuItems.Add(this.m_menuEditReplace);
 			this.m_menuEdit.Text = "Edit";
 			this.m_menuEdit.Popup += new System.EventHandler(this.m_menuEdit_Popup);
 			// 
@@ -529,28 +530,26 @@ namespace ISquared.PocketHTML
 			// 
 			this.menuItem8.Text = "-";
 			// 
-			// m_menuEditIndent
+			// m_menuEditFind
 			// 
-			this.m_menuEditIndent.Text = "Indent Text";
-			this.m_menuEditIndent.Click += new System.EventHandler(this.m_menuEditIndent_Click);
+			this.m_menuEditFind.Text = "Find";
+			this.m_menuEditFind.Click += new System.EventHandler(this.MenuEditFind_Click);
 			// 
-			// m_menuEditUnindent
+			// m_menuEditReplace
 			// 
-			this.m_menuEditUnindent.Text = "Unindent Text";
-			this.m_menuEditUnindent.Click += new System.EventHandler(this.m_menuEditUnindent_Click);
-			// 
-			// menuItem7
-			// 
-			this.menuItem7.Text = "-";
+			this.m_menuEditReplace.Text = "Replace";
+			this.m_menuEditReplace.Click += new System.EventHandler(this.MenuEditReplace_Click);
 			// 
 			// m_menuTools
 			// 
 			this.m_menuTools.MenuItems.Add(this.m_menuToolsOptions);
 			this.m_menuTools.MenuItems.Add(this.menuItem2);
+			this.m_menuTools.MenuItems.Add(this.m_menuToolsLaunchTagEditor);
+			this.m_menuTools.MenuItems.Add(this.m_menuToolsRefreshTags);
 			this.m_menuTools.MenuItems.Add(this.m_menuToolsRefreshTemplates);
 			this.m_menuTools.MenuItems.Add(this.menuItem1);
-			this.m_menuTools.MenuItems.Add(this.m_menuToolsFind);
-			this.m_menuTools.MenuItems.Add(this.m_menuToolsReplace);
+			this.m_menuTools.MenuItems.Add(this.m_menuToolsIndent);
+			this.m_menuTools.MenuItems.Add(this.m_menuToolsUnindent);
 			this.m_menuTools.Text = "Tools";
 			// 
 			// m_menuToolsOptions
@@ -562,6 +561,16 @@ namespace ISquared.PocketHTML
 			// 
 			this.menuItem2.Text = "-";
 			// 
+			// m_menuToolsLaunchTagEditor
+			// 
+			this.m_menuToolsLaunchTagEditor.Text = "Launch Tag Editor";
+			this.m_menuToolsLaunchTagEditor.Click += new System.EventHandler(this.m_menuToolsLaunchTagEditor_Click);
+			// 
+			// m_menuToolsRefreshTags
+			// 
+			this.m_menuToolsRefreshTags.Text = "Refresh Tags";
+			this.m_menuToolsRefreshTags.Click += new System.EventHandler(this.m_menuToolsRefreshTags_Click);
+			// 
 			// m_menuToolsRefreshTemplates
 			// 
 			this.m_menuToolsRefreshTemplates.Text = "Refresh Templates";
@@ -571,15 +580,15 @@ namespace ISquared.PocketHTML
 			// 
 			this.menuItem1.Text = "-";
 			// 
-			// m_menuToolsFind
+			// m_menuToolsIndent
 			// 
-			this.m_menuToolsFind.Text = "Find";
-			this.m_menuToolsFind.Click += new System.EventHandler(this.MenuToolsFind_Click);
+			this.m_menuToolsIndent.Text = "Indent Text";
+			this.m_menuToolsIndent.Click += new System.EventHandler(this.m_menuToolsIndent_Click);
 			// 
-			// m_menuToolsReplace
+			// m_menuToolsUnindent
 			// 
-			this.m_menuToolsReplace.Text = "Replace";
-			this.m_menuToolsReplace.Click += new System.EventHandler(this.MenuToolsReplace_Click);
+			this.m_menuToolsUnindent.Text = "Unindent Text";
+			this.m_menuToolsUnindent.Click += new System.EventHandler(this.m_menuToolsUnindent_Click);
 			// 
 			// m_menuHelp
 			// 
@@ -649,7 +658,7 @@ namespace ISquared.PocketHTML
 			NamedButton nb = sender as NamedButton;
 			
 			String tagName = (String)buttonTags[nb.Name];
-			Tag tag = (Tag)m_tagHash[tagName];
+			Tag tag = (Tag)m_htTags[tagName];
 
 			if(tag == null)
 			{
@@ -666,11 +675,11 @@ namespace ISquared.PocketHTML
 		private bool InsertTag(string onlyTag)
 		{
 			
-			if(!m_tagHash.ContainsKey(onlyTag))
+			if(!m_htTags.ContainsKey(onlyTag))
 			{
 				return false;
 			}
-			Tag t = (Tag)m_tagHash[onlyTag];
+			Tag t = (Tag)m_htTags[onlyTag];
 			InsertTag(t);
 			return true;
 		}
@@ -711,7 +720,7 @@ namespace ISquared.PocketHTML
 				// 
 				if(tag.InnerTags)
 				{
-					Tag innerTag = (Tag)m_tagHash[tag.DefaultInnerTag];
+					Tag innerTag = (Tag)m_htTags[tag.DefaultInnerTag];
 					if(indentHTML && tag.MultiLineTag)
 					{
 						sb.Append(spacesPlus);
@@ -860,7 +869,7 @@ namespace ISquared.PocketHTML
 
 						if(tag.InnerTags)
 						{
-							Tag innerTag = (Tag)m_tagHash[tag.DefaultInnerTag];
+							Tag innerTag = (Tag)m_htTags[tag.DefaultInnerTag];
 							cursorLocationIndex -= innerTag.EndTag.Length;
 						}
 					}
@@ -885,6 +894,7 @@ namespace ISquared.PocketHTML
 		#endregion
 
 		#region Setup functions
+		/*
 		private void LoadTagsXTR()
 		{		
 			string filename = Utility.GetCurrentDir(true) + "tags.xml";
@@ -953,6 +963,7 @@ namespace ISquared.PocketHTML
 				}
 			}
 		}
+		*/
 
 		internal void SetupButtons()
 		{
@@ -964,7 +975,7 @@ namespace ISquared.PocketHTML
 				{				
 					string tagName = m_config.GetValue("Button Tags", nb.Name);
 
-					Tag t = (Tag)m_tagHash[tagName];
+					Tag t = (Tag)m_htTags[tagName];
 
 					if(t == null)
 					{
@@ -1161,19 +1172,52 @@ namespace ISquared.PocketHTML
 			m_editorPanel.TextBox.SelectAll();
 		}
 
-		private void m_menuEditIndent_Click(object sender, EventArgs e)
-		{
-			m_editorPanel.TextBox.IndentSelection();
-		}
-
-		private void m_menuEditUnindent_Click(object sender, EventArgs e)
-		{
-			m_editorPanel.TextBox.UnindentSelection();
-		}
-
 		private void m_menuEdit_Popup(object sender, EventArgs e)
 		{
 			m_menuEditUndo.Enabled = m_editorPanel.TextBox.CanUndo;
+		}
+
+		private void MenuEditFind_Click(object sender, EventArgs e)
+		{
+			if (this.m_dlgFind == null)
+			{
+				m_dlgFind = new FindDialog(m_editorPanel.TextBox);
+				m_dlgFind.ParentForm = this;
+				m_dlgFind.Parent = this;
+				int x = (inputPanel1.VisibleDesktop.Width - m_dlgFind.Width) / 2;
+				int y = (inputPanel1.VisibleDesktop.Height - m_dlgFind.Height) / 2;
+				m_dlgFind.Location = new Point(x, y);
+			}
+
+			if (m_dlgReplace != null && m_dlgReplace.Visible)
+			{
+				m_dlgReplace.Hide();
+			}
+			m_dlgFind.Show();
+			m_dlgFind.BringToFront();
+			m_dlgFind.SearchText = m_editorPanel.TextBox.SelectedText;
+		}
+
+		private void MenuEditReplace_Click(object sender, EventArgs e)
+		{
+			if (this.m_dlgReplace == null)
+			{
+				m_dlgReplace = new ReplaceDialog(m_editorPanel.TextBox);
+				m_dlgReplace.ParentForm = this;
+				m_dlgReplace.Parent = this;
+				int x = (inputPanel1.VisibleDesktop.Width - m_dlgReplace.Width) / 2;
+				int y = (inputPanel1.VisibleDesktop.Height - m_dlgReplace.Height) / 2;
+				m_dlgReplace.Location = new Point(x, y);
+			}
+
+			if (m_dlgFind != null && m_dlgFind.Visible)
+			{
+				m_dlgFind.Hide();
+			}
+
+			m_dlgReplace.Show();
+			m_dlgReplace.BringToFront();
+			m_dlgReplace.SearchText = m_editorPanel.TextBox.SelectedText;
 		}
 		#endregion
 
@@ -1225,52 +1269,34 @@ namespace ISquared.PocketHTML
 			}
 		}
 
-		private void MenuToolsFind_Click(object sender, EventArgs e)
+		private void m_menuToolsIndent_Click(object sender, EventArgs e)
 		{
-			if (this.m_dlgFind == null)
-			{
-				m_dlgFind = new FindDialog(m_editorPanel.TextBox);
-				m_dlgFind.ParentForm = this;
-				m_dlgFind.Parent = this;
-				int x = (inputPanel1.VisibleDesktop.Width - m_dlgFind.Width) / 2;
-				int y = (inputPanel1.VisibleDesktop.Height - m_dlgFind.Height) / 2;
-				m_dlgFind.Location = new Point(x, y);
-			}
-
-			if (m_dlgReplace != null && m_dlgReplace.Visible)
-			{
-				m_dlgReplace.Hide();
-			}
-			m_dlgFind.Show();
-			m_dlgFind.BringToFront();
-			m_dlgFind.SearchText = m_editorPanel.TextBox.SelectedText;
+			m_editorPanel.TextBox.IndentSelection();
 		}
 
-		private void MenuToolsReplace_Click(object sender, EventArgs e)
+		private void m_menuToolsUnindent_Click(object sender, EventArgs e)
 		{
-			if (this.m_dlgReplace == null)
-			{
-				m_dlgReplace = new ReplaceDialog(m_editorPanel.TextBox);
-				m_dlgReplace.ParentForm = this;
-				m_dlgReplace.Parent = this;
-				int x = (inputPanel1.VisibleDesktop.Width - m_dlgReplace.Width) / 2;
-				int y = (inputPanel1.VisibleDesktop.Height - m_dlgReplace.Height) / 2;
-				m_dlgReplace.Location = new Point(x, y);
-			}
-
-			if (m_dlgFind != null && m_dlgFind.Visible)
-			{
-				m_dlgFind.Hide();
-			}
-
-			m_dlgReplace.Show();
-			m_dlgReplace.BringToFront();
-			m_dlgReplace.SearchText = m_editorPanel.TextBox.SelectedText;
+			m_editorPanel.TextBox.UnindentSelection();
 		}
 
 		private void m_menuToolsRefreshTemplates_Click(object sender, EventArgs e)
 		{
 			RefreshTemplates();
+		}
+
+		private void m_menuToolsRefreshTags_Click(object sender, EventArgs e)
+		{
+			m_htTags = PocketHTMLShared.LoadTagsXTR();
+
+			m_editorPanel.SetupTagMenu();
+			this.ContextMenu = m_editorPanel.TextBox.ContextMenu;
+		}
+
+		private void m_menuToolsLaunchTagEditor_Click(object sender, EventArgs e)
+		{
+			string editorPath = Utility.GetCurrentDir(true) + "TagEditor.exe";
+			CoreDLL.CreateProcess(editorPath, string.Empty, IntPtr.Zero,
+				IntPtr.Zero, 0, 0, IntPtr.Zero, IntPtr.Zero, null, null);
 		}
 		#endregion
 
@@ -1422,7 +1448,7 @@ namespace ISquared.PocketHTML
 			}
 			catch(PlatformNotSupportedException)
 			{}
-			String contents = PocketHTMLUtility.DecodeData(fs, defaultEncoding);
+			String contents = PocketHTMLShared.DecodeData(fs, defaultEncoding);
 			m_editorPanel.TextBox.Text = contents;
 
 			this.m_saveFileName = filename;
@@ -1632,8 +1658,8 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("Loading icons");
 			int iconSize = DpiHelper.Scale(16);
 
-			Icon iconIE = PocketHTMLUtility.GetIcon("Graphics.ie", iconSize);
-			Icon iconTag = PocketHTMLUtility.GetIcon("Graphics.Tag", iconSize);
+			Icon iconIE = ISquared.Utility.GetIcon("Graphics.ie", iconSize);
+			Icon iconTag = ISquared.Utility.GetIcon("Graphics.Tag", iconSize);
 
 			Debug.WriteLine("Icons loaded, adding to imagelist");
 
@@ -1732,6 +1758,11 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("Templates check complete");
 		}
 		#endregion
+
+
+
+
+
 
 
 	} // end of PocketHTMLEditor

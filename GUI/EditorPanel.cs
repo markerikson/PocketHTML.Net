@@ -132,6 +132,12 @@ namespace ISquared.PocketHTML
 
 			#endregion
 
+			SetupTagMenu();
+			
+		}
+
+		public void SetupTagMenu()
+		{
 			m_mnuContextTags = new ContextMenu();
 			m_textbox.ContextMenu = m_mnuContextTags;
 			m_currentMenu = m_mnuContextTags;
@@ -157,10 +163,10 @@ namespace ISquared.PocketHTML
 		{
 			this.Bounds = new Rectangle(0, 0, 240, 270);
 			m_pnlButtons.Bounds = new Rectangle(0, 238, 240, 32);
-			m_pnlViewer.Bounds = new Rectangle(0, 0, 240, 237);
-			m_pnlTextbox.Bounds = new Rectangle(0, 0, 240, 237);
+			m_pnlViewer.Bounds = new Rectangle(0, 0, 240, 238);
+			m_pnlTextbox.Bounds = new Rectangle(0, 0, 240, 238);
 
-			this.m_textbox.Size = new System.Drawing.Size(240, 237);
+			this.m_textbox.Size = new System.Drawing.Size(240, 238);
 
 			int width = 30;
 			int height = 16;

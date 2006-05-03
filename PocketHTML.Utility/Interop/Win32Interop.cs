@@ -89,6 +89,8 @@ namespace ISquared.Win32Interop
 		[DllImport("coredll.dll", EntryPoint = "SHGetSpecialFolderPath", SetLastError = false)]
 		public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, StringBuilder lpszPath, int nFolder, int fCreate);
 
+		[DllImport("coredll")]
+		public static extern IntPtr GetCapture();
 		#endregion
 
 		#region Format Message Flags Enumeration
