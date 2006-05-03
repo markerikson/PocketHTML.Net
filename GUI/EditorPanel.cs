@@ -34,32 +34,8 @@ namespace ISquared.PocketHTML
 		private bool showAbout;
 
 		private HTMLViewer htmlControl;
-		//private WebBrowser m_browser;
 
-		private Menu currentMenu;
-
-		/*
-		private MenuItem MenuDocument;
-		private MenuItem MenuForms;
-		private MenuItem MenuLinks;
-		private MenuItem MenuLists;
-		private MenuItem MenuTables;
-		private MenuItem MenuText;
-		private MenuItem MenuOther;
-
-		private MenuItem MenuDocumentDoctype;
-		
-		private TagMenuItem MenuTextFormat;
-		private TagMenuItem MenuTextFont;
-		private TagMenuItem MenuTextLayout;
-		private TagMenuItem MenuTextChars;			
-
-		private TagMenuItem MenuTextLayoutHeadings;
-		private TagMenuItem MenuTextLayoutFrames;
-		 */ 
-
-
-		
+		private Menu currentMenu;		
 		
 		/// <summary>
 		/// Property Tb (TextBox)
@@ -93,19 +69,6 @@ namespace ISquared.PocketHTML
 			}
 		}		
 		
-		/*
-		public WebBrowser Browser
-		{
-			get
-			{
-				return m_browser;
-			}
-			set
-			{
-				m_browser = value;
-			}
-		}
-		*/
 		// TODO Is there a better way to handle this than exposing the buttons as a property?
 
 		/// <summary>
@@ -136,18 +99,15 @@ namespace ISquared.PocketHTML
 			menuTags = new Hashtable();
 
 			#region form setup
-			this.Bounds = new Rectangle(0, 0, 240, 270);
+			
 			buttonPanel = new Panel();
-			buttonPanel.Bounds = new Rectangle(0, 238, 240, 32);
 			buttonPanel.Parent = this;
 
 			viewerPanel = new Panel();
 			viewerPanel.Parent = this;
-			viewerPanel.Bounds = new Rectangle(0, 0, 240, 236);
 
 			tbPanel = new Panel();
 			tbPanel.Parent = this;
-			tbPanel.Bounds = new Rectangle(0, 0, 240, 236);
 
 			m_textbox = new TextBoxEx();
 			this.m_textbox.AcceptsTab = true;
@@ -156,7 +116,6 @@ namespace ISquared.PocketHTML
 			this.m_textbox.MaxLength = 16777215;
 			this.m_textbox.Multiline = true;
 			this.m_textbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_textbox.Size = new System.Drawing.Size(240, 205);
 			this.m_textbox.Text = "";
 			m_textbox.Parent = tbPanel;
 
@@ -180,22 +139,10 @@ namespace ISquared.PocketHTML
 
 			this.Buttons = new NamedButton[16];
 
-			for(int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; i++)
 			{
 				NamedButton nb = new NamedButton();
 				nb.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-				
-				x = width * (i % 8);
-				if(i > 7)
-				{
-					y = 16;
-				}
-				else
-				{
-					y = 0;
-				}
-
-				nb.Bounds = new Rectangle(x, y, width, height);
 				nb.Name = "button" + Convert.ToString(i + 1);
 				nb.Parent = buttonPanel;
 				this.buttons[i] = nb;
@@ -212,214 +159,95 @@ namespace ISquared.PocketHTML
 
 			MakeMenuXTR();
 
-			
-			#region menu items
-			/*
-			
+			//UpdateLayout();
 
-			MenuDocument = new MenuItem();
-			MenuDocument.Text = "Document";
-			contextTop.MenuItems.Add(MenuDocument);
+		}
 
-			MenuForms = new MenuItem();
-			MenuForms.Text = "Forms";
-			contextTop.MenuItems.Add(MenuForms);
+		//protected override void OnResize(EventArgs e)
+		//{
+		//	base.OnResize(e);
+		public void UpdateLayout()
+		{
+			if (Screen.PrimaryScreen.Bounds.Width > Screen.PrimaryScreen.Bounds.Height)
+			{
+				LayoutLandscape();
+			}
+			else
+			{
+				LayoutPortrait();
+			}
 
-			MenuLinks = new MenuItem();
-			MenuLinks.Text = "Links";
-			contextTop.MenuItems.Add(MenuLinks);
+			DpiHelper.AdjustAllControls(this);
+		}
 
-			MenuLists = new MenuItem();
-			MenuLists.Text = "Lists";
-			contextTop.MenuItems.Add(MenuLists);
+		private void LayoutPortrait()
+		{
+			int availableWidth = Screen.PrimaryScreen.WorkingArea.Width;
+			int availableHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
-			MenuTables = new MenuItem();
-			MenuTables.Text = "Tables";
-			contextTop.MenuItems.Add(MenuTables);
-
-			MenuText = new MenuItem();
-			MenuText.Text = "Text";
-			contextTop.MenuItems.Add(MenuText);
-			
-			MenuOther = new MenuItem();
-			MenuOther.Text = "Other";
-			contextTop.MenuItems.Add(MenuOther);
-			
-
-			
-
-			MenuDocumentDoctype = new MenuItem();
-			MenuDocumentDoctype.Text = "Doctypes";
-			MenuDocument.MenuItems.Add(MenuDocumentDoctype);
+			this.Bounds = new Rectangle(0, 0, 240, 270);
+			buttonPanel.Bounds = new Rectangle(0, 238, 240, 32);
+			viewerPanel.Bounds = new Rectangle(0, 0, 240, 237);
+			tbPanel.Bounds = new Rectangle(0, 0, 240, 237);
 
 
-			InsertMenuItem("HTML 2.0", "doc20", true, MenuDocumentDoctype);
-			InsertMenuItem("HTML 3.2", "doc32", true, MenuDocumentDoctype);
-			InsertMenuItem("HTML 4.0 Strict", "doc40s", true, MenuDocumentDoctype);
-			InsertMenuItem("HTML 4.0 Transitional", "doc40t", true, MenuDocumentDoctype);
-			InsertMenuItem("HTML 4.0 Frameset", "doc40f", true, MenuDocumentDoctype);
+			this.m_textbox.Size = new System.Drawing.Size(240, 237);
+
+			int width = 30;
+			int height = 16;
+			int y = 0;
+			int x = 0;
+
+			for (int i = 0; i < 16; i++)
+			{
+				NamedButton nb = this.Buttons[i];
+				x = width * (i % 8);
+				if (i > 7)
+				{
+					y = 16;
+				}
+				else
+				{
+					y = 0;
+				}
+
+				nb.Bounds = new Rectangle(x, y, width, height);
+			}
+		}
+
+		private void LayoutLandscape()
+		{
+			int availableWidth = Screen.PrimaryScreen.WorkingArea.Width;
+			int availableHeight = Screen.PrimaryScreen.WorkingArea.Height;
+
+			this.Bounds = new Rectangle(0, 0, availableWidth, 188);
+			buttonPanel.Bounds = new Rectangle(0, this.Height - 32, this.Width, 32);
+			viewerPanel.Bounds = new Rectangle(0, 0, this.Width, this.Height);
+			tbPanel.Bounds = new Rectangle(0, 0, this.Width, this.Height);
 
 
-			MenuItem sep;
-			sep = new MenuItem();
-			sep.Text = "-";
-			MenuDocument.MenuItems.Add(sep);
+			this.m_textbox.Size = new System.Drawing.Size(this.Width, this.Height - 32);
 
-			InsertMenuItem("html", true, MenuDocument);
-			InsertMenuItem("head", true, MenuDocument);
-			InsertMenuItem("title", true, MenuDocument);
-			InsertMenuItem("meta", true, MenuDocument);
-			InsertMenuItem("body", true, MenuDocument);
+			int width = 40;
+			int height = 16;
+			int y = 0;
+			int x = 0;
 
-			InsertMenuItem("get", "frmget", true, MenuForms);
-			InsertMenuItem("post", "frmpst", true, MenuForms);
+			for (int i = 0; i < 16; i++)
+			{
+				NamedButton nb = this.Buttons[i];
+				x = width * (i % 8);
+				if (i > 7)
+				{
+					y = 16;
+				}
+				else
+				{
+					y = 0;
+				}
 
-			sep = new MenuItem();
-			sep.Text = "-";
-			MenuForms.MenuItems.Add(sep);
-
-			InsertMenuItem("select", "select", true, MenuForms);
-			InsertMenuItem("textarea", "text", true, MenuForms);
-
-			MenuItem MenuFormsInputs = new MenuItem();
-			MenuFormsInputs.Text = "Inputs";
-			MenuForms.MenuItems.Add(MenuFormsInputs);
-
-			InsertMenuItem("button", "inpbut", true, MenuFormsInputs);
-			InsertMenuItem("checkbox", "inpchk", true, MenuFormsInputs);
-			InsertMenuItem("file", "inpfil", true, MenuFormsInputs);
-			InsertMenuItem("hidden", "inphid", true, MenuFormsInputs);
-			InsertMenuItem("password", "inppwd", true, MenuFormsInputs);
-			InsertMenuItem("radio", "inprad", true, MenuFormsInputs);
-			InsertMenuItem("reset", "inpres", true, MenuFormsInputs);
-			InsertMenuItem("submit", "inpsub", true, MenuFormsInputs);
-			InsertMenuItem("text", "inptxt", true, MenuFormsInputs);
-
-			InsertMenuItem("a href", "a hr", true, MenuLinks);
-			InsertMenuItem("a name", "a nm", true, MenuLinks);
-	
-			InsertMenuItem("ol", true, MenuLists);
-			InsertMenuItem("ul", true, MenuLists);
-			InsertMenuItem("li", true, MenuLists);
-			InsertMenuItem("dl", true, MenuLists);
-			InsertMenuItem("dt", true, MenuLists);
-			InsertMenuItem("dd", true, MenuLists);
-
-
-
-			
-			//MenuTablesCreate = new TagMenuItem();
-			//MenuTablesCreate.Text = "Create";
-			//MenuTables.MenuItems.Add(MenuTablesCreate);
-
-			//sep = new MenuItem();
-			//sep.Text = "-";
-			//MenuTables.MenuItems.Add(sep);
-
-
-			InsertMenuItem("table", true, MenuTables);
-			InsertMenuItem("tbody", true, MenuTables);
-			InsertMenuItem("th", true, MenuTables);
-			InsertMenuItem("tr", true, MenuTables);
-			InsertMenuItem("td", true, MenuTables);
-			InsertMenuItem("caption", true, MenuTables);
-
-
-			MenuTextFormat = new TagMenuItem();
-			MenuTextFormat.Text = "Text Format";
-			MenuText.MenuItems.Add(MenuTextFormat);
-
-			MenuTextFont = new TagMenuItem();
-			MenuTextFont.Text = "Text Font";
-			MenuText.MenuItems.Add(MenuTextFont);
-
-			MenuTextLayout = new TagMenuItem();
-			MenuTextLayout.Text = "Text Layout";
-			MenuText.MenuItems.Add(MenuTextLayout);
-
-			MenuTextChars = new TagMenuItem();
-			MenuTextChars.Text = "Special Characters";
-			MenuText.MenuItems.Add(MenuTextChars);
-
-
-			InsertMenuItem("font", true, MenuTextFont);
-			InsertMenuItem("b", true, MenuTextFont);
-			InsertMenuItem("i", true, MenuTextFont);
-			InsertMenuItem("u", true, MenuTextFont);
-			InsertMenuItem("strike", true, MenuTextFont);
-
-
-			InsertMenuItem("big", true, MenuTextFormat);
-			InsertMenuItem("cite", true, MenuTextFormat);
-			InsertMenuItem("code", true, MenuTextFormat);
-			InsertMenuItem("em", true, MenuTextFormat);
-			InsertMenuItem("small", true, MenuTextFormat);
-			InsertMenuItem("span", true, MenuTextFormat);
-			InsertMenuItem("strong", true, MenuTextFormat);
-			InsertMenuItem("sub", true, MenuTextFormat);
-			InsertMenuItem("sup", true, MenuTextFormat);
-			InsertMenuItem("tt", true, MenuTextFormat);
-
-
-			InsertMenuItem("<blockquote>", "block", true, MenuTextLayout);
-			InsertMenuItem("center", true, MenuTextLayout);
-			InsertMenuItem("div", true, MenuTextLayout);
-			InsertMenuItem("p", true, MenuTextLayout);
-			InsertMenuItem("pre", true, MenuTextLayout);
-		
-			sep = new MenuItem();
-			sep.Text = "-";
-			MenuTextLayout.MenuItems.Add(sep);
-		
-			MenuTextLayoutFrames = new TagMenuItem();
-			MenuTextLayoutFrames.Text = "Frames";
-			MenuTextLayout.MenuItems.Add(MenuTextLayoutFrames);
-		
-			MenuTextLayoutHeadings = new TagMenuItem();
-			MenuTextLayoutHeadings.Text = "Headings";			
-			MenuTextLayout.MenuItems.Add(MenuTextLayoutHeadings);
-		
-
-			InsertMenuItem("h1", true, MenuTextLayoutHeadings);
-			InsertMenuItem("h2", true, MenuTextLayoutHeadings);
-			InsertMenuItem("h3", true, MenuTextLayoutHeadings);
-			InsertMenuItem("h4", true, MenuTextLayoutHeadings);
-			InsertMenuItem("h5", true, MenuTextLayoutHeadings);
-			InsertMenuItem("h6", true, MenuTextLayoutHeadings);
-
-
-			InsertMenuItem("<frameset>", "fset", true, MenuTextLayoutFrames);
-			InsertMenuItem("frame", true, MenuTextLayoutFrames);
-			InsertMenuItem("<noframe>", "nofrm", true, MenuTextLayoutFrames);
-
-
-			InsertMenuItem("&&amp (&&)", "&", true, MenuTextChars);
-			InsertMenuItem("&&gt (>)", ">", true, MenuTextChars);
-			InsertMenuItem("&&lt (<)", "<", true, MenuTextChars);
-			InsertMenuItem("&&quot (\")", "\"", true, MenuTextChars);
-			InsertMenuItem("&&copy (©)", "copy", true, MenuTextChars);					
-			InsertMenuItem("&&reg (®)", "reg", true, MenuTextChars);
-			InsertMenuItem("&&trade (™)", "trade", true, MenuTextChars);
-			InsertMenuItem("&&deg (°)", "deg", true, MenuTextChars);	
-			InsertMenuItem("&&nbsp", "nbsp", true, MenuTextChars);
-
-
-			
-			
-			InsertMenuItem("<!--  -->", "comment", true, MenuOther);
-			InsertMenuItem("br", true, MenuOther);
-			InsertMenuItem("hr", true, MenuOther);
-			InsertMenuItem("img", true, MenuOther);
-
-
-
-
-
-			*/
-			#endregion
-			
-
-
+				nb.Bounds = new Rectangle(x, y, width, height);
+			}
 		}
 
 		private void MakeMenuXTR()

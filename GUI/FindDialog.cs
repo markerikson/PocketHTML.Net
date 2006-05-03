@@ -81,6 +81,8 @@ namespace ISquared.Windows.Forms
 
 			this.Size = new Size(184, 108);
 
+			DpiHelper.AdjustAllControls(this);
+
 		}
 
 		protected override void OnActivated(EventArgs e)

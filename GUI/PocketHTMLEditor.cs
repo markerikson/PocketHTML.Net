@@ -1514,6 +1514,16 @@ namespace ISquared.PocketHTML
 			inputPanel1_EnabledChanged(sender, e);
 		}
 
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+
+			if(m_editorPanel != null)
+			{
+				m_editorPanel.UpdateLayout();
+			}			
+		}
+
 		internal void MenuToolsOptions_Click(object sender, EventArgs e)
 		{
 			if(m_optionsDialogHidden)

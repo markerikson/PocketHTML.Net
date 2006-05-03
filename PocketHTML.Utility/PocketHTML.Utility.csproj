@@ -13,7 +13,7 @@
     <PlatformFamilyName>PocketPC</PlatformFamilyName>
     <PlatformID>3C41C503-53EF-4c2a-8DD4-A8217CAD115E</PlatformID>
     <OSVersion>4.20</OSVersion>
-    <DeployDirSuffix>PocketHTML.Utility</DeployDirSuffix>
+    <DeployDirSuffix>PocketHTML.Net</DeployDirSuffix>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <FormFactorID>
     </FormFactorID>

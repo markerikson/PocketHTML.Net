@@ -34,6 +34,8 @@ namespace ISquared.Windows.Forms
 			InitializeComponent();
 			this.Size = new Size(204, 126);
 			this.Caption = "Replace";
+
+			DpiHelper.AdjustAllControls(this);
 		}
 
 		/// <summary>
