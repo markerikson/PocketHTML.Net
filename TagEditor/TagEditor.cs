@@ -99,6 +99,8 @@ namespace ISquared.PocketHTML
 			ContextMenu ct = new ContextMenu();
 			treeView1.ContextMenu = ct;
 
+			m_tbOutput.Font = new Font("Courier New", 8, FontStyle.Regular);
+
 			MenuItem miSelectTag = new MenuItem();
 			miSelectTag.Text = "Select tag";
 			miSelectTag.Click += new EventHandler(miSelectTag_Click);
@@ -682,7 +684,18 @@ namespace ISquared.PocketHTML
 			m_currentTag.MultiLineTag = m_cbMultilineTag.Checked;
 			m_currentTag.AngleBrackets = m_cbAngleBrackets.Checked;
 			m_currentTag.ClosingTag = m_cbClosingTag.Checked;
-			m_currentTag.DefaultInnerTag = (string)m_comboInnerTag.SelectedItem;
+
+			string innerTagName = (string)m_comboInnerTag.SelectedItem;
+			
+			if(innerTagName != null)
+			{
+				m_currentTag.DefaultInnerTag = innerTagName;
+			}
+			else
+			{
+				m_currentTag.DefaultInnerTag = string.Empty;
+			}
+			
 			m_currentTag.InnerTags = m_currentTag.DefaultInnerTag != string.Empty;
 
 			string attributeString = m_tbAttributes.Text;

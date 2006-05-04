@@ -91,9 +91,18 @@ namespace ISquared.PocketHTML
 			get
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.Append("</");
+				if(angleBrackets)
+				{
+					sb.Append("</");
+				}
+				
 				sb.Append(val);
-				sb.Append(">");
+
+				if(angleBrackets)
+				{
+					sb.Append(">");
+				}
+				
 				return sb.ToString();
 			}
 
@@ -126,7 +135,7 @@ namespace ISquared.PocketHTML
 					}
 				}
 
-				if (this.angleBrackets)
+				if (angleBrackets)
 				{
 					// for XHTML compatibility
 

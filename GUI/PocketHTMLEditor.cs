@@ -808,6 +808,9 @@ namespace ISquared.PocketHTML
 				int zoomLevel = int.Parse(m_config.GetValue("Options", "ZoomLevel"));
 				m_editorPanel.HtmlControl.ZoomLevel = zoomLevel;
 
+				bool xhtmlTags = m_config.GetBool("Options", "XHTMLTags");
+				Tag.XHTMLTags = xhtmlTags;
+
 				if(m_editorPanel.TextBox.WordWrap)
 				{
 					m_editorPanel.TextBox.ScrollBars = ScrollBars.Vertical;

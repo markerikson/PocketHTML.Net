@@ -443,11 +443,13 @@ namespace ISquared.Win32Interop
 			p[i] = '\0';   
 		}
 
+		/*
 		public static void InsertString(string st, IntPtr ip)
 		{
 			ip = CoreDLL.LocalAllocCE(0x40, Marshal.SystemDefaultCharSize * st.Length);
 			StringToPointer(st, ip);
 		}
+		*/
 		#endregion
 
 		#region Other functions
