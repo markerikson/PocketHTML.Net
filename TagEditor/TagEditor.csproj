@@ -17,6 +17,7 @@
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <FormFactorID>
     </FormFactorID>
+    <ApplicationIcon>Tag.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -97,6 +97,7 @@ namespace ISquared.PocketHTML
 			BindingContext bc2 = new BindingContext();
 
 			ContextMenu ct = new ContextMenu();
+			treeView1.ContextMenu = ct;
 
 			MenuItem miSelectTag = new MenuItem();
 			miSelectTag.Text = "Select tag";
@@ -106,9 +107,7 @@ namespace ISquared.PocketHTML
 			MenuItem miDeleteMenuItem = new MenuItem();
 			miDeleteMenuItem.Text = "Delete Menu Item";
 			miDeleteMenuItem.Click += new EventHandler(miDeleteMenuItem_Click);
-			ct.MenuItems.Add(miDeleteMenuItem);
-
-			treeView1.ContextMenu = ct;
+			ct.MenuItems.Add(miDeleteMenuItem);			
 
 			m_comboAvailableTags.BindingContext = bc1;
 			m_comboInnerTag.BindingContext = bc2;
@@ -684,6 +683,7 @@ namespace ISquared.PocketHTML
 			m_currentTag.AngleBrackets = m_cbAngleBrackets.Checked;
 			m_currentTag.ClosingTag = m_cbClosingTag.Checked;
 			m_currentTag.DefaultInnerTag = (string)m_comboInnerTag.SelectedItem;
+			m_currentTag.InnerTags = m_currentTag.DefaultInnerTag != string.Empty;
 
 			string attributeString = m_tbAttributes.Text;
 
@@ -871,6 +871,17 @@ namespace ISquared.PocketHTML
 		#endregion
 
 		#region Event handlers
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+
+			tabControl1.Bounds = this.ClientRectangle;
+			m_panelTagInfo.Bounds = tabPage1.ClientRectangle;
+
+			DpiHelper.AdjustAllControls(this);
+		}
+
+
 		private void m_comboAvailableTags_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if(m_comboAvailableTags.SelectedItem == null)
