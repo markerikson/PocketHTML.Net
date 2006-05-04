@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using System.Text;
+using CustomControls;
 #endregion
 
 namespace ISquared.PocketHTML
@@ -14,7 +15,9 @@ namespace ISquared.PocketHTML
 		private Button m_btnOK;
 		private Button m_btnCancel;
 		private DialogResult m_result;
-		private Panel m_innerPanel;
+		private Panel m_pnlContents;
+		private ScrollablePanel m_pnlOptions;
+		private ScrollablePanel m_pnlQuicktags;
 
 		private Hashtable m_htTags;
 		private Hashtable m_htCheckboxes;
@@ -156,7 +159,7 @@ namespace ISquared.PocketHTML
 		{
 			m_btnOK = new Button();
 			this.m_btnOK.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
-			this.m_btnOK.Location = new System.Drawing.Point(155, 2);
+			this.m_btnOK.Location = new System.Drawing.Point(140, 2);
 			this.m_btnOK.Size = new System.Drawing.Size(30, 20);
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.Click += new EventHandler(buttonOK_Click);
@@ -164,8 +167,8 @@ namespace ISquared.PocketHTML
 
 			m_btnCancel = new Button();
 			this.m_btnCancel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
-			this.m_btnCancel.Location = new System.Drawing.Point(188, 2);
-			this.m_btnCancel.Size = new System.Drawing.Size(50, 20);
+			this.m_btnCancel.Location = new System.Drawing.Point(176, 2);
+			this.m_btnCancel.Size = new System.Drawing.Size(60, 20);
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.Click +=new EventHandler(buttonCancel_Click);
 			this.Controls.Add(m_btnCancel);					
@@ -173,7 +176,9 @@ namespace ISquared.PocketHTML
 
 		private void InitializeOptionsControls()
 		{
-			m_innerPanel = new Panel();
+			m_pnlContents = new Panel();
+			m_pnlOptions = new ScrollablePanel();
+			m_pnlQuicktags = new ScrollablePanel();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 
@@ -197,41 +202,48 @@ namespace ISquared.PocketHTML
 
 			this.ClientSize = new System.Drawing.Size(240, 294);
 
-			m_innerPanel.Location = new Point(2, 30);
-			m_innerPanel.Size = new Size(236, 240);
-			m_innerPanel.Parent = this;
+			m_pnlContents.Location = new Point(2, 30);
+			m_pnlContents.Size = new Size(236, 240);
+			m_pnlContents.Parent = this;
 
-			tabControl1.Parent = m_innerPanel;
-			tabControl1.Bounds = m_innerPanel.ClientRectangle;
+			tabControl1.Parent = m_pnlContents;
+			tabControl1.Bounds = m_pnlContents.ClientRectangle;
 
 			tabPage1.Parent = tabControl1;
 			tabPage2.Parent = tabControl1;
 
-			this.tabControl1.SelectedIndex = 0;
-
-			m_lvOptions.Parent = tabPage1;
-
-			m_lblZoomLevel.Parent = tabPage1;
-			m_comboZoomLevel.Parent = tabPage1;
-			m_comboDefaultEncoding.Parent = tabPage1;
-			m_lblDefaultEncoding.Parent = tabPage1;
-			m_btnTestEncoding.Parent = tabPage1;
-
 			tabPage1.Bounds = tabControl1.Bounds;
 			tabPage2.Bounds = tabControl1.Bounds;
 
-			label1.Parent = tabPage2;
-			label2.Parent = tabPage2;
-			label3.Parent = tabPage2;
-			label4.Parent = tabPage2;
-			label5.Parent = tabPage2;
-			label6.Parent = tabPage2;
-			nudHardwareButton.Parent = tabPage2;
-			m_comboButtonLabel.Parent = tabPage2;
-			m_comboButtonNumber.Parent = tabPage2;
-			cbHardwareButtons.Parent = tabPage2;
+			this.tabControl1.SelectedIndex = 0;
 
-			m_lvOptions.Bounds = new Rectangle(0, 0, 236, 124);
+			m_pnlOptions.Parent = tabPage1;
+			m_pnlOptions.Bounds = tabPage1.Bounds;
+			m_pnlOptions.SetScrollHeight(DpiHelper.Scale(200));
+
+			m_pnlQuicktags.Parent = tabPage2;
+			m_pnlQuicktags.Bounds = tabPage2.Bounds;
+			m_pnlQuicktags.SetScrollHeight(DpiHelper.Scale(200));
+
+			m_lvOptions.Parent = m_pnlOptions.Contents;
+			m_lblZoomLevel.Parent = m_pnlOptions.Contents;
+			m_comboZoomLevel.Parent = m_pnlOptions.Contents;
+			m_comboDefaultEncoding.Parent = m_pnlOptions.Contents;
+			m_lblDefaultEncoding.Parent = m_pnlOptions.Contents;
+			m_btnTestEncoding.Parent = m_pnlOptions.Contents;
+
+			label1.Parent = m_pnlQuicktags.Contents;
+			label2.Parent = m_pnlQuicktags.Contents;
+			label3.Parent = m_pnlQuicktags.Contents;
+			label4.Parent = m_pnlQuicktags.Contents;
+			label5.Parent = m_pnlQuicktags.Contents;
+			label6.Parent = m_pnlQuicktags.Contents;
+			nudHardwareButton.Parent = m_pnlQuicktags.Contents;
+			m_comboButtonLabel.Parent = m_pnlQuicktags.Contents;
+			m_comboButtonNumber.Parent = m_pnlQuicktags.Contents;
+			cbHardwareButtons.Parent = m_pnlQuicktags.Contents;
+
+			m_lvOptions.Bounds = new Rectangle(0, 0, 220, 124);
 			ColumnHeader header = new ColumnHeader();
 			header.Text = "Options";
 			header.Width = 195;
@@ -248,7 +260,6 @@ namespace ISquared.PocketHTML
 
 				m_htCheckboxes[boolnames[i, 0]] = lvi;
 			}
-
 
 			this.label6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
 			this.label6.Location = new System.Drawing.Point(7, 4);
@@ -323,16 +334,16 @@ namespace ISquared.PocketHTML
 
 
 			m_lblDefaultEncoding.Text = "Default text encoding:";
-			m_lblDefaultEncoding.Bounds = new Rectangle(4, 160, 180, 16);
+			m_lblDefaultEncoding.Bounds = new Rectangle(4, m_comboZoomLevel.Bottom + 8, 120, 16);
 
-			m_comboDefaultEncoding.Bounds = new Rectangle(4, 180, 180, 22);
+			m_comboDefaultEncoding.Bounds = new Rectangle(4, m_lblDefaultEncoding.Bottom + 4, 172, 22);
 			for (int i = 0; i < encodingnames.GetLength(0); i++)
 			{
 				m_comboDefaultEncoding.Items.Add(encodingnames[i, 0]);
 			}
 
 			m_btnTestEncoding.Text = "Test";
-			m_btnTestEncoding.Bounds = new Rectangle(188, 180, 40, 20);
+			m_btnTestEncoding.Bounds = new Rectangle(180, m_lblDefaultEncoding.Bottom + 4, 40, 20);
 			m_btnTestEncoding.Click += new EventHandler(m_btnTestEncoding_Click);
 
 
@@ -368,7 +379,7 @@ namespace ISquared.PocketHTML
 			// comboBox1
 			// 
 			this.m_comboButtonLabel.Location = new System.Drawing.Point(129, 27);
-			this.m_comboButtonLabel.Size = new System.Drawing.Size(108, 22);
+			this.m_comboButtonLabel.Size = new System.Drawing.Size(97, 22);
 			this.m_comboButtonLabel.SelectedIndexChanged += new System.EventHandler(this.comboButtonLabel_SelectedIndexChanged);
 			
 			this.tabPage1.Text = "Options";
@@ -478,7 +489,22 @@ namespace ISquared.PocketHTML
 			Font titleFont = new Font("Tahoma", 10, FontStyle.Bold);
 			g.DrawString("Options", titleFont, sb, r);
 			Pen p = new Pen(Color.Black);
-			g.DrawLine(p, 0, DpiHelper.Scale(23), DpiHelper.Scale(240), DpiHelper.Scale(23));
+			g.DrawLine(p, 0, DpiHelper.Scale(23), this.Width, DpiHelper.Scale(23));
+		}
+
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			m_pnlContents.Bounds = new Rectangle(0, 30, this.Width, this.Height - 30); 
+			tabControl1.Bounds = m_pnlContents.ClientRectangle;
+
+			m_pnlOptions.Bounds = tabPage1.ClientRectangle;
+			m_pnlQuicktags.Bounds = tabPage2.ClientRectangle;
+
+			m_btnCancel.Left =  this.Width - DpiHelper.Scale(4) - m_btnCancel.Width;
+			m_btnOK.Left = m_btnCancel.Left - DpiHelper.Scale(8) - m_btnOK.Width;
+
+			DpiHelper.AdjustAllControls(this);
 		}
 
 		private void comboButtonLabel_SelectedIndexChanged(object sender, System.EventArgs e)

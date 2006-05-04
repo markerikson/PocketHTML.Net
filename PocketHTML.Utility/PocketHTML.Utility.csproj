@@ -58,6 +58,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUI\IWin32Window.cs" />
+    <Compile Include="GUI\ScrollablePanel.cs" />
     <Compile Include="GUI\TextBoxEx.cs" />
     <Compile Include="GUI\TitleBarPanel.cs" />
     <Compile Include="Interop\EM.cs" />

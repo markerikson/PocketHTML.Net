@@ -62,7 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ScrollablePanel.cs" />
+    <None Include="ScrollablePanel.cs" />
     <Compile Include="SortableList.cs" />
     <Compile Include="TagEditor.cs">
       <SubType>Form</SubType>

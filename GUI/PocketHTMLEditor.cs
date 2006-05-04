@@ -62,10 +62,6 @@ namespace ISquared.PocketHTML
 		private static Configuration m_config;
 		private static string m_versionText = "1.2 Beta 7";
 
-		
-		// just used to keep from writing "\r\n" all the time
-		private string newline;
-
 		// Name of the current file
 		private string m_saveFileName;
 		private string m_saveFileDirectory;
@@ -307,8 +303,6 @@ namespace ISquared.PocketHTML
 			Debug.WriteLine("Buttons created, checking options");
 			SetupOptions();
 			Debug.WriteLine("Options setup complete");
-
-			newline = "\r\n";
 
 			string tgetfilePath = CoreDLL.SystemDirectory + "\\tgetfile.dll";
 			tgetfileExists = File.Exists(tgetfilePath);
@@ -658,13 +652,16 @@ namespace ISquared.PocketHTML
 			NamedButton nb = sender as NamedButton;
 			
 			String tagName = (String)buttonTags[nb.Name];
+			InsertTag(tagName);
+			/*
 			Tag tag = (Tag)m_htTags[tagName];
 
 			if(tag == null)
 			{
 				return;
 			}
-			InsertTag(tag);
+			PocketHTMLShared.InsertTag(tag);
+			*/
 		}
 
 		/// <summary>
@@ -672,225 +669,19 @@ namespace ISquared.PocketHTML
 		/// </summary>
 		/// <param name="onlyTag"></param>
 		/// <returns></returns>
-		private bool InsertTag(string onlyTag)
+		private bool InsertTag(string tagName)
 		{
-			
-			if(!m_htTags.ContainsKey(onlyTag))
+
+			if (!m_htTags.ContainsKey(tagName))
 			{
 				return false;
 			}
-			Tag t = (Tag)m_htTags[onlyTag];
-			InsertTag(t);
+			Tag t = (Tag)m_htTags[tagName];
+			//InsertTag(t);
+			PocketHTMLShared.InsertTag(t, m_editorPanel.TextBox, m_htTags);
 			return true;
 		}
 		
-		/// <summary>
-		/// The main tag insertion function.  
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <returns></returns>
-		private bool InsertTag(Tag tag)
-		{
-			TextBoxEx tb = m_editorPanel.TextBox;
-			StringBuilder sb = new StringBuilder();
-			String spaces = tb.GetLeadingSpaces();
-
-			// basically, an additional level of indentation
-			// TODO make this an option?
-			String spacesPlus = spaces + "\t";
-
-			int currentLineNum = tb.CurrentLine;
-
-			int selstart = tb.SelectionStart;
-
-			int newLineNum = currentLineNum;
-
-			string seltext = tb.SelectedText;
-
-			bool indentHTML = m_config.GetBool("Options", "IndentHTML");
-
-			// We'll need a start tag AND an end tag
-			if(tag.ClosingTag)
-			{
-				sb.Append(tag.StartTag);
-				if(tag.MultiLineTag)
-				{
-					sb.Append(newline);
-				}
-				// 
-				if(tag.InnerTags)
-				{
-					Tag innerTag = (Tag)m_htTags[tag.DefaultInnerTag];
-					if(indentHTML && tag.MultiLineTag)
-					{
-						sb.Append(spacesPlus);
-					}
-					sb.Append(innerTag.StartTag);
-					if(tag.MultiLineTag)
-					{
-						sb.Append(newline);
-						if(indentHTML)
-						{
-							sb.Append(spacesPlus);
-						}
-						if(seltext != String.Empty)
-						{
-							sb.Append(seltext);
-						}
-						sb.Append(newline);
-						if(indentHTML)
-						{
-							sb.Append(spacesPlus);
-						}					
-					}
-					sb.Append(innerTag.EndTag);					
-				}
-
-				if(tag.MultiLineTag)
-				{
-					if(indentHTML)
-					{
-						sb.Append(spaces);
-					}
-				}
-
-				if( (seltext != String.Empty) && 
-					(!tag.InnerTags))
-				{
-					sb.Append(seltext);
-				}
-
-				if(tag.MultiLineTag)
-				{
-					if(tag.ClosingTag)
-					{
-						sb.Append(newline);
-					}
-					sb.Append(spaces);
-				}
-
-				sb.Append(tag.EndTag);
-				if(tag.MultiLineTag)
-				{
-					sb.Append(newline);
-				}
-			}
-			else
-			{
-				sb.Append(tag.StartTag);
-				if(tag.MultiLineTag)
-				{
-					sb.Append(newline);
-					if(indentHTML)
-					{
-						sb.Append(spaces);
-					}
-				}				
-			}
-	
-			tb.ReplaceSelection(sb.ToString());
-
-			int charIndex = 0; 
-			int cursorLocationIndex = 0;
-				
-			if(tag.DefaultAttributes.Length > 0)
-			{
-				charIndex = tb.GetLineIndex(currentLineNum);
-				
-				int firstUninitializedAttribute = -1;
-				int temp = -1;
-				for(int i = 0; i < tag.DefaultAttributes.Length; i++)
-				{
-					temp = tag.DefaultAttributes[i].IndexOf("\"");
-					if(temp == -1)
-					{
-						firstUninitializedAttribute = i;
-						break;
-					}
-				}
-				
-				// TODO What was I doing here?
-				//int idx = tag.Name.IndexOf("\"");
-				int idx = tag.Value.IndexOf("\"");
-				if(firstUninitializedAttribute != -1)
-				{
-					string fua = tag.DefaultAttributes[firstUninitializedAttribute];
-					idx = tag.StartTag.IndexOf(fua) + fua.Length + 2;
-				}
-				else
-				{
-					int t1 = tag.StartTag.IndexOf("\"") + 1;
-					int t2 = tag.StartTag.IndexOf("\"", t1);
-					if(t2 == -1)
-					{
-						idx = tag.StartTag.Length;
-					}
-					else
-					{
-						idx = t2;
-					}
-				}
-				charIndex += idx;
-				charIndex += spaces.Length;
-			}
-			// TODO What was I doing here?
-			//else if(tag.NormalTag)
-			else if(tag.AngleBrackets)
-			{
-				if(tag.MultiLineTag)
-				{
-					newLineNum += 1;
-
-					if(tag.InnerTags)
-					{
-						newLineNum += 1;
-						if(indentHTML)
-						{
-							cursorLocationIndex = spacesPlus.Length;
-						}
-					}
-					else
-					{
-						if(indentHTML)
-						{
-							cursorLocationIndex = spaces.Length;
-						}
-					}
-
-					charIndex = tb.GetLineIndex(newLineNum);
-				}
-
-				else
-				{					
-					if(tag.ClosingTag)
-					{		
-						charIndex = m_editorPanel.TextBox.SelectionStart;
-						cursorLocationIndex -= tag.EndTag.Length;
-
-						if(tag.InnerTags)
-						{
-							Tag innerTag = (Tag)m_htTags[tag.DefaultInnerTag];
-							cursorLocationIndex -= innerTag.EndTag.Length;
-						}
-					}
-				}				
-				
-				charIndex += cursorLocationIndex;							
-			}
-			
-			// TODO What was I doing here?
-			//if(tag.NormalTag)
-			if(tag.AngleBrackets)
-			{
-				tb.Focus();
-				tb.SelectionStart = charIndex;
-				tb.SelectionLength = 0;
-			}
-
-			m_editorPanel.TextBox.Modified = true;
-
-			return true;
-		}
 		#endregion
 
 		#region Setup functions
@@ -1233,13 +1024,16 @@ namespace ISquared.PocketHTML
 					Debug.WriteLine("Loading OptionsPanel");
 					m_optionsPanel = new OptionsPanel(this);
 					Debug.WriteLine("OptionsDialog created");
-					m_optionsPanel.Bounds = new Rectangle(0, 0, DpiHelper.Scale(240), DpiHelper.Scale(270));
+
+					//m_optionsPanel.Bounds = new Rectangle(0, 0, DpiHelper.Scale(240), DpiHelper.Scale(270));
+					
 					m_optionsPanel.Parent = this;
 				}
 				else
 				{
 					m_optionsPanel.Reset();
 				}
+				m_optionsPanel.Bounds = new Rectangle(0, 0, this.Width, this.Height);
 				m_optionsPanel.Show();
 
 				m_optionsDialogHidden = false;
