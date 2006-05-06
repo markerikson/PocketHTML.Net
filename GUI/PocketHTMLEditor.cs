@@ -1117,7 +1117,7 @@ namespace ISquared.PocketHTML
 
 			if (filename != String.Empty)
 			{
-				if (CloseFile() == DialogResult.Yes)
+				if (CloseFile() != DialogResult.Cancel)
 				{
 					LoadFile(filename);
 				}
@@ -1358,7 +1358,11 @@ namespace ISquared.PocketHTML
 						{
 							string originalDirectory = m_saveFileDirectory;
 							LoadFile(filename);
+
+							// LoadFile adds the name of the template to the MRU list, but
+							// we don't want templates listed there
 							m_mruManager.Remove(filename);
+
 							m_saveFileName = String.Empty;
 							m_saveFileDirectory = originalDirectory;
 							m_editorPanel.TextBox.Modified = true;
@@ -1512,7 +1516,7 @@ namespace ISquared.PocketHTML
 
 		void IMRUClient.OpenMRUFile(string fileName)
 		{
-			if(CloseFile() == DialogResult.Yes)
+			if(CloseFile() != DialogResult.Cancel)
 			{
 				LoadFile(fileName);
 			}

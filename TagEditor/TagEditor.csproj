@@ -55,18 +55,19 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="InputDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="ScrollablePanel.cs" />
     <Compile Include="SortableList.cs" />
     <Compile Include="TagEditor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TagSelectionForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="InputDialog.resx">
       <SubType>Designer</SubType>

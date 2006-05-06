@@ -196,38 +196,13 @@ namespace ISquared.PocketHTML
 			// tabPage1
 			// 
 
-			/*
-			this.tabPage1.Controls.Add(this.m_btnInputValue);
-			this.tabPage1.Controls.Add(this.label7);
-			this.tabPage1.Controls.Add(this.m_tbAttributes);
-			this.tabPage1.Controls.Add(this.m_tbOutput);
-			this.tabPage1.Controls.Add(this.label6);
-			this.tabPage1.Controls.Add(this.m_cbAngleBrackets);
-			this.tabPage1.Controls.Add(this.m_cbMultilineTag);
-			this.tabPage1.Controls.Add(this.m_cbClosingTag);
-			this.tabPage1.Controls.Add(this.m_comboInnerTag);
-			this.tabPage1.Controls.Add(this.label5);
-			this.tabPage1.Controls.Add(this.label4);
-			this.tabPage1.Controls.Add(this.m_tbShortName);
-			this.tabPage1.Controls.Add(this.m_tbDisplayName);
-			this.tabPage1.Controls.Add(this.label3);
-			this.tabPage1.Controls.Add(this.m_tbTagValue);
-			this.tabPage1.Controls.Add(this.label2);
-			this.tabPage1.Controls.Add(this.m_comboAvailableTags);
-			this.tabPage1.Controls.Add(this.label1);
-			this.tabPage1.Location = new System.Drawing.Point(0, 0);
-			this.tabPage1.Size = new System.Drawing.Size(240, 245);
-			this.tabPage1.Text = "Tags";
-			 
-			*/
-
 			this.tabPage1.Location = new System.Drawing.Point(0, 0);
 			this.tabPage1.Size = new System.Drawing.Size(240, 245);
 			this.tabPage1.Text = "Tags";
 
 			m_panelTagInfo.Parent = tabPage1;
 			m_panelTagInfo.Bounds = new Rectangle(0, 0, 240, 245);
-			m_panelTagInfo.SetScrollHeight(350);
+			m_panelTagInfo.SetScrollHeight(370);
 			
 
 			this.m_panelTagInfo.Contents.Controls.Add(this.m_btnInputValue);
@@ -271,15 +246,15 @@ namespace ISquared.PocketHTML
 			this.m_tbAttributes.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
 			this.m_tbAttributes.Location = new System.Drawing.Point(69, 181);
 			this.m_tbAttributes.Multiline = true;
-			this.m_tbAttributes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.m_tbAttributes.Size = new System.Drawing.Size(147, 58);
+			this.m_tbAttributes.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.m_tbAttributes.Size = new System.Drawing.Size(147, 72);
 			this.m_tbAttributes.Text = "line1\r\nline2\r\nline3\r\nline4";
 			this.m_tbAttributes.WordWrap = false;
 			// 
 			// m_tbOutput
 			// 
 			this.m_tbOutput.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.m_tbOutput.Location = new System.Drawing.Point(69, 245);
+			this.m_tbOutput.Location = new System.Drawing.Point(69, 259);
 			this.m_tbOutput.Multiline = true;
 			this.m_tbOutput.Size = new System.Drawing.Size(147, 100);
 			this.m_tbOutput.ScrollBars = ScrollBars.Both;
@@ -288,7 +263,7 @@ namespace ISquared.PocketHTML
 
 
 			m_btnPreviewTag.Font = new Font("Tahoma", 8F, FontStyle.Regular);
-			m_btnPreviewTag.Bounds = new Rectangle(3, 245, 64, 20);
+			m_btnPreviewTag.Bounds = new Rectangle(3, 259, 64, 20);
 			m_btnPreviewTag.Text = "Preview Tag";
 			m_btnPreviewTag.Click += new EventHandler(m_btnPreviewTag_Click);
 			

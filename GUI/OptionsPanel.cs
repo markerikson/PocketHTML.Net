@@ -334,7 +334,7 @@ namespace ISquared.PocketHTML
 
 
 			m_lblDefaultEncoding.Text = "Default text encoding:";
-			m_lblDefaultEncoding.Bounds = new Rectangle(4, m_comboZoomLevel.Bottom + 8, 120, 16);
+			m_lblDefaultEncoding.Bounds = new Rectangle(4, m_comboZoomLevel.Bottom + 8, 172, 16);
 
 			m_comboDefaultEncoding.Bounds = new Rectangle(4, m_lblDefaultEncoding.Bottom + 4, 172, 22);
 			for (int i = 0; i < encodingnames.GetLength(0); i++)
