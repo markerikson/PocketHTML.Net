@@ -2,78 +2,387 @@
 <html>
 <head>
 <title>Help for PocketHTML.Net</title>
-<meta http-equiv="Htm-Help" content="\Program Files\PocketHTML.Net\PHN.htm#contents">
+<meta http-equiv="Htm-Help" content="PocketHTML.htm#contents">
 </head>
 <body text="#000000" bgcolor="#ffffff">
 <!-- PegHelp -->
 <p><a name="contents"></a><strong>PocketHTML.Net Help</strong></p>
 
-<p><a href="PHN.html#intro">Introduction</a><br>
- <a href="PHN.html#buttons">Toolbar Buttons</a><br>
- <a href="PHN.html#taginsertion">Tag Insertion</a><br>
- <a href="PHN.html#options">Options</a><br>
- <a href="PHN.html#config">Configuration File</a><br>
- <a href="PHN.html#history">Version History</a><br>
-<br clear="all">
+<p>
+<a href="PocketHTML.htm#intro">Introduction</a><br>
+<a href="PocketHTML.htm#buttons">Toolbar buttons</a><br>
+<a href="PocketHTML.htm#menus">Menu items</a><br>
+<a href="PocketHTML.htm#options">Options</a><br>
+<a href="PocketHTML.htm#tageditor">Tag Editor</a><br><br>
+
+<a href="PocketHTML.htm#taginsertion">Tag Insertion</a><br>
+<a href="PocketHTML.htm#templates">Template files</a><br>
+<a href="PocketHTML.htm#filestructures">XML file structures</a><br>
+<a href="PocketHTML.htm#config">Configuration File</a><br><br>
+
+<a href="PocketHTML.htm#history">Version History</a><br>
 </p>
 
-<!-- PegHelp -->
-<br>
-<br>
-<br>
-<br>
-<!-- *****Topic Break**** --><a name="intro"></a><strong>Introduction</strong> <br>
-<br>
-<p>Welcome to PocketHTML.Net, the premier HTML editor for the PocketPC (abbreviated to PHN in this help file).  PHN is designed to make editing HTML pages as simple as possible while reducing the amount of taps and writing.  It's useful for website design, lists, rich text-style documents, and much more. </p>
 
-<p>My goal is that you be completely satisfied with PHN.  If you have a problem, find a bug, or have a comment, please e-mail me at <a href="mailto:mark@isquaredsoftware.com">mark@isquaredsoftware.com</a> and I'll get back to you as soon as possible.  I also enjoy finding out who's using my software and what they're using it for.</p>
+<!-- PegHelp -->
+<hr>
+<!-- *****Topic Break**** -->
+<p><a name="intro"></a><strong>Introduction</strong></p>
+<p>Welcome to PocketHTML.Net, the premier HTML editor for the PocketPC.  PocketHTML is designed to make 
+editing HTML pages as simple as possible while reducing the amount of taps and writing.  It's useful for 
+website design, lists, rich text-style documents, and much more. </p>
+
+<p>My goal is that you be completely satisfied with PHN.  If you have a problem, find a bug, or have 
+a comment, please e-mail me at <a href="mailto:mark@isquaredsoftware.com">mark@isquaredsoftware.com</a> 
+and I'll get back to you as soon as possible.</p>
 
 <p>Thanks for using PocketHTML.Net!</p>
-
-<br>
  
-<p>Mark Erikson<br>
- ISquared Software</p>
+<p>Mark Erikson
+<br>ISquared Software
+<br>http://www.isquaredsoftware.com</p>
+
 
 <!-- PegHelp -->
-<!-- ************************Topic Break************************* --><a name="buttons"></a><strong>Toolbar Buttons</strong> <br>
-<br>
-<p>PHN has only two buttons on its toolbar.  The left button, "&lt; &gt;", brings up the tag insertion menu.  This is described in more detail in the section "Tag Insertion".  The right toolbar button, "IE", displays the currently edited file in the integrated HTML viewer.  Tap the "IE" button to switch to preview mode; tap it again to switch back to HTML editing.</p>
-
-<!-- PegHelp -->
+<hr>
 <!-- ************************Topic Break************************* -->
-<a name="config"></a><strong>Configuration File</strong> <br>
-<br>
-<p>The configuration file (pockethtml.ini) has two main sections.  It holds the values for initializing the QuickTag buttons, and it holds the main program options. It's a plain text file, so open it in something like Pocket Notepad from Tillanosoft. It's pretty self explanatory. The only thing to remember is that if a short name is provided for a tag in the tags.csv file, then you'll need to use that in the pockethtml.ini file.</p>
+<p><a name="buttons"></a><strong>Toolbar Buttons</strong></p>
+<p>PHN has only two buttons on its toolbar.  The left button, "&lt; &gt;", brings up the tag 
+insertion menu.  This is described in more detail in the section "Tag Insertion".  The right 
+toolbar button, "IE", displays the currently edited file in the integrated HTML viewer.  Tap 
+the "IE" button to switch to preview mode; tap it again to switch back to HTML editing.</p>
+
 
 <!-- PegHelp -->
-<!-- ************************Topic Break************************* --><a name="options"></a><strong>Options Menu</strong> 
-<p>The checkboxes control the main program options.  They are:</p>
-
-<br>
-<br>
-<p>"Wrap editor text": Controls wordwrap in the text editor.<br>
- "Wrap page preview": Controls wordwrap in the integrated HTML viewer.<br>
- "Indent HTML tags": If on, tags inside default inner tags (such as the &lt;LI&gt; inside &lt;OL&gt;) will be inserted with a 4-space indent.<br>
- "Autoindent on Enter": If the Enter key is tapped when on, a new line is inserted and the cursor automatically indented to the same depth it is on the current line.  If not, a new line is inserted and the cursor is placed at the start of the line.<br>
- "XHTML-style single tags": In standard HTML, a single tag such as &lt;BR&gt; does not need a closing tag or slash.  Under XHTML, a tag such as &lt;BR&gt; must be written as &lt;BR /&gt;.  If this is on, XHTML-style tags will be generated.<br>
- "Use ClearType" in preview: Controls the use of ClearType in the integrated HTML viewer.</p>
-
-<p>The QuickTag section allows you to set what each QuickTag button inserts.  The buttons are numbered 1-16, with 1-8 on the top row and 9-16 on the bottom. </p>
-
-<!-- PegHelp -->
+<hr>
 <!-- ************************Topic Break************************* -->
-<a name="taginsertion"></a><strong>Tag Insertion</strong> 
-<p>Writing HTML tags on a PocketPC is extremely repetitive and tiring. PHN makes this easier in two ways: the tag insertion menu, and the QuickTag buttons.</p>
+<p><a name="menus"></a><strong>Menus</strong></p>
+<p><em>File</em></p>
+<p>Most items on the File menu should be self-explanatory.  The "New" item gives a list of options for a 
+file.  "Blank" is an empty file, while "Basic" has just HTML and Body tags.  Also, any 
+<a href="PocketHTML.htm#templates">template files</a> are listed here.</p>
 
-<p>To activate the tag insertion menu, either click the "&lt; &gt;" icon in the tool bar, or tap and hold inside the textbox. Just tap through the menu for the tag you want.</p>
+<p><em>Edit</em></p>
+<p>The Edit menu includes the usual clipboard operations, Undo, Clear, Select All, and access to the
+Find and Replace dialogs.</p>
 
-<p>The customizable QuickTag buttons let you put the tags you use most at your fingertips. One tap-insertion makes writing HTML far easier. The buttons are configured in the Options menu.</p>
+<p><em>Tools</em></p>
+<ul>
+	<li>"Options": shows the Options dialog</li>
+	<li>"Launch Tag Editor": Starts the included <a href="PocketHTML.htm#tageditor">Tag Editor</a>, which 
+	lets you edit the definitions of	HTML tags and the structure of the popup tag menu.</li>
+	<li>"Refresh Tags": Reloads the tag files from disk.  Do this if you've made any changes
+	using the Tag Editor.</li>
+	<li>"Refresh Templates": Updates the list of template files shown in "File &gt; New".</li>
+	<li>"Indent / Unindent Text": Indents and unindents text by a single tab, based on the 
+	current location of the cursor.</li>
+</ul>
 
-<p>Note that if you insert a tag through the toolbar icon while text is selected, the selected text will be placed inside the tags.  At the moment this is impossible to do via tap-and-hold, since the text is deselected.  This appears to be a bug in the Compact Framework and will hopefully be resolved in the next Service Pack.</p>
+<p><em>Help</em></p>
+<p>"About" shows the About PocketHTML screen, and "Contents" shows this help file.</p>
+
 
 <!-- PegHelp -->
-<a name="history"></a><strong>Version History</strong> 
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="options"></a><strong>Options Dialog</strong></p>
+<p>The Options dialog is divided into two main sections: Program Options and QuickTag setup.</p>
+<p><em>Program Options</em></p>
+<p>The main options for PocketHTML include:</p>
+
+<ul>
+	<li>"Wrap editor text": Controls wordwrap in the text editor.</li>
+	<li>"Wrap page preview": Controls wordwrap in the integrated HTML viewer.</li>
+	<li>"Indent HTML tags": If on, tags inside default inner tags (such as the &lt;LI&gt; 
+	inside &lt;OL&gt;) will be inserted with a 1-tab / 4-space indent.</li>
+	<li>"Autoindent on Enter": If the Enter key is tapped when on, a new line is inserted and 
+	the cursor automatically indented to the same depth it is on the current line.  If not, a 
+	new line is inserted and the cursor is placed at the start of the line.</li>
+	<li>"XHTML-style single tags": In standard HTML, a single tag such as &lt;BR&gt; does not 
+	need a closing tag or slash.  Under XHTML, a tag such as &lt;BR&gt; must be written as &lt;BR /&gt;.  
+	If this is on, XHTML-style tags will be generated.</li>
+	<li>"Use ClearType" in preview: Controls the use of ClearType in the integrated HTML viewer.</li>
+	<li>"Use monospaced font": Controls whether or not a monospaced font is used in the text editor.</li>
+	<li>"Preview zoom level": Controls the zoom level for the integrated HTML viewer.  A higher number
+	means more zoom.  The default is 1.</li>
+	<li>"Default text encoding": Selects the text encoding that PocketHTML uses when trying to load
+	or save a file.  When loading a file, PocketHTML checks the text for the Meta tag "contents".  If this
+	tag exists, then PocketHTML tries to use that charset to load the file.  Otherwise, the encoding
+	specified by this value is used.  You can use the "Test" button to check if a given encoding
+	is available on your device.  The default encoding is Unicode (UTF-8).</li>
+</ul>
+<p><em>QuickTags setup</em></p>
+<p>The QuickTag section allows you to set what each QuickTag button inserts.  The buttons are numbered 
+1-16, with 1-8 on the top row and 9-16 on the bottom.  Selecting a button number from the left 
+dropdown shows which tag is currently assigned to that button.  A different tag can be selected
+using the right dropdown.</p>
+<p>A hardware button can be assigned to show the popup tag menu.  Use the number control to select
+which button is used.</p>
+
+
+<!-- PegHelp -->
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="tageditor"></a><strong>Tag Editor</strong></p>
+<p>The information for each HTML tag is stored in an external file.  In previous versions of 
+PocketHTML, this file was called tags.csv.  While it was possible to edit this file manually,
+the format was not well documented and hard to read.  In addition, since the structure of the
+popup tag menu was built into the program, newly added items could only be assigned to 
+QuickTag buttons.</p>
+<p>In version 1.2, tag information is now stored in tags.xml.  This file is human-readable and
+much easier to edit.  Also, the structure of the tag menu is based on the file menu.xml.  This
+means that new items can be added to the tag menu.</p>
+<p>While these files can be edited by hand, a Tag Editor has been created to make editing these
+things easier.  The Tag Editor can add, delete, and edit HTML tag definitions, as well as 
+edit the structure of the tag menu.</p>
+<p>PocketHTML and the Tag Editor share the same tags.xml and menu.xml files.  Both of them
+read these files at startup.  Because the Tag Editor is usually launched from within PocketHTML,
+changes made by the Tag Editor are not automatically available in PocketHTML.  You must select
+"Refresh Tags" from PocketHTML's Tools menu to reload the changed files.</p>
+<p>Please note that if either tags.xml or menu.xml is malformed, PocketHTML may not load properly.</p>
+<p><em>Tag Definition</em></p>
+<p>Each HTML tag is made up of several pieces of information</p>
+<ul>
+	<li>A display name, which is shown in the tag menu and used as the unique identifier for the tag.</li>
+	<li>A value, which is the actual text for the tag.</li>
+	<li>An optional short name, which is displayed on the QuickTag buttons if the display name doesn't fit</li>
+	<li>An optional inner tag, which is inserted inside the main tag (for example, the &lt;LI&gt; 
+	inside &lt;OL&gt;).</li>
+</ul>
+<p>A tag definition also includes whether or not a closing tag is required, whether or not the 
+tag should be split across multiple lines, and whether or not angle brackets need to be put 
+around the tag's value.  Finally, a tag can have attributes.</p>
+<p>The display name, value, and short name are simply typed into the appropriate textboxes.  If the value
+is too long to easily fit into the textbox, tap the "..." button next to it to bring up a larger
+input dialog.  An inner tag can be selected from the dropdown list.  Attributes should be typed into
+the Attributes textbox, one attribute per line, including any default values (see the "Button" tag 
+definition for examples).  Tags can be previewed using the "Preview Tag" button at the bottom of the
+section.</p>
+<p>Please note that tag definitions are saved using the "Save Tag" item in the Tags menu.  However,
+any changes do not fully take place until you select "Save files" from the File menu.</p>
+
+<p><em>Tag Menu Structure</em></p>
+<p>The layout for the popup tag menu can be edited using the Tag Menu tab.  The main section of this
+screen shows the current hierarchy of menu items.  Selected items can be moved around using the 
+"Left / Up / Down / Right" buttons near the bottom of the screen.</p>
+<p>Menu items may be added and deleted using the "Tag Menu" menu.  You can select which tag is assigned
+to a menu item by tapping-and-holding on it, then choosing "Select Tag".  You can also designate a
+menu item as a separator or as a parent heading.  If you designate a menu item as a heading and give
+it a name, make sure that you place other menu items under it.</p>
+<p>The current menu structure can be previewed by choosing "Preview Menu" from the Tags Menu menu, and 
+validated by choosing the "Validate Menu" option.  This does a simple check to make sure that each menu
+item is either a valid tag, a separator, or a heading item with other menu items inside.</p>
+
+
+<!-- PegHelp -->
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="taginsertion"></a><strong>Tag Insertion</strong> </p>
+<p>Writing HTML tags on a PocketPC is extremely repetitive and tiring. PHN makes this easier in 
+two ways: the tag insertion menu, and the QuickTag buttons.</p>
+
+<p>To activate the tag insertion menu, either click the "&lt; &gt;" icon in the tool bar, 
+tap-and-hold inside the textbox, or press the appropriate hardware button (if enabled in the
+Options dialog). Just tap through the menu for the tag you want.</p>
+
+<p>The customizable QuickTag buttons let you put the tags you use most at your fingertips. 
+One tap-insertion makes writing HTML far easier. The buttons are configured in the Options menu.</p>
+
+<p>Note that if you insert a tag through the toolbar icon while text is selected, the selected 
+text will be placed inside the tags.  You can also tap-and-hold on the selected text to bring up
+the tag menu.  Previous version of the .Net Compact Framework had a bug that made it impossible
+to tap-and-hold selected text, but this was fixed in CF Service Pack 3.</p>
+
+
+<!-- PegHelp -->
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="templates"></a><strong>Template Files</strong></p>
+<p>Template files are simply HTML files that are loaded as new files.  On startup, 
+PocketHTML checks the PocketHTML.Net\Templates directory for any HTML files, and adds 
+each one to the list of items under "File &gt; New".  When a template file is selected,
+the file is loaded, but no filename is associated with the text (in other words, saving
+the file will not automatically overwrite the template).  To add a template file, just
+save a new file into the \Templates directory.  To update the list of templates, select
+"Refresh Templates" from the Tools menu.</p>
+
+
+<!-- PegHelp -->
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="filestructures"></a><strong>XML File Structures</strong></p>
+<p>While the Tag Editor is the preferred method for editing menu.xml and tags.xml, they
+can also be edited by hand.  The structure for each file is defined as follows:</p>
+<p><em>menu.xml</em></p>
+<p>Menu.xml contains a single &lt;menuitems&gt; element, which contains one or more
+&lt;menuitem&gt; elements.  Each menuitem may contain other menuitems, which may be
+nested arbitrarily deep.  Each menuitem has a single attribute, "name".  This is the
+display name of the tag associated with that menu item.  If the menu item has children,
+then the name attribute is just a heading instead of a tag name.</p>
+<p><em>tags.xml</em></p>
+<p>Tags.xml contains a single &lt;TagList&gt; element, which contains one or more
+&lt;Tag&gt; elements.  Each tag has several required attributes:</p>
+<ul>
+	<li>DisplayName: the text displayed in the tag menu.</li>
+	<li>Value: the actual text of the tag (ie, what goes between the < >).</li>
+	<li>AngleBrackets: whether or not the item has angle brackets around it.  This is 
+	"true" for almost all actual HTML tags, and is usually only "false" for items such 
+	as character entities (TM, ampersand, etc), Javascript keywords, CSS keywords, 
+	and arbitrary chunks of text.</li>
+	<li>InnerTag: What tag should be inserted inside this tag.  For example, Ordered List 
+	and Unordered List are pointless without at least one List Item inside.</li>
+	<li>Shortname: The QuickTag buttons have a limited amount of space to display text.  
+	This means that many of the DisplayName values will not fit onto the buttons.  If 
+	ShortName has a value, then it will be displayed on the button instead.</li>
+	<li>MultiLine: Some tags are generally seen on a single line, such as Bold.  Others, 
+	such as Ordered List, are usually seen split across multiple lines.  This value combines 
+	with the Default Inner Tag value to define both how the tag is inserted and where the 
+	cursor is located afterwards (cursor shown with the | symbol):
+	
+	<table border=1>
+		<tr>
+			<td><strong>DIT</strong></td>
+			<td><strong>MLT</strong></td>
+			<td><strong>Output</strong></td>
+		</tr>
+		
+		<tr>
+			<td>Empty</td>
+			<td>False</td>
+			<td>
+<pre>
+&lt;tag&gt;|&lt;/tag&gt;</pre>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>Empty</td>
+			<td>True</td>
+			<td>
+<pre>
+&lt;tag&gt;
+|
+&lt;/tag&gt;</pre>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>Exists</td>
+			<td>False</td>
+			<td>
+<pre>
+&lt;tag&gt;&lt;innertag&gt;|&lt;/innertag&gt;&lt;/tag&gt;</pre>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>Exists</td>
+			<td>True</td>
+			<td>
+<pre>
+&lt;tag&gt;
+&lt;innertag&gt;
+|
+&lt;/innertag&gt;
+&lt;/tag&gt;</pre>
+			</td>
+		</tr>
+	
+	</table>
+	If ClosingTag is "false", this option controls whether or not a new line will be inserted.  
+	Also, the Auto-Indent option will affect cursor placement on the given line.
+	</li>
+	<li>ClosingTag: whether or not the item has a closing tag.  Most items will, items such as 
+	Line Break won't.  If this is false, the InnerTag option is ignored.</li>
+</ul>
+<p>A Tag element may contain an &lt;Attributes&gt; element, which contains one or more
+&lt;Attribute&gt; elements.  The text of each Attribute element is a single tag attribute,
+including any default values (see the "Button" tag definition for examples).</p>
+<p>While the default tags.xml only includes HTML tags, it's also possible to add entries for
+other things, such as Javascript keywords, CSS keywords, and frequently used chunks of text.  
+Play with the various options to see what works (you'll probably want "Closing Tag", "Multi-Line",
+and "Angle Brackets" turned off for these).</p>
+
+
+<!-- PegHelp -->
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="config"></a><strong>Configuration File</strong></p>
+<p>The configuration file (pockethtml.ini) has three main sections: the main program options,
+the names of the tags assigned to the QuickTag buttons, and the list of recently used files.
+It's pretty self explanatory.  It's a plain text file, so it can be edited pretty easily.  
+However, trying to edit it within PocketHTML may prove a waste of time, because any changes 
+made will be overwritten when PocketHTML exits.</p>
+
+
+<!-- PegHelp -->
+<hr>
+<!-- ************************Topic Break************************* -->
+<p><a name="history"></a><strong>Version History</strong> </p>
+
+<p>
+		Version 1.2 Beta 7
+		<ul>
+			<li>ADD:    VGA compatibility!</li>
+			<li>ADD:    HTML preview now loads images</li>
+			<li>ADD:    Option to set the default text encoding</li>
+			<li>CHG:    Modified options dialog</li>
+
+		</ul>
+		
+		Version 1.2 Beta 6:
+		<ul>
+			<li>BUG:    PocketHTML would crash on startup.</li>
+		</ul>
+		
+		Version 1.2 betas 4 and 5: not released publicly
+		<br>
+		<br>
+		
+		Version 1.2 beta 3:
+		<ul>
+			<li>BUG:    Files with a charset other than the default were not being interpreted properly</li>
+			<li>CHG:    Additional check code added to aid in debugging.
+		</ul>
+		
+		Version 1.2 beta 2:
+		<ul>
+    			<li>BUG:    Opening a file while the current file was unsaved would replace the current file without a warning</li>
+
+			<li>BUG:    Tags with default attributes were being inserted with extra quotation marks</li>
+			<li>BUG:    Indenting text while scrolled down caused a jump to the top of the textbox</li>
+			<li>BUG:    File &gt; Close wasn't working</li>
+			<li>BUG:    Comment tag was broken</li>
+		</ul>
+		
+		Version 1.2 beta 1:
+		<ul>
+
+			<li>ADD:    Tag context menu can be bound to a hardware button</li>
+			<li>ADD:    Copy/Cut/Paste added to context menu</li>
+			<li>ADD:    Recent files list added to File menu</li>
+			<li>ADD:    Indent / Unindent selected text functions</li>
+			<li>ADD:    User-added HTML templates - just save your template file to the PocketHTML\Templates directory</li>
+
+			<li>CHG:    Tags file is now XML-based, for easier modification</li>
+			<li>CHG:    Tag context menu is now generated from menu.xml (which means new items can be added to the menu just by editing menu.xml)</li>
+			<li>CHG:    File dialogs start with last used directory</li>
+			<li>CHG:    Additional file types added to the dialogs (.asp, .php, etc)</li>
+			<li>CHG:    Save dialog defaults to current file's type</li>
+			<li>CHG:    TAB key now sent to textbox instead of changing focus</li>
+			<li>CHG:    TAB / SHIFT-TAB keys now indent/unindent text</li>
+			<li>CHG:    Find/Replace dialogs are shown with selected text</li>
+			<li>CHG:    Tag insertion now uses tabs instead of spaces for indentation</li>
+
+			<li>BUG:    Warn when possibly overwriting a saved file</li>
+			<li>BUG:    Replacing text doesn't set modified flag</li>
+			<li>BUG:    Saving a saved file brings up the &quot;Save As&quot; dialog again</li>
+			<li>BUG:    Text wrapping not doing anything</li>
+			<li>BUG:    Find and replace dialogs should be exclusive</li>
+			<li>BUG:    "XHTML tags" option was broken</li>
+		</ul>
+		</p>
+
 <p>1.1: Now takes advantage of Tillanosoft's tGetFile.dll if it exists on the system - far superior to Microsoft's built-in open/save dialogs.<br>
 <br>
  1.02: Additional fixes for the DirectoryNotFoundException error, particularly when dealing with storage cards. Hopefully it's all fixed now.<br>
