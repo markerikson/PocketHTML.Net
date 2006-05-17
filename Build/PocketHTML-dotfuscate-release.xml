@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE dotfuscator SYSTEM "http://www.preemptive.com/dotfuscator/dtd/dotfuscator_v2.1.dtd">
+<dotfuscator version="2.1">
+  <!--This is application generated code. Do not edit manually.-->
+  <input>
+    <asmlist>
+      <inputassembly>
+        <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\bin\Release" name="PocketHTML.Net.exe" />
+      </inputassembly>
+      <inputassembly>
+        <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\PocketHTML.Utility\bin\Release" name="PocketHTML.Utility.dll" />
+      </inputassembly>
+      <inputassembly>
+        <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\TagEditor\bin\Release" name="TagEditor.exe" />
+      </inputassembly>
+    </asmlist>
+  </input>
+  <output>
+    <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\Build\Builds\Dotfuscated\Release" />
+  </output>
+  <renaming>
+    <excludelist>
+      <namespace name="HardwareButtons" />
+    </excludelist>
+    <mapping>
+      <mapoutput overwrite="false">
+        <file dir="${configdir}\Dotfuscated" name="Map.xml" />
+      </mapoutput>
+    </mapping>
+  </renaming>
+</dotfuscator>

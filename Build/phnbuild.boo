@@ -40,48 +40,64 @@ def BuildSetupINIString(currDir, cabName):
 	
 	return ncsb.ToString()
 	
-def ObfuscateEXE(inputExeLocation, newBuildDir):
-	xcproj = "PocketHTML-xenocode.xcproj"
-	xcode = XmlDocument()
-	xcode.Load(xcproj)
+#def ObfuscateEXE(inputExeLocation, newBuildDir):
+#	xcproj = "PocketHTML-xenocode.xcproj"
+#	xcode = XmlDocument()
+#	xcode.Load(xcproj)
+#	
+#	nodes = xcode.GetElementsByTagName("Assembly")
+#	outputNode = nodes[0]
+#	outputNode.Attributes["SourcePath"].Value = inputExeLocation
+#	
+#	nodes = xcode.GetElementsByTagName("OutputLocation")
+#	outputNode = nodes[0]
+#	outputNode.Attributes["Value"].Value = newBuildDir
+#	
+#	xcode.Save(xcproj)
+#	
+#	xccLocation = "c:\\Program Files\\Programming\\Utilities\\Xenocode 2005\\xcc.exe"
+#	xcc = Process()
+#	xcc.StartInfo.FileName = xccLocation
+#	xcc.StartInfo.Arguments = xcproj	
+#	xcc.StartInfo.UseShellExecute = false
+#	
+#	xcc.Start()
+#	xcc.WaitForExit()
+
+def ObfuscateFiles(releaseMode as string):
+	projectFile = "PocketHTML-dotfuscate-" + releaseMode + ".xml"
 	
-	nodes = xcode.GetElementsByTagName("Assembly")
-	outputNode = nodes[0]
-	outputNode.Attributes["SourcePath"].Value = inputExeLocation
+	dotfuscatorLocation = "C:\\Program Files\\Microsoft Visual Studio 8\\Application\\PreEmptive Solutions\\Dotfuscator Community Edition\\dotfuscator.exe"
+	dotfuscator = Process()
+	dotfuscator.StartInfo.FileName = dotfuscatorLocation
+	dotfuscator.StartInfo.Arguments = projectFile
+	dotfuscator.StartInfo.UseShellExecute = false
 	
-	nodes = xcode.GetElementsByTagName("OutputLocation")
-	outputNode = nodes[0]
-	outputNode.Attributes["Value"].Value = newBuildDir
+	dotfuscator.Start()
+	dotfuscator.WaitForExit();
 	
-	xcode.Save(xcproj)
+def EnableHighResolution(releaseMode as string, newBuildDir as string, currDir as string):
+	#phnLocation = newBuildDir + "\\PocketHTML.Net.exe"
+	phnLocation = currDir + "\\Builds\\Dotfuscated\\" + releaseMode + "\\PocketHTML.Net.exe"
 	
-	xccLocation = "c:\\Program Files\\Programming\\Utilities\\Xenocode 2005\\xcc.exe"
-	xcc = Process()
-	xcc.StartInfo.FileName = xccLocation
-	xcc.StartInfo.Arguments = xcproj	
-	xcc.StartInfo.UseShellExecute = false
-	
-	xcc.Start()
-	xcc.WaitForExit()
-	
-	
-def EnableHighResolution(currDir, newBuildDir):
-	phnLocation = newBuildDir + "\\PocketHTML.Net.exe"
+	filenames = ["PocketHTML.Net", "TagEditor"]
 	
 	ver = FileVersionInfo.GetVersionInfo(phnLocation)	
 	
 	versionStringDots = ver.FileVersion
 	versionStringCommas = /\./.Replace(versionStringDots, ",")
 	
-	UpdateRC(currDir, versionStringCommas, versionStringDots)
+	for file in filenames:
+		UpdateRC(file, currDir, versionStringCommas, versionStringDots)
+		
+		CompileResFile(file, currDir)
+		
+		RunRes2Exe(file, releaseMode, currDir, newBuildDir)
 	
-	CompileResFile(currDir)
 	
-	RunRes2Exe(currDir, phnLocation)
-	
-	
-def UpdateRC(currDir as string, versionStringCommas as string, versionStringDots as string):
-	rcpath = currDir + "\\PocketHTML-hires.rc"
+def UpdateRC(file as string, currDir as string, versionStringCommas as string, versionStringDots as string):
+	#rcpath = currDir + "\\PocketHTML-hires.rc"
+	rcpath = currDir + "\\" + file + "-hires.rc"
 	sr = StreamReader(rcpath)
 	rctext = sr.ReadToEnd()
 	sr.Close()
@@ -94,8 +110,9 @@ def UpdateRC(currDir as string, versionStringCommas as string, versionStringDots
 	sw.Close()
 	
 
-def CompileResFile(currDir as string):
-	rcpath = currDir + "\\PocketHTML-hires.rc"
+def CompileResFile(file as string, currDir as string):
+	#rcpath = currDir + "\\PocketHTML-hires.rc"
+	rcpath = currDir + "\\" + file + "-hires.rc"
 	compilerpath = "c:\\Program Files\\Microsoft Visual Studio 8\\VC\\bin\\rc.exe"
 	
 	rc = Process()
@@ -107,13 +124,17 @@ def CompileResFile(currDir as string):
 	rc.WaitForExit()
 	
 
-def RunRes2Exe(currDir as string, phnLocation as string):
+def RunRes2Exe(file as string, releaseMode as string, currDir as string, outputDir as string):
 	res2exeLocation = "C:\\toolkits\\Developer Resources for Windows Mobile 2003 Second Edition\\tools\\res2exe.exe"
-	respath = currDir + "\\PocketHTML-hires.res"
+	#respath = currDir + "\\PocketHTML-hires.res"
+	inputRes = currDir + "\\" + file + "-hires.res"
+	inputExe = currDir + "\\Builds\\Dotfuscated\\" + releaseMode + "\\" + file + ".exe"
+	outputExe = outputDir + "\\" + file + ".exe"
+	
 	
 	res2exe = Process()
 	res2exe.StartInfo.FileName = "\"" + res2exeLocation + "\""
-	res2exe.StartInfo.Arguments = "-r -c " + respath + " " + phnLocation
+	res2exe.StartInfo.Arguments = "-r -c " + inputRes + " " + inputExe + " -fo " + outputExe
 	res2exe.StartInfo.UseShellExecute = false
 	
 	res2exe.Start()
@@ -175,9 +196,11 @@ def Main(argv as (string)):
 		print("Usage: phnbuild [debug | release] [VersionString]")
 		return
 		
+	# save command-line arguments
 	buildMode = argv[0]
 	versionString = argv[1]	
 	
+	# create directory strings based on location
 	currDir = Directory.GetCurrentDirectory()
 	mainDir = currDir.Substring(0, currDir.IndexOf("\\Build"))
 	buildsDir = currDir + "\\Builds"
@@ -186,14 +209,23 @@ def Main(argv as (string)):
 	
 	if not Directory.Exists(newBuildDir):
 		Directory.CreateDirectory(newBuildDir)
-		
+	
+	# TODO 
 	binDir = mainDir + "\\bin\\" + buildMode
 	inputExeLocation = binDir + "\\PocketHTML.Net.exe"
 	
-	ObfuscateEXE(inputExeLocation, newBuildDir)
+	print "Obfuscating files..."
+	ObfuscateFiles(buildMode)
 	
-	EnableHighResolution(currDir, newBuildDir)
-		
+	# res2exe will output the .exe files in the output directory...
+	print "Enabling high resolution..."
+	EnableHighResolution(buildMode, newBuildDir, currDir) 
+	
+	# but not PocketHTML.Utility.dll
+	dllLocation = mainDir + "\\PocketHTML.Utility\\bin\\" + buildMode + "\\PocketHTML.Utility.dll"
+	dllDestination = newBuildDir + "\\PocketHTML.Utility.dll"
+	File.Copy(dllLocation, dllDestination, true)
+	
 	nircmd = Process()
 	nircmd.StartInfo.FileName = "nircmdc.exe"
 	nircmd.StartInfo.CreateNoWindow = true
@@ -201,10 +233,13 @@ def Main(argv as (string)):
 	nircmd.StartInfo.UseShellExecute = false
 	
 	infDirs = [newBuildDir, mainDir, templatesDir]
+	print "Setting up INF file..."
 	SetupINF(nircmd, currDir, infDirs)
 	
+	print "Building CAB file..."
 	BuildCab(nircmd, currDir, newBuildDir)
 	
+	print "Creating setup file..."
 	CreateSetup(nircmd, currDir, newBuildDir, buildMode, versionString)
 	
 	print("Build complete")

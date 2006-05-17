@@ -7,22 +7,27 @@ CESignature="$Windows CE$"
 AppName="PocketHTML.Net"
 InstallDir=%CE1%\%AppName%
 
+[CEDevice]
+BuildMax=0xE0000000
+
 [DefaultInstall]
-CEShortcuts=Shortcuts
+CEShortcuts=Shortcuts,HelpLink
 CopyFiles=Files.Common, Help, Templates
 
 [SourceDisksNames]
-1=,"Common1",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\Build\Builds\12B7\"
+1=,"Common1",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\Build\Builds\1.2RC1\"
 2=,"Common2",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\"
 3=,"Common3",,"C:\Projects\PocketHTML.Net\PocketHTML.Net\Templates\"
 
 [SourceDisksFiles]
 PocketHTML.Net.exe=1
-PHN.html=2
+TagEditor.exe=1
+PocketHTML.Utility.dll=1
+PocketHTML.htm=2
 pockethtml.ini=2
 tags.xml=2
 menu.xml=2
-filedialogs.dll=2
+FileDialogs.dll=2
 HTMLContainer.dll=2
 template1.html=3
 
@@ -30,21 +35,27 @@ template1.html=3
 Files.Common=0,%InstallDir%
 Help=0,%CE2%
 Templates=0,%InstallDir%\Templates
-Shortcuts=0,%CE2%\Start Menu
+Shortcuts=0,%CE11%
+HelpLink=0,%CE2%\Help
 
 [Files.Common]
 "PocketHTML.Net.exe"
+"TagEditor.exe"
+"PocketHTML.Utility.dll"
 "pockethtml.ini"
 "tags.xml"
 "menu.xml"
-"filedialogs.dll"
-HTMLContainer.dll
+"FileDialogs.dll"
+"HTMLContainer.dll"
 
 [Help]
-"PHN.html"
+"PocketHTML.htm"
 
 [Templates]
 "template1.html"
 
 [Shortcuts]
-PocketHTML.Net,0,PocketHTML.Net.exe,%CE11%
+PocketHTML.Net,0,PocketHTML.Net.exe
+
+[HelpLink]
+PocketHTML.Net,0,PocketHTML.htm
