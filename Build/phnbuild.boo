@@ -174,7 +174,7 @@ def CreateSetup(nircmd as Process, currDir, newBuildDir, buildMode, versionStrin
 	nircmd.WaitForExit()
 	
 	tempCabLocation = currDir + "\\" + originalCabName
-	File.Copy(originalCabLocation, tempCabLocation)
+	File.Copy(originalCabLocation, tempCabLocation, true)
 	
 	ezsetup = Process()
 	ezsetup.StartInfo.FileName = "ezsetup.exe"
@@ -224,7 +224,7 @@ def Main(argv as (string)):
 	EnableHighResolution(buildMode, newBuildDir, currDir) 
 	
 	# but not PocketHTML.Utility.dll
-	dllLocation = mainDir + "\\PocketHTML.Utility\\bin\\" + buildMode + "\\PocketHTML.Utility.dll"
+	dllLocation = buildsDir + "\\Dotfuscated\\" + buildMode + "\\PocketHTML.Utility.dll"
 	dllDestination = newBuildDir + "\\PocketHTML.Utility.dll"
 	File.Copy(dllLocation, dllDestination, true)
 	

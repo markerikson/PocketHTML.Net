@@ -5,8 +5,8 @@ HI_RES_AWARE   CEUX   {1}
 
 
 1 VERSIONINFO
-FILEVERSION 1,2,0,958
-PRODUCTVERSION 1,2,0,958
+FILEVERSION 1,2,0,960
+PRODUCTVERSION 1,2,0,960
 FILEOS 0x4
 FILETYPE 0x1
 {
@@ -17,14 +17,14 @@ BLOCK "StringFileInfo"
 		VALUE "Comments", "The premier HTML editor for the PocketPC"
 		VALUE "CompanyName", "ISquared Software"
 		VALUE "FileDescription", "PocketHTML.Net"
-		VALUE "FileVersion", "1.2.0.958"
+		VALUE "FileVersion", "1.2.0.960"
 		VALUE "InternalName", "PocketHTML.Net.exe"
 		VALUE "LegalCopyright", " "
 		VALUE "LegalTrademarks", " "
 		VALUE "OriginalFilename", "PocketHTML.Net.exe"
 		VALUE "ProductName", "PocketHTML.Net"
-		VALUE "ProductVersion", "1.2.0.958"
-		VALUE "Assembly Version", "1.2.0.958"
+		VALUE "ProductVersion", "1.2.0.960"
+		VALUE "Assembly Version", "1.2.0.960"
 	}
 }
 
@@ -33,6 +33,13 @@ BLOCK "VarFileInfo"
 	VALUE "Translation", 0x0000 0x04B0
 }
 }
+
+
+
+
+
+
+
 
 
 
