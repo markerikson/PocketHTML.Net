@@ -60,7 +60,7 @@ namespace ISquared.PocketHTML
 
 		/// The saved settings for PocketHTML
 		private static Configuration m_config;
-		private static string m_versionText = "1.2 Beta 7";
+		private static string m_versionText = "1.2 Release Candidate";
 
 		// Name of the current file
 		private string m_saveFileName;
