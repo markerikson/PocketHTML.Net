@@ -168,7 +168,7 @@ def CreateSetup(nircmd as Process, currDir, newBuildDir, buildMode, versionStrin
 	originalCabLocation = newBuildDir + "\\" + originalCabName
 	
 	nircmdArgs = BuildSetupINIString(currDir, originalCabName)
-	print("nircmdargs: " + nircmdArgs)
+	#print("nircmdargs: " + nircmdArgs)
 	nircmd.StartInfo.Arguments = nircmdArgs
 	nircmd.Start()
 	nircmd.WaitForExit()
@@ -187,7 +187,8 @@ def CreateSetup(nircmd as Process, currDir, newBuildDir, buildMode, versionStrin
 	
 	destCabName = "PocketHTML" + versionString + ".cab"
 	destCabLocation = newBuildDir + "\\" + destCabName
-	File.Copy(newBuildDir + "\\PocketHTML.cab", destCabLocation)
+	File.Move(newBuildDir + "\\PocketHTML.cab", destCabLocation)
+	#File.Copy(newBuildDir + "\\PocketHTML.cab", destCabLocation)
 	File.Delete(tempCabLocation)
 	
 def Main(argv as (string)):
@@ -211,13 +212,14 @@ def Main(argv as (string)):
 		Directory.CreateDirectory(newBuildDir)
 	
 	# TODO 
-	binDir = mainDir + "\\bin\\" + buildMode
-	inputExeLocation = binDir + "\\PocketHTML.Net.exe"
+	#binDir = mainDir + "\\bin\\" + buildMode
+	#inputExeLocation = binDir + "\\PocketHTML.Net.exe"
 	
 	print "Obfuscating files..."
 	ObfuscateFiles(buildMode)
 	
 	# res2exe will output the .exe files in the output directory...
+	print ""
 	print "Enabling high resolution..."
 	EnableHighResolution(buildMode, newBuildDir, currDir) 
 	
@@ -233,13 +235,17 @@ def Main(argv as (string)):
 	nircmd.StartInfo.UseShellExecute = false
 	
 	infDirs = [newBuildDir, mainDir, templatesDir]
+	print ""
 	print "Setting up INF file..."
 	SetupINF(nircmd, currDir, infDirs)
 	
+	print ""
 	print "Building CAB file..."
 	BuildCab(nircmd, currDir, newBuildDir)
 	
+	print ""
 	print "Creating setup file..."
 	CreateSetup(nircmd, currDir, newBuildDir, buildMode, versionString)
 	
+	print ""
 	print("Build complete")
