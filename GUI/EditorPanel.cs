@@ -378,8 +378,10 @@ namespace ISquared.PocketHTML
 			{
 				m_pnlAbout = new AboutPanel();
 				m_pnlAbout.Parent = this;
-				m_pnlAbout.Bounds = new Rectangle(0, 0, 240, 236);					
+				//m_pnlAbout.Bounds = new Rectangle(0, 0, 240, 236);					
 			}
+            m_pnlAbout.Bounds = this.ClientRectangle;
+            m_pnlAbout.UpdateLayout();
 			m_pnlAbout.Show();
 			m_pnlAbout.BringToFront();
 		}
