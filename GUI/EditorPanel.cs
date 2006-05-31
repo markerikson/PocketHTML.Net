@@ -147,29 +147,54 @@ namespace ISquared.PocketHTML
 
 		public void UpdateLayout()
 		{
-			if (Screen.PrimaryScreen.Bounds.Width > Screen.PrimaryScreen.Bounds.Height)
-			{
-				LayoutLandscape();
-			}
-			else
-			{
-				LayoutPortrait();
-			}
+            if (PocketHTML.PocketHTMLEditor.DoLayout)
+            {
 
-			DpiHelper.AdjustAllControls(this);
+                if (Screen.PrimaryScreen.Bounds.Width > Screen.PrimaryScreen.Bounds.Height)
+                {
+                    LayoutLandscape();
+                }
+                else
+                {
+                    LayoutPortrait();
+                }
+
+                m_htmlControl.Bounds = m_pnlViewer.ClientRectangle;
+                m_htmlControl.ResizeHTMLControl();
+
+                //DpiHelper.AdjustAllControls(this);
+            }
 		}
 
 		private void LayoutPortrait()
 		{
+            /*
 			this.Bounds = new Rectangle(0, 0, 240, 270);
 			m_pnlButtons.Bounds = new Rectangle(0, 238, 240, 32);
 			m_pnlViewer.Bounds = new Rectangle(0, 0, 240, 238);
 			m_pnlTextbox.Bounds = new Rectangle(0, 0, 240, 238);
+            */
 
-			this.m_textbox.Size = new System.Drawing.Size(240, 238);
+            int scale = DpiHelper.Scale(1);
+            int scaled240 = scale * 240;
+            int scaled238 = scale * 238;
+            int scaled32 = scale * 32;
 
-			int width = 30;
-			int height = 16;
+            this.Bounds = Parent.ClientRectangle;
+            //m_pnlButtons.Bounds = new Rectangle(0, scaled238, scaled240, scale * 32);
+            //m_pnlViewer.Bounds = new Rectangle(0, 0, scaled240, scaled238);
+            //m_pnlTextbox.Bounds = new Rectangle(0, 0, scaled240, scaled238);
+
+
+            m_pnlButtons.Bounds = new Rectangle(0, ClientSize.Height - scaled32, this.Width, scaled32);
+            m_pnlViewer.Bounds = new Rectangle(0, 0, this.Width, this.Height);
+            m_pnlTextbox.Bounds = new Rectangle(0, 0, this.Width, this.Height);
+
+            this.m_textbox.Size = new System.Drawing.Size(this.Width, this.Height - scaled32);
+        
+
+			int width = scale * 30;
+			int height = scale * 16;
 			int y = 0;
 			int x = 0;
 
@@ -179,7 +204,7 @@ namespace ISquared.PocketHTML
 				x = width * (i % 8);
 				if (i > 7)
 				{
-					y = 16;
+                    y = height;
 				}
 				else
 				{
@@ -195,16 +220,19 @@ namespace ISquared.PocketHTML
 			int availableWidth = Screen.PrimaryScreen.WorkingArea.Width;
 			int availableHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
-			this.Bounds = new Rectangle(0, 0, availableWidth, 188);
-			m_pnlButtons.Bounds = new Rectangle(0, this.Height - 32, this.Width, 32);
+            int scale = DpiHelper.Scale(1);
+            int scaled32 = DpiHelper.Scale(32);
+
+			this.Bounds = new Rectangle(0, 0, availableWidth, scale * 188);
+            m_pnlButtons.Bounds = new Rectangle(0, this.Height - scaled32, this.Width, scaled32);
 			m_pnlViewer.Bounds = new Rectangle(0, 0, this.Width, this.Height);
 			m_pnlTextbox.Bounds = new Rectangle(0, 0, this.Width, this.Height);
 
 
-			this.m_textbox.Size = new System.Drawing.Size(this.Width, this.Height - 32);
+            this.m_textbox.Size = new System.Drawing.Size(this.Width, this.Height - scaled32);
 
-			int width = 40;
-			int height = 16;
+			int width = scale * 40;
+			int height = scale * 16;
 			int y = 0;
 			int x = 0;
 
@@ -214,7 +242,7 @@ namespace ISquared.PocketHTML
 				x = width * (i % 8);
 				if (i > 7)
 				{
-					y = 16;
+					y = height;
 				}
 				else
 				{
@@ -348,6 +376,8 @@ namespace ISquared.PocketHTML
 			if(showHTML)
 			{
 				m_pnlTextbox.Hide();
+                m_pnlButtons.Hide();
+                m_pnlButtons.SendToBack();
 				m_pnlViewer.Show();
 				m_pnlViewer.BringToFront();
 
@@ -369,6 +399,8 @@ namespace ISquared.PocketHTML
 				m_pnlViewer.Hide();
 				m_pnlTextbox.Show();
 				m_pnlTextbox.BringToFront();
+                m_pnlButtons.Show();
+                m_pnlButtons.BringToFront();
 			}
 		}
 
@@ -394,13 +426,13 @@ namespace ISquared.PocketHTML
 
 			if (inputPanel1.Enabled == true)
 			{
-				m_pnlViewer.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
+				m_pnlViewer.Height = this.ClientSize.Height - inputPanel1.Bounds.Height;
 				m_pnlTextbox.Height = this.ClientSize.Height - scaledSize - inputPanel1.Bounds.Height;
 				m_pnlButtons.Top = visible.Height - scaledSize;
 			}
 			else
 			{
-				m_pnlViewer.Height = this.ClientSize.Height - scaledSize;
+				m_pnlViewer.Height = this.ClientSize.Height;
 				m_pnlTextbox.Height = this.ClientSize.Height - scaledSize;
 				m_pnlButtons.Top = this.ClientSize.Height - scaledSize;
 			}

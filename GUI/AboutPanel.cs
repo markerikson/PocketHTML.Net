@@ -61,21 +61,25 @@ namespace ISquared.PocketHTML
                 LayoutPortrait();
             }
 
-            DpiHelper.AdjustAllControls(this);
+            //DpiHelper.AdjustAllControls(this);
         }
 
         private void LayoutPortrait()
         {
-            m_lblISquared.Bounds = new Rectangle(44, 0, 150, 32);
-            m_lblVersion.Bounds = new Rectangle(44, 32, 150, 32);
-            m_lblURL.Bounds = new Rectangle(0, 64, 232, 16);
-            m_lblMessage.Bounds = new Rectangle(0, 84, 240, 120);
-            pictureBox1.Bounds = new Rectangle(8, 8, 32, 32);
+            int scale = DpiHelper.Scale(1);
 
-            this.button1.Location = new System.Drawing.Point(84, 208);
+            m_lblISquared.Bounds = new Rectangle(scale * 44, scale * 0, scale * 150, scale * 32);
+            m_lblVersion.Bounds = new Rectangle(scale * 44, scale * 32, scale * 150, scale * 32);
+            m_lblURL.Bounds = new Rectangle(0, scale * 64, scale * 232, scale * 16);
+            m_lblMessage.Bounds = new Rectangle(0, scale * 84, scale * 240, scale * 120);
+            pictureBox1.Bounds = new Rectangle(scale * 8, scale * 8, scale * 32, scale * 32);
+
+            this.button1.Location = new System.Drawing.Point(scale * 84, scale * 208);
 
             m_lblISquared.TextAlign = ContentAlignment.TopCenter;
             m_lblVersion.TextAlign = ContentAlignment.TopCenter;
+
+            m_lblMessage.TextAlign = ContentAlignment.TopLeft;
 
             m_lblISquared.Text = "ISquared Software\r\nPocketHTML.Net";
             m_lblVersion.Text = PocketHTMLEditor.VersionText + "\r\n" + m_buildNumber;
@@ -83,13 +87,15 @@ namespace ISquared.PocketHTML
 
         private void LayoutLandscape()
         {
-            pictureBox1.Bounds = new Rectangle(8, 8, 32, 32);
-            m_lblISquared.Bounds = new Rectangle(44, 0, 232, 16);
-            m_lblVersion.Bounds = new Rectangle(44, 16, 232, 32);
-            m_lblURL.Bounds = new Rectangle(44, 32, 232, 16);
-            m_lblMessage.Bounds = new Rectangle(4, 60, 316, 100);
+            int scale = DpiHelper.Scale(1);
 
-            this.button1.Location = new System.Drawing.Point(128, 164);
+            pictureBox1.Bounds = new Rectangle(scale * 8, scale * 8, scale * 32, scale * 32);
+            m_lblISquared.Bounds = new Rectangle(scale * 44, scale * 0, scale * 232, scale * 16);
+            m_lblVersion.Bounds = new Rectangle(scale * 44, scale * 16, scale * 232, scale * 32);
+            m_lblURL.Bounds = new Rectangle(scale * 44, scale * 32, scale * 232, scale * 16);
+            m_lblMessage.Bounds = new Rectangle(scale * 4, scale * 60, scale * 316, scale * 100);
+
+            this.button1.Location = new System.Drawing.Point(scale * 128, scale * 164);
 
 
             m_lblISquared.TextAlign = ContentAlignment.TopCenter;
@@ -128,9 +134,12 @@ namespace ISquared.PocketHTML
 			// 
 			// button1
 			// 
+
+            int scale = DpiHelper.Scale(1);
 			
 			this.button1.Text = "OK";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Size = new Size(scale * button1.Width, scale * button1.Height);
 			// 
 			// m_lblURL
 			// 

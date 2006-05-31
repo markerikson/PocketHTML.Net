@@ -78,15 +78,20 @@ namespace ISquared.Windows.Forms
 		public FindDialog(TextBox tb)
 		{
 			this.Visible = false;
+            this.Size = new Size(DpiHelper.Scale(184), DpiHelper.Scale(108));
+
+            //int scaled16 = DpiHelper.Scale(16);
+            //m_pnlTitle.Bounds = new Rectangle(0, 0, this.Width, scaled16);
+            //m_pnlContent.Bounds = new Rectangle(1, scaled16, this.Width - 2, this.Height - scaled16);
 			InitializeComponent();
 			this.Caption = "Find";
 			m_inputPanel = new InputPanel();
 
 			TargetTextbox = tb;
 
-			this.Size = new Size(184, 108);
+			
 
-			DpiHelper.AdjustAllControls(this);
+			//DpiHelper.AdjustAllControls(this);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -112,37 +117,49 @@ namespace ISquared.Windows.Forms
 
 			m_btnFind = new Button();
 			this.m_btnFind.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_btnFind.Size = new System.Drawing.Size(68, 16);
-			m_btnFind.Location = new Point(110, 44);
+			//this.m_btnFind.Size = new System.Drawing.Size(68, 16);
+			//m_btnFind.Location = new Point(110, 44);
+            m_btnFind.Bounds = new Rectangle(DpiHelper.Scale(110), DpiHelper.Scale(44),
+                                            DpiHelper.Scale(68), DpiHelper.Scale(16));
 			this.m_btnFind.Text = "Find Next";
 			this.m_btnFind.Click += new EventHandler(m_btnFind_Click);
 
 			m_btnClose = new Button();
 			this.m_btnClose.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_btnClose.Size = new System.Drawing.Size(68, 16);
-			m_btnClose.Location = new Point(110, 64);
+			//this.m_btnClose.Size = new System.Drawing.Size(68, 16);
+			//m_btnClose.Location = new Point(110, 64);
+            m_btnClose.Bounds = new Rectangle(DpiHelper.Scale(110), DpiHelper.Scale(64),
+                                               DpiHelper.Scale(68), DpiHelper.Scale(16));
 			this.m_btnClose.Text = "Close";
 			m_btnClose.Click += new EventHandler(m_btnClose_Click);
 
 
 			this.m_tbFind.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_tbFind.Size = new System.Drawing.Size(172, 21);
-			m_tbFind.Location = new Point(6, 20);
+			//this.m_tbFind.Size = new System.Drawing.Size(172, 21);
+			//m_tbFind.Location = new Point(6, 20);
+            m_tbFind.Bounds = new Rectangle(DpiHelper.Scale(6), DpiHelper.Scale(20),
+                                             DpiHelper.Scale(172), DpiHelper.Scale(21));
 			this.m_tbFind.Text = "";
 
 			this.m_lblFind.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_lblFind.Size = new System.Drawing.Size(64, 16);
-			m_lblFind.Location = new Point(6, 4);
+			//this.m_lblFind.Size = new System.Drawing.Size(64, 16);
+			//m_lblFind.Location = new Point(6, 4);
+            m_lblFind.Bounds = new Rectangle(DpiHelper.Scale(6), DpiHelper.Scale(4),
+                                            DpiHelper.Scale(64), DpiHelper.Scale(16));
 			this.m_lblFind.Text = "Find what:";
 
 			this.m_cbWord.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_cbWord.Location = new System.Drawing.Point(6, 44);
-			this.m_cbWord.Size = new System.Drawing.Size(100, 16);
+			//this.m_cbWord.Location = new System.Drawing.Point(6, 44);
+			//this.m_cbWord.Size = new System.Drawing.Size(100, 16);
+            m_cbWord.Bounds = new Rectangle(DpiHelper.Scale(6), DpiHelper.Scale(44),
+                                            DpiHelper.Scale(100), DpiHelper.Scale(16));
 			this.m_cbWord.Text = "Whole word";
 
 			this.m_cbCase.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_cbCase.Location = new System.Drawing.Point(6, 64);
-			this.m_cbCase.Size = new System.Drawing.Size(100, 16);
+			//this.m_cbCase.Location = new System.Drawing.Point(6, 64);
+			//this.m_cbCase.Size = new System.Drawing.Size(100, 16);
+            m_cbCase.Bounds = new Rectangle(DpiHelper.Scale(6), DpiHelper.Scale(64),
+                                            DpiHelper.Scale(100), DpiHelper.Scale(16));
 			this.m_cbCase.Text = "Match case";
 
 			m_cbCase.Parent = this.ContentPanel;

@@ -60,7 +60,7 @@ namespace ISquared.PocketHTML
 
 		/// The saved settings for PocketHTML
 		private static Configuration m_config;
-		private static string m_versionText = "1.2 Release Candidate";
+		private static string m_versionText = "1.2 Final";
 
 		// Name of the current file
 		private string m_saveFileName;
@@ -121,6 +121,7 @@ namespace ISquared.PocketHTML
 		private bool tgetfileExists;
 		//private PHNOptions options;
 		private bool m_optionsDialogHidden;
+        private static bool m_doLayout = false;
 		
 		private System.Windows.Forms.ToolBarButton m_btnPreview;
 		private System.Windows.Forms.ToolBarButton m_btnTags;
@@ -182,6 +183,14 @@ namespace ISquared.PocketHTML
 				return m_config;
 			}
 		}
+
+        public static bool DoLayout
+        {
+            get
+            {
+                return m_doLayout;
+            }
+        }
 
 		public static string VersionText
 		{
@@ -275,6 +284,7 @@ namespace ISquared.PocketHTML
 			m_editorPanel = new EditorPanel();
 			Debug.WriteLine("EditorPanel created");
 			m_editorPanel.Parent = this;
+            m_editorPanel.Bounds = this.ClientRectangle;
 
 			// Hooks up each button with the handler
 			// TODO Check if this optimization actually matters
@@ -333,8 +343,10 @@ namespace ISquared.PocketHTML
 				m_mruManager.Add(recentFiles[i]);
 			}
 
-			DpiHelper.AdjustAllControls(this);
+			//DpiHelper.AdjustAllControls(this);
+            //DpiHelper.AdjustControl(m_editorPanel);
 
+            PocketHTMLEditor.m_doLayout = true;
 			Debug.WriteLine("PHE constructor complete");
 
 		}
@@ -1036,7 +1048,7 @@ namespace ISquared.PocketHTML
 				{
 					m_optionsPanel.Reset();
 				}
-				m_optionsPanel.Bounds = new Rectangle(0, 0, this.Width, this.Height);
+                m_optionsPanel.Bounds = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
 				m_optionsPanel.Show();
 
 				m_optionsDialogHidden = false;

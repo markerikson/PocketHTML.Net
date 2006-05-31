@@ -39,10 +39,10 @@ namespace ISquared.Windows.Forms
 			: base(tb)
 		{
 			InitializeComponent();
-			this.Size = new Size(204, 126);
+			this.Size = new Size(DpiHelper.Scale(204), DpiHelper.Scale(126));
 			this.Caption = "Replace";
 
-			DpiHelper.AdjustAllControls(this);
+			//DpiHelper.AdjustAllControls(this);
 		}
 
 		/// <summary>
@@ -69,58 +69,68 @@ namespace ISquared.Windows.Forms
 			// 
 			// buttonClose
 			// 
-			this.m_btnClose.Location = new System.Drawing.Point(132, 76);
+			this.m_btnClose.Location = new System.Drawing.Point(DpiHelper.Scale(132), DpiHelper.Scale(76));
 
 			// 
 			// buttonFind
 			// 
-			this.m_btnFind.Location = new System.Drawing.Point(132, 12);
+			this.m_btnFind.Location = new System.Drawing.Point(DpiHelper.Scale(132), DpiHelper.Scale(12));
 			// 
 			// cbCase
 			// 
-			this.m_cbCase.Location = new System.Drawing.Point(8, 88);
+            this.m_cbCase.Location = new System.Drawing.Point(DpiHelper.Scale(8), DpiHelper.Scale(88));
 			// 
 			// cbWord
 			// 
-			this.m_cbWord.Location = new System.Drawing.Point(8, 72);
+			this.m_cbWord.Location = new System.Drawing.Point(DpiHelper.Scale(8), DpiHelper.Scale(72));
 			// 
 			// tbFind
 			// 
-			this.m_tbFind.Location = new System.Drawing.Point(8, 12);
-			this.m_tbFind.Size = new System.Drawing.Size(120, 21);
+            m_tbFind.Bounds = new Rectangle(DpiHelper.Scale(8), DpiHelper.Scale(12), 
+                                            DpiHelper.Scale(120), DpiHelper.Scale(21));
+			//this.m_tbFind.Location = new System.Drawing.Point(DpiHelper.Scale(8), DpiHelper.Scale(12));
+			//this.m_tbFind.Size = new System.Drawing.Size(DpiHelper.Scale(120), DpiHelper.Scale(21));
 			// 
 			// findLabel
 			// 
-			this.m_lblFind.Location = new System.Drawing.Point(8, 0);
+			this.m_lblFind.Location = new System.Drawing.Point(DpiHelper.Scale(8), 0);
 
 			// 
 			// tbReplace
 			// 
 			this.m_tbReplace.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_tbReplace.Location = new System.Drawing.Point(8, 48);
-			this.m_tbReplace.Size = new System.Drawing.Size(120, 21);
+			//this.m_tbReplace.Location = new System.Drawing.Point(8, 48);
+			//this.m_tbReplace.Size = new System.Drawing.Size(120, 21);
+            m_tbReplace.Bounds = new Rectangle(DpiHelper.Scale(8), DpiHelper.Scale(48), 
+                                                DpiHelper.Scale(120), DpiHelper.Scale(21));
 			this.m_tbReplace.Text = "";
 			// 
 			// replaceLabel
 			// 
 			this.m_lblReplace.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_lblReplace.Location = new System.Drawing.Point(8, 36);
-			this.m_lblReplace.Size = new System.Drawing.Size(64, 16);
+			//this.m_lblReplace.Location = new System.Drawing.Point(8, 36);
+			//this.m_lblReplace.Size = new System.Drawing.Size(64, 16);
+            m_lblReplace.Bounds = new Rectangle(DpiHelper.Scale(8), DpiHelper.Scale(36),
+                                                DpiHelper.Scale(64), DpiHelper.Scale(16));
 			this.m_lblReplace.Text = "Replace";
 			// 
 			// buttonReplace
 			// 
 			this.m_btnReplace.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_btnReplace.Location = new System.Drawing.Point(132, 32);
-			this.m_btnReplace.Size = new System.Drawing.Size(68, 16);
+			//this.m_btnReplace.Location = new System.Drawing.Point(132, 32);
+			//this.m_btnReplace.Size = new System.Drawing.Size(68, 16);
+            m_btnReplace.Bounds = new Rectangle(DpiHelper.Scale(132), DpiHelper.Scale(32),
+                                                DpiHelper.Scale(68), DpiHelper.Scale(16));
 			this.m_btnReplace.Text = "Replace";
 			this.m_btnReplace.Click += new EventHandler(buttonReplace_Click);
 			// 
 			// buttonReplaceAll
 			// 
 			this.m_btnReplaceAll.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.m_btnReplaceAll.Location = new System.Drawing.Point(132, 54);
-			this.m_btnReplaceAll.Size = new System.Drawing.Size(68, 16);
+			//this.m_btnReplaceAll.Location = new System.Drawing.Point(132, 54);
+			//this.m_btnReplaceAll.Size = new System.Drawing.Size(68, 16);
+            m_btnReplaceAll.Bounds = new Rectangle(DpiHelper.Scale(132), DpiHelper.Scale(54),
+                                                    DpiHelper.Scale(68), DpiHelper.Scale(16));
 			this.m_btnReplaceAll.Text = "Replace All";
 			this.m_btnReplaceAll.Click += new EventHandler(buttonReplaceAll_Click);
 

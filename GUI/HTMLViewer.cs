@@ -168,6 +168,7 @@ namespace OpenNETCF.Windows.Forms
 				return m_html;
 			}
 		}
+
 #endif
 		#endregion
 		
@@ -616,6 +617,14 @@ namespace OpenNETCF.Windows.Forms
 
 		[DllImport("HTMLContainer.dll", EntryPoint = "CreateHTMLControl")]
 		private static extern IntPtr CreateChildHTMLControl(IntPtr hwndParent, IntPtr hwndMessageWindow);
+
+        public void ResizeHTMLControl()
+        {
+            IntPtr pHTMLContainer = CoreDLL.GetParent(m_html);
+
+            CoreDLL.MoveWindow(pHTMLContainer, 0, 0, this.Width, this.Height, true);
+            CoreDLL.MoveWindow(m_html, 0, 0, this.Width, this.Height, true);
+        }
 #endif
 		#endregion
 

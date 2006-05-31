@@ -130,7 +130,7 @@ namespace ISquared.PocketHTML
 
 			InitializeHeader();
 			InitializeOptionsControls();
-			DpiHelper.AdjustAllControls(this);
+			//DpiHelper.AdjustAllControls(this);
 
 			m_mainEditor = parent;
 			this.m_config = PocketHTMLEditor.Config;
@@ -157,18 +157,19 @@ namespace ISquared.PocketHTML
 		#region Setup functions
 		private void InitializeHeader()
 		{
+            int scale = DpiHelper.Scale(1);
 			m_btnOK = new Button();
 			this.m_btnOK.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
-			this.m_btnOK.Location = new System.Drawing.Point(140, 2);
-			this.m_btnOK.Size = new System.Drawing.Size(30, 20);
+            this.m_btnOK.Location = new System.Drawing.Point(scale * 140, scale * 2);
+            this.m_btnOK.Size = new System.Drawing.Size(scale * 30, scale * 20);
 			this.m_btnOK.Text = "OK";
 			this.m_btnOK.Click += new EventHandler(buttonOK_Click);
 			this.Controls.Add(m_btnOK);
 
 			m_btnCancel = new Button();
 			this.m_btnCancel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold);
-			this.m_btnCancel.Location = new System.Drawing.Point(176, 2);
-			this.m_btnCancel.Size = new System.Drawing.Size(60, 20);
+            this.m_btnCancel.Location = new System.Drawing.Point(scale * 176, scale * 2);
+            this.m_btnCancel.Size = new System.Drawing.Size(scale * 60, scale * 20);
 			this.m_btnCancel.Text = "Cancel";
 			this.m_btnCancel.Click +=new EventHandler(buttonCancel_Click);
 			this.Controls.Add(m_btnCancel);					
@@ -176,6 +177,7 @@ namespace ISquared.PocketHTML
 
 		private void InitializeOptionsControls()
 		{
+            int scale = DpiHelper.Scale(1);
 			m_pnlContents = new Panel();
 			m_pnlOptions = new ScrollablePanel();
 			m_pnlQuicktags = new ScrollablePanel();
@@ -200,10 +202,10 @@ namespace ISquared.PocketHTML
 			m_lblDefaultEncoding = new Label();
 			m_btnTestEncoding = new Button();
 
-			this.ClientSize = new System.Drawing.Size(240, 294);
+            this.ClientSize = new System.Drawing.Size(scale * 240, scale * 294);
 
-			m_pnlContents.Location = new Point(2, 30);
-			m_pnlContents.Size = new Size(236, 240);
+            m_pnlContents.Location = new Point(scale * 2, scale * 30);
+            m_pnlContents.Size = new Size(scale * 236, scale * 240);
 			m_pnlContents.Parent = this;
 
 			tabControl1.Parent = m_pnlContents;
@@ -219,11 +221,11 @@ namespace ISquared.PocketHTML
 
 			m_pnlOptions.Parent = tabPage1;
 			m_pnlOptions.Bounds = tabPage1.Bounds;
-			m_pnlOptions.SetScrollHeight(DpiHelper.Scale(200));
+			m_pnlOptions.SetScrollHeight(scale * 200);
 
 			m_pnlQuicktags.Parent = tabPage2;
 			m_pnlQuicktags.Bounds = tabPage2.Bounds;
-			m_pnlQuicktags.SetScrollHeight(DpiHelper.Scale(200));
+			m_pnlQuicktags.SetScrollHeight(scale * 200);
 
 			m_lvOptions.Parent = m_pnlOptions.Contents;
 			m_lblZoomLevel.Parent = m_pnlOptions.Contents;
@@ -243,10 +245,10 @@ namespace ISquared.PocketHTML
 			m_comboButtonNumber.Parent = m_pnlQuicktags.Contents;
 			cbHardwareButtons.Parent = m_pnlQuicktags.Contents;
 
-			m_lvOptions.Bounds = new Rectangle(0, 0, 220, 124);
+            m_lvOptions.Bounds = new Rectangle(0, 0, scale * 220, scale * 124);
 			ColumnHeader header = new ColumnHeader();
 			header.Text = "Options";
-			header.Width = 195;
+            header.Width = scale * 195;
 			m_lvOptions.View = View.Details;
 			m_lvOptions.Columns.Add(header);
 			m_lvOptions.HeaderStyle = ColumnHeaderStyle.None;
@@ -262,19 +264,19 @@ namespace ISquared.PocketHTML
 			}
 
 			this.label6.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
-			this.label6.Location = new System.Drawing.Point(7, 4);
-			this.label6.Size = new System.Drawing.Size(137, 20);
+            this.label6.Location = new System.Drawing.Point(scale * 7, scale * 4);
+            this.label6.Size = new System.Drawing.Size(scale * 137, scale * 20);
 			this.label6.Text = "Button Assignments:";
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(33, 151);
-			this.label3.Size = new System.Drawing.Size(49, 20);
+            this.label3.Location = new System.Drawing.Point(scale * 33, scale * 151);
+            this.label3.Size = new System.Drawing.Size(scale * 49, scale * 20);
 			this.label3.Text = "Button:";
 			// 
 			// nudHardwareButton
 			// 
-			this.nudHardwareButton.Location = new System.Drawing.Point(88, 149);
+            this.nudHardwareButton.Location = new System.Drawing.Point(scale * 88, scale * 149);
 			this.nudHardwareButton.Maximum = new decimal(new int[] {
             5,
             0,
@@ -285,7 +287,7 @@ namespace ISquared.PocketHTML
             0,
             0,
             0});
-			this.nudHardwareButton.Size = new System.Drawing.Size(43, 22);
+            this.nudHardwareButton.Size = new System.Drawing.Size(scale * 43, scale * 22);
 			this.nudHardwareButton.Value = new decimal(new int[] {
             1,
             0,
@@ -295,8 +297,8 @@ namespace ISquared.PocketHTML
 			// cbHardwareButtons
 			// 
 			this.cbHardwareButtons.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
-			this.cbHardwareButtons.Location = new System.Drawing.Point(5, 129);
-			this.cbHardwareButtons.Size = new System.Drawing.Size(196, 16);
+            this.cbHardwareButtons.Location = new System.Drawing.Point(scale * 5, scale * 129);
+            this.cbHardwareButtons.Size = new System.Drawing.Size(scale * 196, scale * 16);
 			this.cbHardwareButtons.Text = "Hardware button shows tag menu";
 			this.cbHardwareButtons.CheckStateChanged += new System.EventHandler(this.cbHardwareButtons_CheckStateChanged);
 			// 
@@ -318,32 +320,35 @@ namespace ISquared.PocketHTML
 			this.m_comboButtonNumber.Items.Add("14");
 			this.m_comboButtonNumber.Items.Add("15");
 			this.m_comboButtonNumber.Items.Add("16");
-			this.m_comboButtonNumber.Location = new System.Drawing.Point(49, 27);
-			this.m_comboButtonNumber.Size = new System.Drawing.Size(36, 22);
+            this.m_comboButtonNumber.Location = new System.Drawing.Point(scale * 49, scale * 27);
+            this.m_comboButtonNumber.Size = new System.Drawing.Size(scale * 36, scale * 22);
 			this.m_comboButtonNumber.SelectedIndexChanged += new System.EventHandler(this.comboButtonNumber_SelectedIndexChanged);
 
 			m_lblZoomLevel.Text = "Preview zoom level:";
-			m_lblZoomLevel.Bounds = new Rectangle(4, 130, 112, 16);
+            m_lblZoomLevel.Bounds = new Rectangle(scale * 4, scale * 130, scale * 112, scale * 16);
 			m_comboZoomLevel.Items.Add("0");
 			m_comboZoomLevel.Items.Add("1");
 			m_comboZoomLevel.Items.Add("2");
 			m_comboZoomLevel.Items.Add("3");
 			m_comboZoomLevel.Items.Add("4");
-			m_comboZoomLevel.Bounds = new Rectangle(124, 130, 40, 22);
+            m_comboZoomLevel.Bounds = new Rectangle(scale * 124, scale * 130, scale * 40, scale * 22);
 
 
 
 			m_lblDefaultEncoding.Text = "Default text encoding:";
-			m_lblDefaultEncoding.Bounds = new Rectangle(4, m_comboZoomLevel.Bottom + 8, 172, 16);
+            m_lblDefaultEncoding.Bounds = new Rectangle(scale * 4, m_comboZoomLevel.Bottom + scale * 8, 
+                                                        scale * 172, scale * 16);
 
-			m_comboDefaultEncoding.Bounds = new Rectangle(4, m_lblDefaultEncoding.Bottom + 4, 172, 22);
+            m_comboDefaultEncoding.Bounds = new Rectangle(scale * 4, m_lblDefaultEncoding.Bottom + scale * 4, 
+                                                            scale * 172, scale * 22);
 			for (int i = 0; i < encodingnames.GetLength(0); i++)
 			{
 				m_comboDefaultEncoding.Items.Add(encodingnames[i, 0]);
 			}
 
 			m_btnTestEncoding.Text = "Test";
-			m_btnTestEncoding.Bounds = new Rectangle(180, m_lblDefaultEncoding.Bottom + 4, 40, 20);
+            m_btnTestEncoding.Bounds = new Rectangle(scale * 180, m_lblDefaultEncoding.Bottom + scale * 4,
+                                                    scale * 40, scale * 20);
 			m_btnTestEncoding.Click += new EventHandler(m_btnTestEncoding_Click);
 
 
@@ -351,35 +356,35 @@ namespace ISquared.PocketHTML
 				// label5
 				// 
 			this.label5.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label5.Location = new System.Drawing.Point(93, 27);
-			this.label5.Size = new System.Drawing.Size(36, 20);
+            this.label5.Location = new System.Drawing.Point(scale * 93, scale * 27);
+            this.label5.Size = new System.Drawing.Size(scale * 36, scale * 20);
 			this.label5.Text = "Label:";
 			// 
 			// label4
 			// 
 			this.label4.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label4.Location = new System.Drawing.Point(5, 27);
-			this.label4.Size = new System.Drawing.Size(44, 20);
+            this.label4.Location = new System.Drawing.Point(scale * 5, scale * 27);
+            this.label4.Size = new System.Drawing.Size(scale * 44, scale * 20);
 			this.label4.Text = "Button:";
 			// 
 			// label2
 			// 
 			this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label2.Location = new System.Drawing.Point(41, 55);
-			this.label2.Size = new System.Drawing.Size(196, 73);
+            this.label2.Location = new System.Drawing.Point(scale * 41, scale * 55);
+            this.label2.Size = new System.Drawing.Size(scale * 196, scale * 73);
 			this.label2.Text = "label2";
 			// 
 			// label1
 			// 
 			this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular);
-			this.label1.Location = new System.Drawing.Point(5, 55);
-			this.label1.Size = new System.Drawing.Size(32, 26);
+            this.label1.Location = new System.Drawing.Point(scale * 5, scale * 55);
+            this.label1.Size = new System.Drawing.Size(scale * 32, scale * 26);
 			this.label1.Text = "Tag:";
 			// 
 			// comboBox1
 			// 
-			this.m_comboButtonLabel.Location = new System.Drawing.Point(129, 27);
-			this.m_comboButtonLabel.Size = new System.Drawing.Size(97, 22);
+            this.m_comboButtonLabel.Location = new System.Drawing.Point(scale * 129, scale * 27);
+            this.m_comboButtonLabel.Size = new System.Drawing.Size(scale * 97, scale * 22);
 			this.m_comboButtonLabel.SelectedIndexChanged += new System.EventHandler(this.comboButtonLabel_SelectedIndexChanged);
 			
 			this.tabPage1.Text = "Options";
@@ -481,21 +486,24 @@ namespace ISquared.PocketHTML
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint (e);
+
+            int scale = DpiHelper.Scale(1);
 			Graphics g = e.Graphics;
 			SolidBrush sb2 = new SolidBrush(Color.White);
 			
-			Rectangle r = new Rectangle(DpiHelper.Scale(8), DpiHelper.Scale(2), DpiHelper.Scale(120), DpiHelper.Scale(22));
+			Rectangle r = new Rectangle(scale * 8, scale * 2, scale * 120, scale * 22);
 			SolidBrush sb = new SolidBrush(Color.Blue);
 			Font titleFont = new Font("Tahoma", 10, FontStyle.Bold);
 			g.DrawString("Options", titleFont, sb, r);
 			Pen p = new Pen(Color.Black);
-			g.DrawLine(p, 0, DpiHelper.Scale(23), this.Width, DpiHelper.Scale(23));
+			g.DrawLine(p, 0, scale * 23, this.Width, scale * 23);
 		}
 
 		protected override void OnResize(EventArgs e)
 		{
+            int scale = DpiHelper.Scale(1);
 			base.OnResize(e);
-			m_pnlContents.Bounds = new Rectangle(0, 30, this.Width, this.Height - 30); 
+            m_pnlContents.Bounds = new Rectangle(0, scale * 30, this.Width, this.Height - scale * 30); 
 			tabControl1.Bounds = m_pnlContents.ClientRectangle;
 
 			m_pnlOptions.Bounds = tabPage1.ClientRectangle;
@@ -504,7 +512,7 @@ namespace ISquared.PocketHTML
 			m_btnCancel.Left =  this.Width - DpiHelper.Scale(4) - m_btnCancel.Width;
 			m_btnOK.Left = m_btnCancel.Left - DpiHelper.Scale(8) - m_btnOK.Width;
 
-			DpiHelper.AdjustAllControls(this);
+			//DpiHelper.AdjustAllControls(this);
 		}
 
 		private void comboButtonLabel_SelectedIndexChanged(object sender, System.EventArgs e)
