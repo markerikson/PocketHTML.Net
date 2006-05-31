@@ -90,12 +90,13 @@ namespace ISquared.Windows.Forms
 			this.Controls.Add(m_pnlTitle);
 
 			m_pnlTitle.ParentDialog = this;
-			this.m_pnlTitle.Bounds = new Rectangle(0, 0, this.Width, 16);
+            int scaled16 = DpiHelper.Scale(16);
+            this.m_pnlTitle.Bounds = new Rectangle(0, 0, this.Width, scaled16);
 			// 
 			// backPanel
 			// 
-			this.m_pnlContent.Location = new System.Drawing.Point(1, 16);
-			this.m_pnlContent.Size = new System.Drawing.Size(this.Width - 2, 83);
+            this.m_pnlContent.Location = new System.Drawing.Point(1, scaled16);
+			this.m_pnlContent.Size = new System.Drawing.Size(this.Width - 2, DpiHelper.Scale(83));
 			Button b = new Button();
 
 
@@ -129,12 +130,12 @@ namespace ISquared.Windows.Forms
 
 			if (m_pnlTitle != null)
 			{
-				m_pnlTitle.Bounds = new Rectangle(0, 0, this.Width, 16);
+				m_pnlTitle.Bounds = new Rectangle(0, 0, this.Width, DpiHelper.Scale(16));
 			}
 
 			if (m_pnlContent != null)
 			{
-				m_pnlContent.Bounds = new Rectangle(1, 17, this.Width - 2, this.Height - m_pnlTitle.Height - 2);
+				m_pnlContent.Bounds = new Rectangle(1, DpiHelper.Scale(16), this.Width - 2, this.Height - m_pnlTitle.Height - 2);
 			}
 
 			//DpiHelper.AdjustAllControls(this);

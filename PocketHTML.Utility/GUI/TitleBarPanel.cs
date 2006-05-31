@@ -72,7 +72,7 @@ namespace ISquared.Windows.Forms
 			m_lblCaption = new Label();
 			m_lblCaption.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
 			m_lblCaption.ForeColor = System.Drawing.Color.White;
-			m_lblCaption.Bounds = new Rectangle(4, 0, 100, 16);
+			m_lblCaption.Bounds = new Rectangle(DpiHelper.Scale(4), 0, DpiHelper.Scale(100), DpiHelper.Scale(16));
 			m_lblCaption.Text = "Caption";
 
 			this.BackColor = SystemColors.ActiveCaption;

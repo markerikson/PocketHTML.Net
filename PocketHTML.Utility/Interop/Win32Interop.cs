@@ -27,6 +27,9 @@ namespace ISquared.Win32Interop
 
 		[DllImport("coredll")]
 		public static extern IntPtr GetFocus();
+
+        [DllImport("coredll")]
+        public static extern IntPtr GetParent(IntPtr child);
 		
 		[DllImport("coredll")]
 		public static extern int LoadIcon(int hInstance, int lpIconName); 
@@ -66,6 +69,9 @@ namespace ISquared.Win32Interop
 		public extern static bool SetWindowPos(IntPtr hWnd, Int32 hWndInsertAfter,
 			Int32 X, Int32 Y, Int32 cx, Int32 cy, UInt32 uFlags);
 
+        [DllImport("coredll.dll")]
+        public extern static bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint); 
+
 		[DllImport("coredll", EntryPoint="LoadLibraryW", SetLastError=true)]
 		public static extern IntPtr LoadLibraryCE( string lpszLib );
 
@@ -91,6 +97,8 @@ namespace ISquared.Win32Interop
 
 		[DllImport("coredll")]
 		public static extern IntPtr GetCapture();
+
+
 		#endregion
 
 		#region Format Message Flags Enumeration
