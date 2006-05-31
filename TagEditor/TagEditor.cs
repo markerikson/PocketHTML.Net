@@ -441,6 +441,7 @@ namespace ISquared.PocketHTML
 			// m_miFileExit
 			// 
 			this.m_miFileExit.Text = "Exit";
+            this.m_miFileExit.Click += new EventHandler(m_miFileExit_Click);
 			// 
 			// m_miFileSave
 			// 
@@ -535,6 +536,8 @@ namespace ISquared.PocketHTML
 			this.Text = "Form1";
 
 		}
+
+
 
 		void m_btnPreviewTag_Click(object sender, EventArgs e)
 		{
@@ -1102,6 +1105,11 @@ namespace ISquared.PocketHTML
 		{
 			SaveTagInformation();
 		}
+
+        void m_miFileExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
 		void miDeleteMenuItem_Click(object sender, EventArgs e)
 		{
