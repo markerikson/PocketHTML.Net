@@ -156,6 +156,7 @@ namespace ISquared.Windows.Forms
 
 			if (TargetTextbox.SelectionLength > 1)
 			{
+
 				TargetTextbox.SelectedText = this.m_tbReplace.Text;
 				TargetTextbox.Modified = true;
 			}

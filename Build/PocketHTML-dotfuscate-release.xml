@@ -5,18 +5,18 @@
   <input>
     <asmlist>
       <inputassembly>
-        <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\bin\Release" name="PocketHTML.Net.exe" />
+        <file dir="D:\Projects\PocketHTML.Net\PocketHTML.Net\bin\Release" name="PocketHTML.Net.exe" />
       </inputassembly>
       <inputassembly>
-        <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\PocketHTML.Utility\bin\Release" name="PocketHTML.Utility.dll" />
+        <file dir="D:\Projects\PocketHTML.Net\PocketHTML.Net\PocketHTML.Utility\bin\Release" name="PocketHTML.Utility.dll" />
       </inputassembly>
       <inputassembly>
-        <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\TagEditor\bin\Release" name="TagEditor.exe" />
+        <file dir="D:\Projects\PocketHTML.Net\PocketHTML.Net\TagEditor\bin\Release" name="TagEditor.exe" />
       </inputassembly>
     </asmlist>
   </input>
   <output>
-    <file dir="C:\Projects\PocketHTML.Net\PocketHTML.Net\Build\Builds\Dotfuscated\Release" />
+    <file dir="D:\Projects\PocketHTML.Net\PocketHTML.Net\Build\Builds\Dotfuscated\Release" />
   </output>
   <renaming>
     <excludelist>

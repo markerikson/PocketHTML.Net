@@ -31,6 +31,8 @@ namespace ISquared.PocketHTML
 	public class PocketHTMLEditor : Form, IMRUClient
 	{
 		#region Main
+
+		/*
 		public static void Main() 
 		{
 			Application.Run(new PocketHTMLEditor());
@@ -47,11 +49,12 @@ namespace ISquared.PocketHTML
 				MessageBox.Show("Exception caught at the top level\nException info: " + e.Message 
 					+ "\nInnerException: " + e.InnerException);
 				
-				Application.Exit();
 				//throw e;
 			}
 
 		}
+		*/
+		
 		#endregion
 
 		#region private members
@@ -1120,6 +1123,7 @@ namespace ISquared.PocketHTML
 		{
 			m_editorPanel.ShowAbout();
 		}
+
 		#endregion
 
 		#region New/open/save functions
@@ -1233,6 +1237,12 @@ namespace ISquared.PocketHTML
 
 				filename = TGetFile.TGetFileName(save, originalFileName, filterIndex, fileFilter, m_saveFileDirectory);
 
+			}
+
+			if(filename.IndexOf(';') != -1)
+			{
+				string[] splitString = filename.Split(';');
+				filename = splitString[0];
 			}
 
 			return filename;
