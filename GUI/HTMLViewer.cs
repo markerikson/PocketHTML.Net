@@ -950,6 +950,9 @@ namespace OpenNETCF.Windows.Forms
 			CurrentFilename = null;
 		}
 
+		#endregion
+
+		#region WndProc
 		protected override void WndProc(ref Message msg)
 		{
 			if (msg.Msg == WM_IMAGENOTIFY)
@@ -989,6 +992,7 @@ namespace OpenNETCF.Windows.Forms
 
 		}
 		#endregion
+
 	}
 
 }

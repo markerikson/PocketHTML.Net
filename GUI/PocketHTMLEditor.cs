@@ -203,7 +203,7 @@ namespace ISquared.PocketHTML
 
 		#region Constructor
 
-		public PocketHTMLEditor()
+		public PocketHTMLEditor(string[] args)
 		{			
 			String inifile = Utility.GetCurrentDir(true) + "pockethtml.ini";
 
@@ -350,6 +350,18 @@ namespace ISquared.PocketHTML
             //DpiHelper.AdjustControl(m_editorPanel);
 
             PocketHTMLEditor.m_doLayout = true;
+
+			if(args != null && args.Length > 0)
+			{
+				string filename = args[0];
+
+				if(File.Exists(filename))
+				{
+					LoadFile(filename);
+				}
+			}
+
+
 			Debug.WriteLine("PHE constructor complete");
 
 		}
@@ -693,8 +705,19 @@ namespace ISquared.PocketHTML
 			}
 			Tag t = (Tag)m_htTags[tagName];
 			//InsertTag(t);
-			PocketHTMLShared.InsertTag(t, m_editorPanel.TextBox, m_htTags);
-			return true;
+
+			bool result = true;
+			if(t == null)
+			{
+				Debug.WriteLine("Tried to insert invalid tag: " + tagName);
+				result = false;
+			}
+			else
+			{
+				PocketHTMLShared.InsertTag(t, m_editorPanel.TextBox, m_htTags);
+			}
+			
+			return result;
 		}
 		
 		#endregion

@@ -4,17 +4,18 @@
 #include "stdafx.h"
 #include "HTMLContainer.h"
 #include <string.h>
+#include <stdio.h>
 
 #define WC_HTMLCONTAINER TEXT("HTMLContainer")
 LRESULT TestWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+#define WM_IMAGENOTIFY (WM_USER + 42)
 
 HINSTANCE g_hInstance = NULL;
 HWND g_hwndContainer = NULL;
 HWND g_hwndHtml = NULL;
 HWND g_hwndParent = NULL;
 HWND g_hwndMessageWindow = NULL;
-
-#define WM_IMAGENOTIFY (WM_USER + 42)
 
 HRESULT RegisterTestClass(HINSTANCE hInstance)
 {
@@ -117,6 +118,13 @@ LRESULT TestWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NMHDR * pnmh = (NMHDR *)lParam;
 			NM_HTMLVIEW * pnmHTML = (NM_HTMLVIEW *) lParam;
 
+			//OutputDebugString(TEXT("Received WM_NOTIFY"));
+
+			//TCHAR buffer[255];
+
+			//wsprintf(buffer, TEXT("Message: %d, target: %s"), pnmh->code, pnmHTML->szTarget);
+			//MessageBox(NULL, (LPCTSTR)buffer, TEXT("Received WM_NOTIFY"), MB_OK);
+
 			switch (pnmh->code)
 			{
 			case NM_HOTSPOT:
@@ -131,6 +139,10 @@ LRESULT TestWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					TCHAR* szPathName = pathName;
 
 					HBITMAP hBitmap = NULL;
+
+					// Pass the message up to our managed MessageWindow, which handles
+					// filename manipulation (because I'm too lazy to figure out how to
+					// mangle it in C++).
 					int result = SendMessage(g_hwndMessageWindow, WM_IMAGENOTIFY, 
 											(WPARAM)pnmHTML->szTarget, (LPARAM)szPathName);
 					//MessageBox(g_hwndHtml, TEXT("NM_INLINE_IMAGE\r\n"), TEXT("Caption"), MB_OK);
@@ -162,6 +174,18 @@ LRESULT TestWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					
 					lResult = 1;
 					//break;
+				}
+			case NM_INLINE_STYLE:
+				{
+					//OutputDebugString(TEXT("NM_INLINE_STYLE:"));
+
+					//char buffer[255];
+					//sprintf(buffer, "NM_INLINE_STYLE: %s", pnmHTML->target);
+					
+					//MessageBox(NULL, (LPCTSTR)pnmHTML->szTarget, TEXT("NM_INLINE_STYLE"), MB_OK);
+
+
+					break;
 				}
 
 			case NM_INLINE_SOUND:
@@ -223,6 +247,7 @@ LRESULT TestWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					//OutputDebugString(TEXT("NM_TITLECHANGE\r\n"));
 					break;
 				}
+			
 
 			default:
 				{

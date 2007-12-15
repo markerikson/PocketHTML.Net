@@ -22,13 +22,13 @@ namespace ISquared.PocketHTML
 			//
 		}
 
-		internal static void LaunchPocketHTML()
+		internal static void LaunchPocketHTML(string[] args)
 		{
 			PocketHTMLEditor mainForm = null;
 
 			try
 			{
-				mainForm = new PocketHTMLEditor();
+				mainForm = new PocketHTMLEditor(args);
 				Application.Run(mainForm);
 				Cursor.Current = Cursors.Default;
 			}

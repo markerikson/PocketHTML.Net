@@ -230,7 +230,7 @@ ClosingTag: whether or not the item has a closing tag.  Most items will, items s
 	<Tag DisplayName="Table caption" Value="caption" AngleBrackets="True" InnerTag="" ShortName="capt" MultiLine="False" ClosingTag="True" />
 	<Tag DisplayName="Table cell" Value="td" AngleBrackets="True" InnerTag="" ShortName="" MultiLine="True" ClosingTag="True" />
 	<Tag DisplayName="Table header" Value="th" AngleBrackets="True" InnerTag="" ShortName="" MultiLine="True" ClosingTag="True" />
-	<Tag DisplayName="Table row" Value="tr" AngleBrackets="True" InnerTag="Table column" ShortName="" MultiLine="True" ClosingTag="True" />
+	<Tag DisplayName="Table row" Value="tr" AngleBrackets="True" InnerTag="Table cell" ShortName="" MultiLine="True" ClosingTag="True" />
 	<Tag DisplayName="Text area" Value="textarea" AngleBrackets="True" InnerTag="" ShortName="text" MultiLine="True" ClosingTag="True">
 		<Attributes>
 			<Attribute>name</Attribute>

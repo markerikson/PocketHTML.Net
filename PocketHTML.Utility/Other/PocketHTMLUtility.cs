@@ -177,6 +177,11 @@ namespace ISquared.PocketHTML
 
 		public static bool InsertTag(Tag tag, TextBoxEx tb, Hashtable htTags)
 		{
+			if(tag == null)
+			{
+				return false;
+			}
+
 			//TextBoxEx tb = m_editorPanel.TextBox;
 			StringBuilder sb = new StringBuilder();
 			String spaces = tb.GetLeadingSpaces();
@@ -208,6 +213,12 @@ namespace ISquared.PocketHTML
 				if (tag.InnerTags)
 				{
 					Tag innerTag = (Tag)htTags[tag.DefaultInnerTag];
+
+					if(innerTag == null)
+					{
+						goto InnerTagComplete;
+					}
+
 					if (indentHTML && tag.MultiLineTag)
 					{
 						sb.Append(spacesPlus);
@@ -232,6 +243,7 @@ namespace ISquared.PocketHTML
 					}
 					sb.Append(innerTag.EndTag);
 				}
+InnerTagComplete:
 
 				if (tag.MultiLineTag)
 				{

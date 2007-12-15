@@ -19,11 +19,11 @@ namespace ISquared.PocketHTML
 			//
 		}
 
-		public static void Main()
+		public static void Main(string[] args)
 		{
 			try
 			{
-				PocketHTMLRunner.LaunchPocketHTML();
+				PocketHTMLRunner.LaunchPocketHTML(args);
 				Cursor.Current = Cursors.Default;
 			}
 			catch(System.TypeLoadException)

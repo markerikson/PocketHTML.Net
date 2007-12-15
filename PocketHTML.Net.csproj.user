@@ -10,7 +10,7 @@
     </CopyProjectUncPath>
     <CopyProjectOption>0</CopyProjectOption>
     <ProjectView>ProjectFiles</ProjectView>
-    <DeployDeviceID>E282E6BE-C7C3-4ece-916A-88FB1CF8AF3C</DeployDeviceID>
+    <DeployDeviceID>AE1FD546-ECB8-4553-B0AA-53E129544859</DeployDeviceID>
     <ProvisionStore>none</ProvisionStore>
     <LastOpenVersion>8.0.50215</LastOpenVersion>
     <NETCFDeploy>false</NETCFDeploy>
@@ -24,8 +24,7 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>
-    </StartArguments>
+    <StartArguments>"\Storage Card\Hotel phrases.html"</StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>
